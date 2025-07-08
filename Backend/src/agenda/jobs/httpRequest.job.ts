@@ -13,11 +13,10 @@ interface HttpRequestJobData {
 agenda.define("http-request", {concurrency: 5}, async (job: Job<HttpRequestJobData>) => {
   const { _id, data } = job.attrs;
   const { url, method, headers, userId } = data;
-
-  const jobId = data.jobId ||  _id.toString()
+    
+  const jobId = data.jobId ||  _id.toString();
   try {
     const res = await fetch(url, { method, headers });
-
     await logsModel.create({
       jobId,
       userId,
@@ -35,7 +34,6 @@ agenda.define("http-request", {concurrency: 5}, async (job: Job<HttpRequestJobDa
       url,
       method,
       status: "error",
-      statusCode: null,
       response: err?.message || "Unknown error"
     });
   }

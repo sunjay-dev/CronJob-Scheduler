@@ -25,8 +25,7 @@ const joblogsSchema = new mongoose.Schema({
         required: true
     },
     statusCode: {
-        type: String,
-        required: true
+        type: String
     },
     response: {
         type: String,

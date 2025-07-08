@@ -23,7 +23,10 @@ const port = process.env.PORT || 3000;
 
 async function start() {
     await connectDB();
-    await agenda.start()
+    await agenda.start();
+
+    await agenda.every("1 hour", "clean-now-jobs");
+
     app.listen(port, () => console.log('Server running on Port', port));
 }
 
