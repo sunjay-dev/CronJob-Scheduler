@@ -2,33 +2,64 @@ import { Request, Response, NextFunction } from "express";
 import agenda from "../agenda/agenda";
 import { isValidCron } from 'cron-validator';
 import { ObjectId } from 'mongodb';
+import validator from "validator";
 
 export const handleNewCronJobs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
-    const { url, method, headers, cron } = req.body;
-    const { userId } = req.user;
+  const { url, method, headers, cron } = req.body;
+  const { userId } = req.user;
 
-    if (!url || !method || !cron || !userId) {
-        res.status(400).json({ error: "Missing required fields" });
-        return;
-    }
+  if (!url || !method || !cron || !userId) {
+    res.status(400).json({ error: "Missing required fields" });
+    return;
+  }
 
-    if (!isValidCron(cron, { seconds: true })) {
-        res.status(400).json({ error: "Invalid cron expression" });
-        return;
-    }
+  if (typeof url !== 'string') {
+    res.status(400).json({ error: "url must be a string" });
+    return
+  }
 
+  if (!validator.isURL(url, { protocols: ['http', 'https'], require_protocol: true })) {
+    res.status(400).json({ error: "Invalid url" });
+    return;
+  }
+
+  if (typeof cron !== 'string') {
+    res.status(400).json({ error: "url must be a string" });
+    return
+  }
+
+  if (!isValidCron(cron, { seconds: true })) {
+    res.status(400).json({ error: "Invalid cron expression" });
+    return;
+  }
+
+  if (typeof method !== 'string') {
+    res.status(400).json({ error: "Method must be a string" });
+    return
+  }
+
+  if (!['GET', 'POST', 'PUT', 'DELETE'].includes(method.toUpperCase())) {
+    res.status(400).json({ error: "Invalid method type" });
+    return;
+  }
+
+  try {
     const job = agenda.create("http-request", {
-        url,
-        method,
-        headers: headers || {},
-        userId,
+      url,
+      method,
+      headers: headers || {},
+      userId,
     });
 
     job.repeatEvery(cron);
     await job.save();
 
     res.status(200).json(job);
+  } catch (error) {
+    console.error("Error while creating new job", error)
+    res.status(500).json({ message: "Error while creating new job" });
+  }
 }
 
 export const handleUserJobs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -94,7 +125,8 @@ export const handleDeleteJob = async (req: Request, res: Response, next: NextFun
 
     res.status(200).json({
       message: "Job deleted",
-      job: result
+      job: result,
+      jobId
     });
 
   } catch (error) {
@@ -103,12 +135,12 @@ export const handleDeleteJob = async (req: Request, res: Response, next: NextFun
   }
 }
 
-export const handleRunJobNow  = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const handleRunJobNow = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { userId } = req.user;
   const { jobId } = req.body;
-  
-  try {  
-    const jobs = await agenda.jobs({_id: new ObjectId(jobId), 'data.userId': userId});
+
+  try {
+    const jobs = await agenda.jobs({ _id: new ObjectId(jobId), 'data.userId': userId });
 
     if (jobs.length === 0) {
       res.status(404).json({ message: "Job not found" });
@@ -117,13 +149,11 @@ export const handleRunJobNow  = async (req: Request, res: Response, next: NextFu
 
     const job = jobs[0];
     const data = job.attrs.data;
-    console.log(job);
-    console.log(data);
-    
+
     await agenda.now(job.attrs.name, {
-    ...job.attrs.data,
-    jobId: job.attrs._id.toString(),
-  });
+      ...data,
+      jobId: job.attrs._id.toString(),
+    });
 
     res.status(200).json({ message: "Job executed immediately" });
 

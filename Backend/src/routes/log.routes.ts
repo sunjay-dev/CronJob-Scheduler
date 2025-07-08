@@ -1,7 +1,7 @@
 import express from 'express';
 const router =  express.Router();
 
-import { handleUserLogs, handleJobLogs, handleErrorLogs} from '../controllers/cron.controllers'
+import { handleUserLogs, handleJobLogs, handleErrorLogs} from '../controllers/log.controllers'
 import { restrictUserLogin } from '../middlewares/auth.middlewares';
 
 // Logs routes

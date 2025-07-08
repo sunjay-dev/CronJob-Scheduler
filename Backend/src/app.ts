@@ -7,7 +7,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 import userRouter from './routes/user.routes'
-import cronRouter from './routes/cron.routes'
+import cronRouter from './routes/log.routes'
 import jobRouter from './routes/job.routes'
 
 app.use('/', userRouter);
