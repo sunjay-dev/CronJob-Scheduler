@@ -102,3 +102,33 @@ export const handleDeleteJob = async (req: Request, res: Response, next: NextFun
     res.status(500).json({ message: "Error while deleting job" });
   }
 }
+
+export const handleRunJobNow  = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const { userId } = req.user;
+  const { jobId } = req.body;
+  
+  try {  
+    const jobs = await agenda.jobs({_id: new ObjectId(jobId), 'data.userId': userId});
+
+    if (jobs.length === 0) {
+      res.status(404).json({ message: "Job not found" });
+      return;
+    }
+
+    const job = jobs[0];
+    const data = job.attrs.data;
+    console.log(job);
+    console.log(data);
+    
+    await agenda.now(job.attrs.name, {
+    ...job.attrs.data,
+    jobId: job.attrs._id.toString(),
+  });
+
+    res.status(200).json({ message: "Job executed immediately" });
+
+  } catch (error) {
+    console.log("Error while running job now", error);
+    res.status(500).json({ message: "Error while running job now" });
+  }
+}

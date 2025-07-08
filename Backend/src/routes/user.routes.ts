@@ -3,9 +3,10 @@ import { handleUserLogin, handleUserRegister, handleUserLogout, handleUserDetail
 import { restrictUserLogin } from "../middlewares/auth.middlewares";
 const router = express.Router();
 
-router.post('/login', handleUserLogin);
-router.post('/register', handleUserRegister);
 router.get('/logout', handleUserLogout);
 router.get('/details', restrictUserLogin,handleUserDetails);
+
+router.post('/login', handleUserLogin);
+router.post('/register', handleUserRegister);
 
 export default router;

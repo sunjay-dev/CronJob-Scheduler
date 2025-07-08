@@ -1,4 +1,3 @@
-import 'dotenv/config'
 import Agenda from 'agenda'
 
 const agenda = new Agenda({

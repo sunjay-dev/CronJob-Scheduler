@@ -25,7 +25,6 @@ export const handleJobLogs = async (req: Request, res: Response, next: NextFunct
   try {
     const logs = await logsModels.find({ userId, jobId });
     res.status(200).json(logs);
-    return;
   } catch (error) {
     console.error("Error while fetching user logs", error)
     res.status(500).json({ message: "Error while fetching user logs" });
