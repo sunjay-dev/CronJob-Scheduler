@@ -3,7 +3,7 @@ import { Clock, Settings } from 'lucide-react';
 import { Header, Sidebar, Common, Advanced, Footer } from '../components';
 
 export default function CreateJob() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const [tab, setTab] = useState<'common' | 'advanced'>('common');
 

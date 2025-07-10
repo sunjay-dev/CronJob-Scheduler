@@ -75,7 +75,7 @@ export default function Common() {
                     type="text"
                     value={cron}
                     readOnly
-                    className="text-center border-0 border-b border-gray-400 bg-transparent px-1 py-1 font-mono text-gray-700 focus:outline-none focus:border-purple-500 transition"
+                    className="text-center border-0 border-b-2 border-gray-400 bg-transparent px-1 py-1 font-mono text-gray-700 focus:outline-none focus:border-purple-500 transition"
                 />
             </div>
             </div>

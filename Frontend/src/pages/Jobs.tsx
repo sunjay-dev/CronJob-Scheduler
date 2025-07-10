@@ -3,7 +3,7 @@ import { Timer } from 'lucide-react';
 import { Header, Sidebar, JobCard, Footer } from '../components';
 
 export default function Jobs() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
     <div className='font-[Inter] h-dvh w-dvw overflow-x-hidden'>

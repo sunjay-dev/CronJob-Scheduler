@@ -4,4 +4,6 @@ import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 import Common from "./Common";
 import Advanced from "./Advanced";
-export {Header ,Sidebar,JobCard, Common, Advanced,Footer}
+import LogCard from "./LogCard";
+import StatCard from './StatCard'
+export {Header ,Sidebar,JobCard, StatCard, LogCard,Common, Advanced,Footer}
