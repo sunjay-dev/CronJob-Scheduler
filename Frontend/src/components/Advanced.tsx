@@ -1,0 +1,53 @@
+import { useState } from 'react';
+
+export default function Advanced() {
+    const [method, setMethod] = useState('GET');
+    const [headers, setHeaders] = useState('{}');
+    const [timezone, setTimezone] = useState('Asia/Karachi');
+    return (
+        <>
+        <div className='border border-gray-200 rounded-lg px-4 py-6 space-y-6'>
+            <div className="text-base flex flex-col space-y-2">
+                <div className="flex flex-col space-y-2">
+                    <label className="font-medium text-gray-700">HTTP Method</label>
+                    <select
+                        value={method}
+                        onChange={(e) => setMethod(e.target.value)}
+                        className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    >
+                        <option>GET</option>
+                        <option>POST</option>
+                        <option>PUT</option>
+                        <option>DELETE</option>
+                    </select>
+                </div>
+                <label className="font-medium text-gray-700">Custom Headers (JSON)</label>
+                <textarea
+                    rows={4}
+                    placeholder='e.g. { "Authorization": "Bearer token" }'
+                    value={headers}
+                    onChange={(e) => setHeaders(e.target.value)}
+                    className="border border-gray-300 rounded px-3 py-2 font-mono focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+            </div>
+            </div>
+            <div className="flex flex-col space-y-2">
+                <label className="font-medium text-gray-700">Timezone</label>
+                <select
+                    value={timezone}
+                    onChange={(e) => setTimezone(e.target.value)}
+                    className="border-0 border-b-2 border-gray-400 px-3 py-2 focus:outline-none focus:border-purple-500 transition"
+                >
+                    <option value="UTC">UTC</option>
+                    <option value="Asia/Karachi">Asia/Karachi</option>
+                    <option value="Asia/Kolkata">Asia/Kolkata</option>
+                    <option value="Asia/Dubai">Asia/Dubai</option>
+                    <option value="Europe/London">Europe/London</option>
+                    <option value="America/New_York">America/New_York</option>
+                    <option value="America/Los_Angeles">America/Los_Angeles</option>
+                </select>
+            </div>
+
+        </>
+    )
+}
