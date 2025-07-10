@@ -1,7 +1,5 @@
-// pages/Dashboard.tsx
-
 import { useState } from 'react';
-import { Header, StatCard ,LogCard, Sidebar, Footer } from '../components';
+import { Header, StatCard ,LogCard,Sidebar, Footer } from '../components';
 import { PlusCircle, List, Clock } from 'lucide-react';
 
 export default function Dashboard() {

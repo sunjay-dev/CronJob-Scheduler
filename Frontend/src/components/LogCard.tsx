@@ -11,7 +11,7 @@ export default function LogCard({ timestamp, url, method, status }: LogCardProps
   const isSuccess = status === 'success';
 
   return (
-    <div className="grid grid-cols-[1fr_2fr_2fr_1fr] items-center gap-4 bg-white p-4 mb-2 rounded-md shadow-sm border border-gray-200 text-sm">
+    <div className="grid grid-cols-[1fr_2fr_2fr_1fr] items-center gap-4 bg-white p-4 mb-2 rounded-md border border-gray-200 text-sm">
       
       {/* Method + URL */}
       <div className=" overflow-hidden">

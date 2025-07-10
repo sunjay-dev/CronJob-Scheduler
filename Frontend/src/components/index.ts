@@ -6,4 +6,5 @@ import Common from "./Common";
 import Advanced from "./Advanced";
 import LogCard from "./LogCard";
 import StatCard from './StatCard'
-export {Header ,Sidebar,JobCard, StatCard, LogCard,Common, Advanced,Footer}
+import LogChart from "./LogChart";
+export {Header ,Sidebar,JobCard, LogChart,StatCard, LogCard,Common, Advanced,Footer}
