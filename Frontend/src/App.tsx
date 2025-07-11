@@ -1,18 +1,21 @@
-import {BrowserRouter, Route, Routes} from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Login, Signup, Dashboard, CreateJob, Jobs, Logs, Settings } from './pages';
-
+import { Layout } from './components'
 export default function App() {
   return (
-   <BrowserRouter>
-   <Routes>
-    <Route path='/login' element={<Login/>} />
-    <Route path='/signup' element={<Signup />} />
-    <Route path='/create' element={<CreateJob />} />
-    <Route path='/jobs' element={<Jobs />} />
-    <Route path='/dashboard' element={<Dashboard />} />
-    <Route path='/logs' element={<Logs />} />
-    <Route path='/' element={<Settings />} />
-   </Routes>
-   </BrowserRouter>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/login' element={<Login />} />
+        <Route path='/signup' element={<Signup />} />
+
+        <Route element={<Layout />}>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/create" element={<CreateJob />} />
+          <Route path="/jobs" element={<Jobs />} />
+          <Route path="/logs" element={<Logs />} />
+          <Route path="/settings" element={<Settings />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }

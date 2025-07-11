@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import { Header, Sidebar, Preference, Footer } from '../components';
+import { Preference } from '../components';
 import { Pencil, Save } from "lucide-react";
 
 export default function SettingsPage() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [emailNotifs, setEmailNotifs] = useState(true);
   const [pushAlerts, setPushAlerts] = useState(false);
   const [email] = useState('john@example.com');
@@ -11,11 +10,7 @@ export default function SettingsPage() {
   const [name, setName] = useState("Sunjay Kumar");
 
   return (
-    <div className="font-[Inter] text-base bg-gray-50 h-dvh w-dvw overflow-x-hidden">
-      <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-      <Sidebar collapsed={sidebarOpen} />
-
-      <div className={`mt-16 p-12 transition-all duration-300 ${sidebarOpen? 'ml-64': 'ml-16'}`}>
+    <>
        <h1 className="text-3xl text-purple-600 mb-6">Settings</h1>
 
         <form className="space-y-10 bg-white p-6 rounded-xl shadow">
@@ -110,8 +105,6 @@ export default function SettingsPage() {
             </button>
           </div>
         </form>
-       <Footer />
-      </div>
-    </div>
+      </>
   );
 }

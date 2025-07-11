@@ -1,3 +1,4 @@
+import Layout from "./Layout";
 import JobCard from "./JobCard";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
@@ -8,4 +9,4 @@ import LogCard from "./LogCard";
 import StatCard from './StatCard'
 import LogChart from "./LogChart";
 import Preference from "./Preference";
-export {Header ,Sidebar,JobCard, LogChart,StatCard, LogCard,Common, Advanced,Preference,Footer}
+export {Layout,Header ,Sidebar,JobCard, LogChart,StatCard, LogCard,Common, Advanced,Preference,Footer}
