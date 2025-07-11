@@ -1,80 +1,89 @@
+import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   LineElement,
-  CategoryScale,
-  LinearScale,
   PointElement,
+  LinearScale,
+  Title,
   Tooltip,
   Legend,
+  CategoryScale,
 } from 'chart.js';
-import { Line } from 'react-chartjs-2';
+import { useMemo } from 'react';
 
-ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend);
+ChartJS.register(LineElement, PointElement, LinearScale, Title, Tooltip, Legend, CategoryScale);
 
-const hours = Array.from({ length: 24 }, (_, i) =>
-  `${i.toString().padStart(2, '0')}:00`
-);
+interface Log {
+  timestamp: string;
+  status: 'success' | 'failed';
+}
 
-// Dummy 24-hour data
-const successData = [
-  0, 1, 0, 2, 3, 5, 4, 6, 7, 5, 6, 4, 3, 4, 6, 5, 4, 3, 2, 2, 1, 1, 0, 0,
-];
-const failedData = [
-  0, 0, 0, 1, 0, 1, 1, 0, 1, 2, 1, 0, 1, 2, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0,
-];
+interface Props {
+  logs: Log[];
+}
 
-const data = {
-  labels: hours,
-  datasets: [
-    {
-      label: 'Success',
-      data: successData,
-      borderColor: '#10B981',
-      backgroundColor: 'rgba(16, 185, 129, 0.2)',
-      fill: true,
-      tension: 0.3,
-    },
-    {
-      label: 'Failed',
-      data: failedData,
-      borderColor: '#EF4444',
-      backgroundColor: 'rgba(239, 68, 68, 0.2)',
-      fill: true,
-      tension: 0.3,
-    },
-  ],
-};
+export default function LogLineChart({ logs }: Props) {
+  const { labels, successData, failedData } = useMemo(() => {
+    const labels = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`);
+    const successData = Array(24).fill(0);
+    const failedData = Array(24).fill(0);
 
-const options = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      position: 'top' as const,
-    },
-  },
-  scales: {
-    x: {
-      ticks: {
-        maxRotation: 90,
-        minRotation: 45,
+    logs.forEach(log => {
+      const hour = new Date(log.timestamp).getHours();
+      if (log.status === 'success') successData[hour]++;
+      else failedData[hour]++;
+    });
+
+    return { labels, successData, failedData };
+  }, [logs]);
+
+  const data = {
+    labels,
+    datasets: [
+      {
+        label: 'Success',
+        data: successData,
+        borderColor: '#10b981', // green-500
+        backgroundColor: 'rgba(16,185,129,0.1)',
+        tension: 0.4,
+      },
+      {
+        label: 'Failed',
+        data: failedData,
+        borderColor: '#ef4444', // red-500
+        backgroundColor: 'rgba(239,68,68,0.1)',
+        tension: 0.4,
+      }
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: false,
       },
     },
-    y: {
-      beginAtZero: true,
-      ticks: {
-        stepSize: 1,
-      },
-    },
-  },
-};
+    scales: {
+      y: {
+        beginAtZero: true,
+        precision: 0,
+        ticks: {
+          stepSize: 1,
+        },
+      }
+    }
+  };
 
-export default function LogLineChart() {
   return (
     <div className="bg-white p-6 rounded-xl shadow mb-6 w-full">
       <h2 className="text-md font-semibold text-gray-700 mb-2">Job Executions (Last 24 Hours)</h2>
-      <div className='w-full h-64 relative'>
-      <Line data={data} options={options} />
+      <div className="w-full h-64 relative">
+        <Line data={data} options={options} />
       </div>
     </div>
   );

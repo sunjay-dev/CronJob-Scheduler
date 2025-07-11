@@ -7,4 +7,5 @@ import Advanced from "./Advanced";
 import LogCard from "./LogCard";
 import StatCard from './StatCard'
 import LogChart from "./LogChart";
-export {Header ,Sidebar,JobCard, LogChart,StatCard, LogCard,Common, Advanced,Footer}
+import Preference from "./Preference";
+export {Header ,Sidebar,JobCard, LogChart,StatCard, LogCard,Common, Advanced,Preference,Footer}

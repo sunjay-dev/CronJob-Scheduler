@@ -9,8 +9,7 @@ export default function Header({sidebarOpen,setSidebarOpen}: Props) {
   
   return (
       <header className="fixed top-0 left-0 z-50 bg-white shadow-sm h-16 w-full px-6 flex items-center justify-between">
-        
-        <div className="flex items-center gap-4">
+         <div className="flex items-center gap-4">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="text-gray-700 hover:text-purple-600"

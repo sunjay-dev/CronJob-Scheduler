@@ -4,4 +4,5 @@ import Dashboard from './Dashboard'
 import Jobs from './Jobs';
 import CreateJob from './CreateJob'
 import Logs from './Logs';
-export {Login, Signup, Dashboard, CreateJob, Jobs, Logs}
+import Settings  from './Settings';
+export {Login, Signup, Dashboard, CreateJob, Jobs, Logs, Settings}

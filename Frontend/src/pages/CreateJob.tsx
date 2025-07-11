@@ -11,13 +11,10 @@ export default function CreateJob() {
     <div className="bg-gray-50 h-dvh w-dvw overflow-x-hidden font-[Inter]">
 
       <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-      {sidebarOpen && <Sidebar />}
+      <Sidebar collapsed={sidebarOpen} />
 
-      <div
-        className={`mt-16 py-6 px-18 transition-all duration-300 ${sidebarOpen && 'ml-64'}`}
-      >
-
-        <h1 className="text-2xl text-purple-600 mb-6">Create Cron Job</h1>
+      <div className={`mt-16 p-12 transition-all duration-300 ${sidebarOpen? 'ml-64': 'ml-16'}`}>
+       <h1 className="text-3xl text-purple-600 mb-6">Create Cron Job</h1>
 
         <div className="flex gap-8 mb-4">
           <button

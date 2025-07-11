@@ -8,15 +8,11 @@ export default function Dashboard() {
     return (
         <div className="bg-gray-50 h-dvh w-dvw overflow-x-hidden font-[Inter]">
             <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-            {sidebarOpen && <Sidebar />}
+            <Sidebar collapsed={sidebarOpen} />
 
-            <div className={`mt-16 transition-all duration-300 ${sidebarOpen ? 'ml-64' : ''}`}>
-                <div className="p-8">
+            <div className={`mt-16 p-12 transition-all duration-300 ${sidebarOpen? 'ml-64': 'ml-16'}`}>
+                             <h1 className="text-3xl text-purple-600 mb-6">Dashboard</h1>
 
-                    {/* Top - Welcome Message */}
-                    <h1 className="text-3xl text-purple-600 mb-4">Dashboard</h1>
-
-                    {/* Stats Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                         <StatCard title="Total Jobs" value={12} />
                         <StatCard title="Active Jobs" value={8} />
@@ -35,7 +31,7 @@ export default function Dashboard() {
                         </button>
                     </div>
 
-                    <div className="bg-white p-6  rounded shadow">
+                    <div className="bg-white p-6  rounded-xl shadow">
                         <div className="mb-5 flex items-center gap-2 text-gray-700 font-semibold text-xl">
                             <Clock className="w-5 h-5" />
                             Recent Logs
@@ -63,10 +59,7 @@ export default function Dashboard() {
                                 status="failed"
                             />
                         </div>
-                    </div>
-
-                </div>
-                <Footer />
+                    </div>                         <Footer />
             </div>
         </div>
     );

@@ -29,8 +29,7 @@ export default function Signup() {
 
                 <div className="flex-grow flex flex-col justify-center items-center">
                     <form onSubmit={handleFormSubmit} className="w-full max-w-sm space-y-4">
-                        
-                            <div className="space-y-1">
+                                             <div className="space-y-1">
                                 <h1 className="text-3xl font-bold">Sign up</h1>
                                 <p className="text-sm text-gray-500">Please enter your details</p>
                             </div>
@@ -75,8 +74,7 @@ export default function Signup() {
                                 <img src="/google.webp" alt="Google" className="w-4 h-4" />
                                 <span>Sign in with Google</span>
                             </button>
-                        
-                        <p className="text-center text-sm text-gray-600">
+                                         <p className="text-center text-sm text-gray-600">
                             Already have an account? {' '}
                             <Link to="/login" className="text-purple-700 hover:underline">Sign in</Link>
                         </p>

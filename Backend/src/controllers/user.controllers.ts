@@ -94,8 +94,7 @@ export const handleUserDetails = async (req: Request, res: Response, next: NextF
 
     try {
         const user = await userModel.findById(userId);
-        
-        res.status(200).json(user);
+         res.status(200).json(user);
 
     } catch (error) {
         console.log("Error while fetching user details", error);

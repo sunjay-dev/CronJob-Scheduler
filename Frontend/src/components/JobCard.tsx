@@ -3,8 +3,7 @@ import { Pencil, FileText } from 'lucide-react';
 export default function JobCard() {
   return (
     <div className="bg-white cursor-pointer hover:shadow-sm border border-gray-300 rounded-lg p-4 transition grid grid-cols-1 md:grid-cols-[3fr_1.5fr_1fr_1fr_1fr] items-center text-sm gap-4">
-      
-      <div>
+     <div>
         <h2 className="font-semibold text-gray-800">http-request</h2>
         <p className="text-xs text-gray-500 uppercase">GET • https://uniride.sunjay.xyz</p>
       </div>
