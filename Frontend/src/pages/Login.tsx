@@ -3,13 +3,18 @@ import { useState } from "react";
 import { useDispatch } from 'react-redux';
 import { setAuth } from '../slices/authSlice';
 import type { AppDispatch } from '../store';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
+  const navigate = useNavigate();
   const [details, setDetails] = useState({ email: '', password: '' });
+  const [isLoading, setIsLoading] = useState(false);
    const dispatch = useDispatch<AppDispatch>();
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
+    
     if (!details.email.trim() || !details.password.trim()) {
       return
     }
@@ -32,9 +37,14 @@ export default function Login() {
       })
       .then(data => {
         dispatch(setAuth({ token: data.token, user: { name: data.user.name, email:data.user.email  } }));
+        navigate('/');
         console.log(data);
       }).catch(err => console.log(err))
-
+      .finally(() => {
+      setIsLoading(false);
+    });
+      
+      
   }
 
   return (
@@ -45,7 +55,8 @@ export default function Login() {
         <img src="/logo.webp" alt="logo" className="md:ml-2 h-10 w-10 mb-8" />
 
         <div className="flex-grow flex flex-col justify-center items-center">
-          <form onSubmit={handleFormSubmit} className="w-full max-w-sm space-y-5">
+          <form onSubmit={handleFormSubmit} className="w-full max-w-sm">
+            <fieldset disabled={isLoading} className="space-y-4" >
             <div className="space-y-1">
               <h1 className="text-3xl font-bold">Welcome back</h1>
               <p className="text-sm text-gray-500">Please enter your details</p>
@@ -81,7 +92,7 @@ export default function Login() {
               <a href="/" className="text-purple-700 hover:underline">Forgot password</a>
             </div>
 
-            <button type="submit" className="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-2 rounded-md text-sm transition">
+            <button disabled={isLoading} type="submit" className="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-2 rounded-md text-sm transition">
               Sign in
             </button>
             <button className="w-full border border-gray-300 py-1.5 rounded-md flex items-center justify-center gap-2 hover:bg-gray-50 transition text-sm">
@@ -93,6 +104,7 @@ export default function Login() {
               Don’t have an account?{' '}
               <Link to="/Signup" className="text-purple-700 hover:underline">Sign up</Link>
             </p>
+            </fieldset>
           </form>
         </div>
       </div>
