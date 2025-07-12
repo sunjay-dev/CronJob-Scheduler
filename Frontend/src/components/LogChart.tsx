@@ -14,7 +14,7 @@ import { useMemo } from 'react';
 ChartJS.register(LineElement, PointElement, LinearScale, Title, Tooltip, Legend, CategoryScale);
 
 interface Log {
-  timestamp: string;
+  createdAt: string;
   status: 'success' | 'failed';
 }
 
@@ -29,7 +29,7 @@ export default function LogLineChart({ logs }: Props) {
     const failedData = Array(24).fill(0);
 
     logs.forEach(log => {
-      const hour = new Date(log.timestamp).getHours();
+      const hour = new Date(log.createdAt).getHours();
       if (log.status === 'success') successData[hour]++;
       else failedData[hour]++;
     });

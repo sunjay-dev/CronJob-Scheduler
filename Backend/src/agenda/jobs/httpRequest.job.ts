@@ -22,7 +22,7 @@ agenda.define("http-request", {concurrency: 5}, async (job: Job<HttpRequestJobDa
       userId,
       url,
       method,
-      status: res.ok ? "success" : "error",
+      status: res.ok ? "success" : "failed",
       statusCode: res.status
     });
     
@@ -33,7 +33,7 @@ agenda.define("http-request", {concurrency: 5}, async (job: Job<HttpRequestJobDa
       userId,
       url,
       method,
-      status: "error",
+      status: "failed",
       response: err?.message || "Unknown error"
     });
   }

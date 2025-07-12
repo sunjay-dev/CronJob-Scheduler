@@ -1,21 +1,42 @@
+import { useEffect, useState } from 'react';
 import { LogChart, LogCard } from '../components';
 
+interface UserLogInterface {
+    _id: string;
+    createdAt: string;
+    url:string;
+    method: string;
+    status: "success" | "failed";
+}
+
 export default function Logs() {
-    const logs = [
-        { timestamp: '2025-07-09T00:10:00Z', status: 'success' },
-        { timestamp: '2025-07-09T00:10:00Z', status: 'success' },
-        { timestamp: '2025-07-09T01:15:00Z', status: 'failed' },
-        { timestamp: '2025-07-09T01:15:01Z', status: 'failed' },
-        { timestamp: '2025-07-09T01:15:04Z', status: 'failed' },
-        { timestamp: '2025-07-09T01:45:00Z', status: 'success' },
-        { timestamp: '2025-07-09T14:30:00Z', status: 'success' },
-    ];
+    const [logs, setLogs] = useState<UserLogInterface[]>();
+    useEffect(()=> {
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/logs`, {
+              credentials: 'include',
+            })
+              .then(async (res) => {
+                const data = await res.json();
+                console.log(data);
+        
+                if (!res.ok)
+                  throw new Error(data.message || "Something went wrong");
+        
+                return data;
+              })
+              .then(data => {
+                console.log(data);
+                setLogs(data)
+              }).catch(err => console.log(err))
+              
+    }, [])
+
 
     return (
         <>
             <h1 className="text-3xl font-normal mb-6 text-purple-500">Logs</h1>
 
-            <LogChart logs={logs} />
+            <LogChart logs={logs ?? []} />
             <div className="bg-white p-6 mb-6 rounded-xl shadow">
                 <div className="grid grid-cols-[1fr_2fr_2fr_1fr] text-sm gap-4 items-center text-gray-500 font-medium px-4 mb-2">
                     <span>Method</span>
@@ -25,19 +46,13 @@ export default function Logs() {
                 </div>
 
                 <div className="text-sm text-gray-600 space-y-1">
-                    <LogCard
-                        timestamp="2025-07-09T10:45:00.000Z"
-                        url="https://uniride.sunjay.xyz"
-                        method="GET"
-                        status="success"
-                    />
-
-                    <LogCard
-                        timestamp="2025-07-09T08:00:00.000Z"
-                        url="https://uniride.sunjay.xyz/api"
-                        method="POST"
-                        status="failed"
-                    />
+                    {logs?.map(log => 
+                        <LogCard key={log._id} timestamp={log.createdAt}
+                        url={log.url}
+                        method={log.method}
+                        status={log.status} />
+                    )}
+                    
                 </div>
             </div>
         </>
