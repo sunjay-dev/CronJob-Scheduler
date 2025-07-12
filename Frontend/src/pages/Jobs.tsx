@@ -2,21 +2,12 @@ import { Timer } from 'lucide-react';
 import { JobCard } from '../components';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import type {JobInterface} from '../types'
 
-interface JobInterface {
-  data : {
-    url: string;
-    name: string;
-    method:string;
-  }
-  _id:string
-  nextRunAt:string;
-  disabled? :boolean
-}
 
 export default function Jobs() {
 
-  const [jobs, setJobs] = useState<JobInterface[]>();
+  const [jobs, setJobs] = useState<JobInterface[]>([]);
   useEffect(() => {
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/jobs`, {
       credentials: 'include',

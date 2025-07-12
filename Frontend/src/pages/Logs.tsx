@@ -1,16 +1,9 @@
 import { useEffect, useState } from 'react';
 import { LogChart, LogCard } from '../components';
-
-interface UserLogInterface {
-    _id: string;
-    createdAt: string;
-    url:string;
-    method: string;
-    status: "success" | "failed";
-}
+import type {UserLogInterface} from '../types'
 
 export default function Logs() {
-    const [logs, setLogs] = useState<UserLogInterface[]>();
+    const [logs, setLogs] = useState<UserLogInterface[]>([]);
     useEffect(()=> {
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/logs`, {
               credentials: 'include',
@@ -26,9 +19,8 @@ export default function Logs() {
               })
               .then(data => {
                 console.log(data);
-                setLogs(data)
+                setLogs(data.logs)
               }).catch(err => console.log(err))
-              
     }, [])
 
 

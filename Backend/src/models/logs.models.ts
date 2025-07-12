@@ -34,5 +34,5 @@ const joblogsSchema = new mongoose.Schema({
 }, {
     timestamps: true
 })
-joblogsSchema.index({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 7 });
+joblogsSchema.index({ userId: 1, createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 7 });
 export default mongoose.model("JobLog", joblogsSchema);

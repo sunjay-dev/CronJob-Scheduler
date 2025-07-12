@@ -1,16 +1,64 @@
 import { PlusCircle, List, Clock } from 'lucide-react';
-import { StatCard, LogCard } from '../components';
+import { StatCard, LogCard, Pagination } from '../components';
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import type { JobInterface, UserLogInterface } from '../types'
 
 export default function Dashboard() {
+  const limit = 8;
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [logs, setLogs] = useState<UserLogInterface[]>([]);
+  const [analytics, setAnalytics] = useState({
+    total: 0,
+    active: 0,
+    disabled: 0,
+  })
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/jobs`, {
+      credentials: 'include',
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        console.log(data);
+
+        if (!res.ok)
+          throw new Error(data.message || "Something went wrong");
+
+        return data;
+      })
+      .then((data: JobInterface[]) => {
+        const activeCount = data.reduce((count, job) => job.disabled ? count : count + 1, 0)
+
+        setAnalytics({
+          total: data.length,
+          active: activeCount,
+          disabled: data.length - activeCount
+        })
+      }).catch(err => console.log(err));
+
+      
+
+  }, [])
+
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/logs?page=${page}&limit=${limit}`, {
+      credentials: 'include',
+    })
+      .then(res => res.json())
+      .then(data => {
+        setLogs(data.logs);
+        setTotalPages(data.totalPages)
+      });
+  }, [page])
   return (
     <>
       <h1 className="text-3xl text-purple-600 mb-6">Dashboard</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <StatCard title="Total Jobs" value={12} />
-        <StatCard title="Active Jobs" value={8} />
-        <StatCard title="Disabled Jobs" value={4} />
+        <StatCard title="Total Jobs" value={analytics.total} />
+        <StatCard title="Active Jobs" value={analytics.active} />
+        <StatCard title="Disabled Jobs" value={analytics.disabled} />
         <StatCard title="Executed Today" value={3} />
       </div>
 
@@ -39,19 +87,16 @@ export default function Dashboard() {
         </div>
 
         <div className="text-sm text-gray-600 space-y-1">
-          <LogCard
-            timestamp="2025-07-09T10:45:00.000Z"
-            url="https://uniride.sunjay.xyz"
-            method="GET"
-            status="success"
-          />
-          <LogCard
-            timestamp="2025-07-09T08:00:00.000Z"
-            url="https://uniride.sunjay.xyz/api"
-            method="POST"
-            status="failed"
-          />
+          {logs?.map(log =>
+            <LogCard key={log._id}
+              timestamp={log.createdAt}
+              url={log.url}
+              method={log.method}
+              status={log.status}
+            />
+          )}
         </div>
+          <Pagination page={page} setPage={setPage} totalPages={totalPages} />
       </div>
     </>
   );

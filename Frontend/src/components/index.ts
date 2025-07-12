@@ -9,4 +9,5 @@ import LogCard from "./LogCard";
 import StatCard from './StatCard'
 import LogChart from "./LogChart";
 import Preference from "./Preference";
-export {Layout,Header ,Sidebar,JobCard, LogChart,StatCard, LogCard,Common, Advanced,Preference,Footer}
+import Pagination from "./Pagination";
+export { Layout, Header, Sidebar, JobCard, LogChart, StatCard, LogCard, Common, Advanced, Preference, Pagination, Footer }
