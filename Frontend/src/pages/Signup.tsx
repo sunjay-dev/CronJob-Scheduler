@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { Link } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'
+import { useAppDispatch } from '../hooks'; 
+import { setAuth } from '../slices/authSlice';
 
 export default function Signup() {
     const navigate = useNavigate();
     const [details, setDetails] = useState({ name: '', email: '', password: '' });
     const [isLoading, setIsLoading] = useState(false);
-    
+    const dispatch = useAppDispatch();
+
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsLoading(true);
@@ -31,9 +33,10 @@ export default function Signup() {
 
                 return data;
             })
-            .then(res => {
+            .then(data => {
                 setDetails({ name: '', email: '', password: '' });
-                console.log(res);
+                dispatch(setAuth({ user: { name: data.user.name, email:data.user.email  } }));
+                console.log(data);
                 navigate('/');
             }).catch(err => console.log(err))
             .finally(() => {

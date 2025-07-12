@@ -1,13 +1,18 @@
 import { useState } from 'react';
 import { Preference } from '../components';
 import { Pencil, Save } from "lucide-react";
+import { useAppSelector } from '../hooks';
 
 export default function SettingsPage() {
+  const user = useAppSelector(state => state.auth.user);
   const [emailNotifs, setEmailNotifs] = useState(true);
   const [pushAlerts, setPushAlerts] = useState(false);
-  const [email] = useState('john@example.com');
+  const [email] = useState(user?.email || '');
   const [isEditingName, setIsEditingName] = useState(false);
-  const [name, setName] = useState("Sunjay Kumar");
+  const [name, setName] = useState(user?.name || '');
+
+  if (!user) return <div>Loading user info...</div>;
+
 
   return (
     <>

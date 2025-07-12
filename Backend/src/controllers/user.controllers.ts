@@ -76,11 +76,22 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
         const newUser = await userModel.create({ name, email, password });
 
         const token = signToken({ userId: newUser.id, email: newUser.email });
-        res.cookie("token", token)
+
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: true,            
+            sameSite: 'Strict',      
+            maxAge: 3600000,        
+        });
+
         res.status(200).json({
-            token,
-            name: newUser.name,
-            email: newUser.email,
+            message: "Signup successful",
+            user: {
+                id: newUser._id,
+                name: newUser.name,
+                email: newUser.email,
+            },
+            token
         });
     } catch (error) {
         console.log("Error while user register", error);

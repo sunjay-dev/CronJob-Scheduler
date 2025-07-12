@@ -1,5 +1,7 @@
 import { LogOut, Menu } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../hooks';
+import { logout } from '../slices/authSlice';
 
 interface Props {
   sidebarOpen: boolean;
@@ -7,6 +9,8 @@ interface Props {
 }
 
 export default function Header({ sidebarOpen, setSidebarOpen }: Props) {
+  const user = useAppSelector(state => state.auth.user);
+  const dispatch = useAppDispatch()
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -25,6 +29,7 @@ export default function Header({ sidebarOpen, setSidebarOpen }: Props) {
       })
       .then(data => {
         console.log(data);
+        dispatch(logout())
         navigate('/login');
       }).catch(err => console.log(err))
 
@@ -45,7 +50,7 @@ export default function Header({ sidebarOpen, setSidebarOpen }: Props) {
       </div>
 
       <div className="flex items-center gap-4 text-sm text-gray-700">
-        <span className="hidden sm:inline">Hello, Sunjay Kumar</span>
+        <span className="hidden sm:inline">Hello, {user?.name}</span>
         <button onClick={handleLogout} className="flex items-center gap-1 text-purple-600 hover:underline">
           <LogOut className="w-4 h-4" />
           <span>Logout</span>
