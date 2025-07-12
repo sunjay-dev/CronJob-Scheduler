@@ -1,11 +1,17 @@
 import { Pencil, FileText } from 'lucide-react';
 
-export default function JobCard() {
+interface Props {
+  jobName: string;
+  method: string;
+  url:string;
+}
+
+export default function JobCard({jobName,method, url}: Props) {
   return (
     <div className="bg-white cursor-pointer hover:shadow-sm border border-gray-300 rounded-lg p-4 transition grid grid-cols-1 md:grid-cols-[3fr_1.5fr_1fr_1fr_1fr] items-center text-sm gap-4">
      <div>
-        <h2 className="font-semibold text-gray-800">http-request</h2>
-        <p className="text-xs text-gray-500 uppercase">GET • https://uniride.sunjay.xyz</p>
+        <h2 className="font-semibold text-gray-800">{jobName}</h2>
+        <p className="text-xs text-gray-500 uppercase">{method} • {url}</p>
       </div>
 
       <div className="text-gray-700 text-sm truncate">

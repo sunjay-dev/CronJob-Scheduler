@@ -1,10 +1,62 @@
 import { useState } from 'react';
 import { Clock, Settings } from 'lucide-react';
 import { Common, Advanced } from '../components';
+import { useNavigate } from 'react-router-dom';
+import {useAppSelector} from '../hooks'
 
 export default function CreateJob() {
 
   const [tab, setTab] = useState<'common' | 'advanced'>('common');
+  const [isLoading, setIsLoading] = useState(false);
+  const user = useAppSelector(state => state.auth.user);
+
+  const [jobDetails, setJobDetails] = useState({
+    name: '',
+    url: 'https://',
+    method: 'GET',
+    cron: '* * * * *',
+    headers: '',
+    body: '',
+    enabled: true,
+    timezone: user?.timezone || 'UTC'
+  });
+  console.log(jobDetails);
+  
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!jobDetails.url.trim() || !jobDetails.cron.trim()) {
+      alert('Please fill required fields');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/jobs`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(jobDetails),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.message || 'Something went wrong');
+
+      alert('Job created successfully!');
+      navigate('/jobs');
+    } catch (err) {
+      console.error(err);
+      alert('Error creating job');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <>
@@ -40,15 +92,22 @@ export default function CreateJob() {
         </button>
       </div>
 
-      <form className="space-y-5 bg-white p-6 rounded-xl shadow mb-4">
-        {tab === 'common' ? <Common /> : <Advanced />}
+      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow mb-4">
+        <fieldset disabled={isLoading} className='space-y-5'>
+          {tab === 'common' ? (
+            <Common jobDetails={jobDetails} setJobDetails={setJobDetails} />
+          ) : (
+            <Advanced jobDetails={jobDetails} setJobDetails={setJobDetails} />
+          )}
 
-        <button
-          type="submit"
-          className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 rounded-md transition"
-        >
-          Create Job
-        </button>
+          <button
+            disabled={isLoading}
+            type="submit"
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 rounded-md transition"
+          >
+            Create Job
+          </button>
+        </fieldset>
       </form>
     </>
   );

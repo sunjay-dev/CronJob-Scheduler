@@ -56,7 +56,7 @@ export const handleUserLogin = async (req: Request, res: Response, next: NextFun
 }
 
 export const handleUserRegister = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { name, email, password } = req.body;
+    const { name, email, password, timezone= 'UTC' } = req.body;
 
     if (!name || !email || !password) {
         res.status(401).json({
@@ -73,7 +73,7 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
             return;
         }
 
-        const newUser = await userModel.create({ name, email, password });
+        const newUser = await userModel.create({ name, email, password, timezone });
 
         const token = signToken({ userId: newUser.id, email: newUser.email });
 
@@ -90,6 +90,7 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
                 id: newUser._id,
                 name: newUser.name,
                 email: newUser.email,
+                timezone: newUser.timezone
             },
             token
         });

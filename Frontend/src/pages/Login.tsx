@@ -35,7 +35,7 @@ export default function Login() {
         return data;
       })
       .then(data => {
-        dispatch(setAuth({ user: { name: data.user.name, email: data.user.email } }));
+        dispatch(setAuth({ user: { name: data.user.name, email: data.user.email, timezone: data.user.timezone } }));
         navigate('/');
         console.log(data);
       }).catch(err => console.log(err))

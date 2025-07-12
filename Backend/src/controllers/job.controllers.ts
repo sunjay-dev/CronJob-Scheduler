@@ -6,10 +6,10 @@ import validator from "validator";
 
 export const handleNewCronJobs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
-  const { url, method, headers, cron } = req.body;
+  const { name, url, method, headers, cron, timezone, enabled } = req.body;
   const { userId } = req.user;
 
-  if (!url || !method || !cron || !userId) {
+  if (!name || !url || !method || !cron || !timezone || enabled === undefined) {
     res.status(400).json({ error: "Missing required fields" });
     return;
   }
@@ -44,15 +44,31 @@ export const handleNewCronJobs = async (req: Request, res: Response, next: NextF
     return;
   }
 
+  if (typeof timezone !== 'string') {
+    res.status(400).json({ error: "timezone must be a string" });
+    return
+  }
+  if (typeof enabled !== 'boolean') {
+    res.status(400).json({ error: "enabled must be a boolean" });
+    return
+  }
   try {
     const job = agenda.create("http-request", {
+      name,
       url,
       method,
       headers: headers || {},
       userId,
     });
 
-    job.repeatEvery(cron);
+    job.repeatEvery(cron, {
+      timezone,
+      skipImmediate: true
+    });
+
+    if (!enabled) {
+      job.attrs.disabled = true;
+    }
     await job.save();
 
     res.status(200).json(job);

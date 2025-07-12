@@ -26,7 +26,7 @@ export default function Header({ sidebarOpen, setSidebarOpen }: Props) {
         return data
       }).then(data => {
 
-          dispatch(setAuth({ user: { name: data.name, email: data.email } }));
+          dispatch(setAuth({ user: { name: data.name, email: data.email, timezone: data.timezone } }));
         })
         .catch(err => {
           console.error('User not logged in', err);

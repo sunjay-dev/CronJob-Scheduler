@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from 'react-router-dom'
-import { useAppDispatch } from '../hooks'; 
+import { useAppDispatch } from '../hooks';
 import { setAuth } from '../slices/authSlice';
 
 export default function Signup() {
@@ -17,12 +17,20 @@ export default function Signup() {
             return
         }
 
+        const signupDetails = {
+            name: details.name,
+            email: details.email,
+            password: details.password,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        };
+
         fetch(`${import.meta.env.VITE_BACKEND_URL}/register`, {
             method: "POST",
+            credentials: 'include',
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(details),
+            body: JSON.stringify(signupDetails),
         })
             .then(async (res) => {
                 const data = await res.json();
@@ -35,7 +43,7 @@ export default function Signup() {
             })
             .then(data => {
                 setDetails({ name: '', email: '', password: '' });
-                dispatch(setAuth({ user: { name: data.user.name, email:data.user.email  } }));
+                dispatch(setAuth({ user: { name: data.user.name, email: data.user.email, timezone: data.user.timezone } }));
                 console.log(data);
                 navigate('/');
             }).catch(err => console.log(err))
