@@ -1,7 +1,10 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Login, Signup, Dashboard, CreateJob, Jobs, Logs, Settings } from './pages';
-import { Layout } from './components'
+import { Layout } from './components';
+
+
 export default function App() {
+
   return (
     <BrowserRouter>
       <Routes>

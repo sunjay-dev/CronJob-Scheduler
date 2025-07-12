@@ -1,7 +1,7 @@
 import { LayoutDashboard, ListChecks, History, Settings } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
-export default function Sidebar({ collapsed = false }: { collapsed?: boolean }) {
+export default function Sidebar({ collapsed = false }) {
   return (
     <aside
       className={`fixed top-16 left-0 h-[calc(100vh-4rem)] bg-white shadow z-40 p-4 transition-all duration-300 ${collapsed ? "w-56" : "w-16"

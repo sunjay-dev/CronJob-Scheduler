@@ -1,8 +1,7 @@
 import { LogOut, Menu } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { logout, setAuth } from '../slices/authSlice';
-import { useEffect } from 'react';
+import { logout } from '../slices/authSlice';
 
 interface Props {
   sidebarOpen: boolean;
@@ -11,29 +10,10 @@ interface Props {
 
 export default function Header({ sidebarOpen, setSidebarOpen }: Props) {
   const user = useAppSelector(state => state.auth.user);
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!user) {
-      fetch(`${import.meta.env.VITE_BACKEND_URL}/details`, {
-        credentials: 'include',
-      })
-        .then(async (res) => {
-        const data = await res.json();
-        if (!res.ok)
-          throw new Error(data.message || "Something went wrong");
-        return data
-      }).then(data => {
-
-          dispatch(setAuth({ user: { name: data.name, email: data.email, timezone: data.timezone } }));
-        })
-        .catch(err => {
-          console.error('User not logged in', err);
-        });
-    }
-  }, [user, dispatch]);
-
+  
   const handleLogout = () => {
 
     fetch(`${import.meta.env.VITE_BACKEND_URL}/logout`, {

@@ -3,6 +3,7 @@ import { Clock, Settings } from 'lucide-react';
 import { Common, Advanced } from '../components';
 import { useNavigate } from 'react-router-dom';
 import {useAppSelector} from '../hooks'
+import type {JobDetails} from '../types'
 
 export default function CreateJob() {
 
@@ -10,11 +11,11 @@ export default function CreateJob() {
   const [isLoading, setIsLoading] = useState(false);
   const user = useAppSelector(state => state.auth.user);
 
-  const [jobDetails, setJobDetails] = useState({
+  const [jobDetails, setJobDetails] = useState<JobDetails>({
     name: '',
     url: 'https://',
     method: 'GET',
-    cron: '* * * * *',
+    cron: '*/5 * * * *',
     headers: '',
     body: '',
     enabled: true,

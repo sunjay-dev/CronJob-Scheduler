@@ -1,10 +1,7 @@
+import type {JobDetails} from '../types'
 interface Props {
-  jobDetails: {
-    method: string;
-    headers: string;
-    timezone: string;
-  };
-  setJobDetails: React.Dispatch<React.SetStateAction<any>>;
+  jobDetails: JobDetails;
+  setJobDetails: React.Dispatch<React.SetStateAction<JobDetails>>;
 }
 
 export default function Advanced({ jobDetails, setJobDetails }: Props) {

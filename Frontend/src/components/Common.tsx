@@ -1,15 +1,12 @@
 import Cron from 'react-js-cron';
 import 'react-js-cron/dist/styles.css';
 import { Copy } from 'lucide-react';
+import type { JobDetails } from '../types'
+
 
 interface Props {
-  jobDetails: {
-    name: string;
-    url: string;
-    cron: string;
-    enabled: boolean;
-  };
-  setJobDetails: React.Dispatch<React.SetStateAction<any>>;
+  jobDetails: JobDetails;
+  setJobDetails: React.Dispatch<React.SetStateAction<JobDetails>>;
 }
 
 export default function Common({ jobDetails, setJobDetails }: Props) {
@@ -58,12 +55,16 @@ export default function Common({ jobDetails, setJobDetails }: Props) {
       <div className="border border-gray-200 rounded-lg px-4 py-6 space-y-6">
         <div className="flex flex-col space-y-3">
           <label className="font-medium text-gray-700">Schedule</label>
-          <Cron
-            value={cron}
-            setValue={(value) => setJobDetails(prev => ({ ...prev, cron: value }))}
-            clearButton={false}
-            className="!w-full"
-          />
+          <div className="overflow-x-auto whitespace-nowrap">
+            <Cron
+              value={cron}
+              setValue={(value: string) =>
+                setJobDetails((prev) => ({ ...prev, cron: value }))
+              }
+              clearButton={false}
+              className="!w-full"
+            />
+          </div>
         </div>
 
         <div className="flex flex-col space-y-1 mt-4">
