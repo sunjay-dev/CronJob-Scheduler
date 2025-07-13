@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { Login, Signup, Dashboard, CreateJob, Jobs, Logs, JobLogs,Settings } from './pages';
+import { Login, Signup, Dashboard, CreateJob, Jobs, EditJob,Logs, JobLogs,Settings } from './pages';
 import { Layout } from './components';
 
 
@@ -16,6 +16,7 @@ export default function App() {
           <Route path="/create" element={<CreateJob />} />
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/jobs/:jobId" element={<JobLogs />} />
+          <Route path="/job/:jobId/edit" element={<EditJob />} />
           <Route path="/logs" element={<Logs />} />
           <Route path="/settings" element={<Settings />} />
         </Route>

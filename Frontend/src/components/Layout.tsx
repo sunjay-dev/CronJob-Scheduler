@@ -31,7 +31,7 @@ export default function Layout() {
     }, [ dispatch]);
 
   return (
-    <div className="bg-gray-50 h-dvh w-dvw overflow-x-hidden font-[Inter]">
+    <div className="bg-gray-50 h-dvh overflow-x-hidden font-[Inter]">
       <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       <Sidebar collapsed={sidebarOpen} />
 

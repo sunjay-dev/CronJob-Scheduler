@@ -210,3 +210,65 @@ export const handleRunJobNow = async (req: Request, res: Response, next: NextFun
     res.status(500).json({ message: "Error while running job now" });
   }
 }
+
+export const handleJobEdit = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const { jobId } = req.params;
+  const { userId } = req.user;
+
+  const {
+    name,
+    url,
+    method,
+    headers,
+    body,
+    cron,
+    timezone,
+    enabled
+  } = req.body;
+  
+  if (!jobId || !name || !url || !method || !cron) {
+    res.status(400).json({ message: "Missing required fields" });
+    return;
+  }  
+
+  try {
+    const jobs = await agenda.jobs({ 'data.userId': userId, _id: new ObjectId(jobId) });
+
+    if (jobs.length === 0) {
+      res.status(404).json({
+        message: "No Job found"
+      });
+      return;
+    }
+
+    const job = jobs[0];
+
+    job.attrs.data = {
+      ...job.attrs.data,
+      name,
+      url,
+      method,
+      headers: headers || {},
+      body,
+    };
+
+    job.attrs.repeatInterval = cron;
+    job.attrs.repeatTimezone = timezone;
+    
+    job.computeNextRunAt();
+    
+    if (enabled === false) {
+      job.disable();
+    } else {
+      job.enable();
+    }
+    
+    
+    await job.save();
+
+    res.status(200).json({ message: "Job updated successfully", job });
+  } catch (error) {
+    console.error("Server error while editing job", error)
+    res.status(500).json({ message: "Server error while editing job" });
+  }
+}

@@ -14,7 +14,7 @@ interface HttpRequestJobData {
 agenda.define("http-request", {concurrency: 5}, async (job: Job<HttpRequestJobData>) => {
   const { _id, data } = job.attrs;
   const { name, url, method, headers, userId } = data;
-    
+  
   const jobId = data.jobId ||  _id.toString();
   try {
     const res = await fetch(url, { method, headers });
@@ -31,6 +31,7 @@ agenda.define("http-request", {concurrency: 5}, async (job: Job<HttpRequestJobDa
   } catch (err: any) {
     console.log(err);
     await logsModel.create({
+      name,
       jobId,
       userId,
       url,

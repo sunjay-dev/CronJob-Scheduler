@@ -76,7 +76,7 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, disabled
         </p>
       </div>
       
-      <div className="text-gray-700 text-sm truncate">
+      <div title={new Date(nextRunAt).toLocaleString()} className="text-gray-700 text-sm truncate">
         {new Date(nextRunAt).toLocaleString()}
       </div>
 
@@ -88,12 +88,12 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, disabled
         )}
       </div>
 
-      <div className="flex justify-start md:justify-center">
+      <Link to={`/job/${_id}/edit`} className="flex justify-start md:justify-center">
         <button className="flex items-center gap-1 hover:underline">
           <Pencil className="w-4 h-4" />
           Edit
         </button>
-      </div>
+      </Link>
 
       <Link to={`/jobs/${_id}`} className="flex justify-start md:justify-center items-center">
         <button className="flex items-center gap-1 hover:underline">
