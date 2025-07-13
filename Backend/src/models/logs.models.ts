@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 const joblogsSchema = new mongoose.Schema({
     jobId: {
         type: String,
-        required: true
+        required: true,
+        index: true
     },
     name: {
         type: String,

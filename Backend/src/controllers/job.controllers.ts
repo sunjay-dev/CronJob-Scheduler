@@ -3,6 +3,7 @@ import agenda from "../agenda/agenda";
 import { isValidCron } from 'cron-validator';
 import { ObjectId } from 'mongodb';
 import validator from "validator";
+import logsModels from "../models/logs.models";
 
 export const handleNewCronJobs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
@@ -103,7 +104,22 @@ export const handleUserJobById = async (req: Request, res: Response, next: NextF
 
 export const handleJobStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { userId } = req.user;
-  const { jobId, enable } = req.body;
+  const { jobId, status } = req.body;
+
+
+  if(!jobId || typeof status === "undefined" ){
+    res.status(400).json({
+      message: "Please Provide both jobId and status"
+    })
+    return;
+  }
+
+  if(typeof status !== "boolean"){
+    res.status(400).json({
+      message: "status must be a boolean"
+    })
+    return;
+  }
 
   try {
     const jobs = await agenda.jobs({ 'data.userId': userId, _id: new ObjectId(jobId) });
@@ -116,10 +132,10 @@ export const handleJobStatus = async (req: Request, res: Response, next: NextFun
     }
 
     const job = jobs[0];
-    enable ? job.enable() : job.disable();
+    status ? job.enable() : job.disable();
     await job.save();
 
-    res.status(200).json({ message: `Job ${enable ? "enabled" : "disabled"}` });
+    res.status(200).json({ message: `Job ${status ? "enabled" : "disabled"}` });
   } catch (error) {
     console.error("Server error while updating job status", error)
     res.status(500).json({ message: "Server error while updating job status" });
@@ -129,6 +145,19 @@ export const handleJobStatus = async (req: Request, res: Response, next: NextFun
 export const handleDeleteJob = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { jobId } = req.params;
   const { userId } = req.user;
+
+  if(!jobId) {
+    res.status(400).json({
+      message: "Field jobId is required."
+    });
+    return;
+  }
+
+  if (!ObjectId.isValid(jobId)) {
+    res.status(400).json({ message: "Invalid jobId" });
+    return;
+  }
+
   try {
     const result = await agenda.cancel({ _id: new ObjectId(jobId), 'data.userId': userId })
 
@@ -138,6 +167,9 @@ export const handleDeleteJob = async (req: Request, res: Response, next: NextFun
       });
       return;
     }
+    
+    await logsModels.deleteMany({jobId});
+
 
     res.status(200).json({
       message: "Job deleted",

@@ -42,7 +42,7 @@ export const handleJobLogs = async (req: Request, res: Response, next: NextFunct
   try {
      const [logs, total] = await Promise.all([
       logsModels.find({ userId, jobId }).sort({ createdAt: -1 }).skip(skip).limit(limit),
-      logsModels.countDocuments({ userId })
+      logsModels.countDocuments({ userId, jobId })
     ]);
     res.status(200).json({
       logs,

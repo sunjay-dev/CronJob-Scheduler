@@ -14,7 +14,7 @@ export default function JobLogs() {
 
     useEffect(() => {
 
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/logs/${jobId}/?limit=${limit}&page=${page}`, {
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/logs/${jobId}/?page=${page}&limit=${limit}`, {
             credentials: "include"
         }).then(async (res) => {
             const data = await res.json();
@@ -25,6 +25,8 @@ export default function JobLogs() {
 
             return data;
         }).then(data => {
+            console.log(data);
+            
             setJobName(data?.logs[0]?.name)
             setLogs(data.logs);
             setTotalPages(data.totalPages);
