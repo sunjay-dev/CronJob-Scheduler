@@ -50,6 +50,7 @@ export default function Jobs() {
         <div className="space-y-3">
           {jobs?.map(job =>
             <JobCard key={job._id}
+            _id={job._id}
               url={job.data.url}
               jobName={job.data.name}
               method={job.data.method}

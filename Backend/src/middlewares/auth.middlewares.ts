@@ -13,7 +13,7 @@ export function restrictUserLogin(req: Request, res: Response, next: NextFunctio
     const token = req.cookies?.token;
     
     if(!token){
-        res.status(400).json({
+        res.status(401).json({
             message: "Please Login"
         });
         return;

@@ -3,6 +3,7 @@ import logsModel from "../../models/logs.models";
 import { Job } from "agenda";
 
 interface HttpRequestJobData {
+  name: string;
   url: string;
   method: "GET" | "POST";
   headers?: Record<string, string>;
@@ -12,12 +13,13 @@ interface HttpRequestJobData {
 
 agenda.define("http-request", {concurrency: 5}, async (job: Job<HttpRequestJobData>) => {
   const { _id, data } = job.attrs;
-  const { url, method, headers, userId } = data;
+  const { name, url, method, headers, userId } = data;
     
   const jobId = data.jobId ||  _id.toString();
   try {
     const res = await fetch(url, { method, headers });
     await logsModel.create({
+      name,
       jobId,
       userId,
       url,

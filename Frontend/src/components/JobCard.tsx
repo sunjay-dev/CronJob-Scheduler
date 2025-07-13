@@ -1,6 +1,8 @@
 import { Pencil, FileText } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface Props {
+  _id: string;
   jobName: string;
   method: string;
   url:string;
@@ -8,7 +10,7 @@ interface Props {
   disabled?: boolean
 }
 
-export default function JobCard({jobName,method, url, nextRunAt, disabled=false}: Props) {
+export default function JobCard({_id,jobName,method, url, nextRunAt, disabled=false}: Props) {
   return (
     <div className="bg-white cursor-pointer hover:shadow-sm border border-gray-300 rounded-lg p-4 transition grid grid-cols-1 md:grid-cols-[3fr_1.5fr_1fr_1fr_1fr] items-center text-sm gap-4">
      <div>
@@ -39,12 +41,12 @@ export default function JobCard({jobName,method, url, nextRunAt, disabled=false}
         </button>
       </div>
 
-      <div className="flex justify-start md:justify-center">
+      <Link to={`/jobs/${_id}`} className="flex justify-start md:justify-center">
         <button className="flex items-center gap-1 hover:underline">
           <FileText className="w-4 h-4" />
           History
         </button>
-      </div>
+      </Link> 
     </div>
   );
 }

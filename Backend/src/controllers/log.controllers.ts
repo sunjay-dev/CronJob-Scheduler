@@ -29,6 +29,10 @@ export const handleJobLogs = async (req: Request, res: Response, next: NextFunct
   const { jobId } = req.params
   const { userId } = req.user;
 
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 10;
+  const skip = (page - 1) * limit;
+
   if (!jobId) {
     res.status(400).json({
       message: "Job Id is required"
@@ -36,8 +40,16 @@ export const handleJobLogs = async (req: Request, res: Response, next: NextFunct
     return;
   }
   try {
-    const logs = await logsModels.find({ userId, jobId });
-    res.status(200).json(logs);
+     const [logs, total] = await Promise.all([
+      logsModels.find({ userId, jobId }).sort({ createdAt: -1 }).skip(skip).limit(limit),
+      logsModels.countDocuments({ userId })
+    ]);
+    res.status(200).json({
+      logs,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit)
+    });
   } catch (error) {
     console.error("Error while fetching user logs", error)
     res.status(500).json({ message: "Error while fetching user logs" });
