@@ -22,6 +22,7 @@ export default function Common({ jobDetails, setJobDetails }: Props) {
             type="text"
             placeholder="e.g. Ping API"
             value={name}
+            required
             onChange={(e) => setJobDetails(prev => ({ ...prev, name: e.target.value }))}
             className="border-0 border-b-2 border-gray-400 px-3 py-2 focus:outline-none focus:border-purple-500 transition"
           />

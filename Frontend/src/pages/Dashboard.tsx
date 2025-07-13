@@ -13,7 +13,8 @@ export default function Dashboard() {
     total: 0,
     active: 0,
     disabled: 0,
-  })
+  });
+
   useEffect(() => {
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/jobs`, {
       credentials: 'include',
@@ -36,21 +37,44 @@ export default function Dashboard() {
           disabled: data.length - activeCount
         })
       }).catch(err => console.log(err));
-
-      
-
   }, [])
 
   useEffect(() => {
+    let intervalId: ReturnType<typeof setInterval> | undefined;
+
+    const fetchLogs = () => {
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/logs?page=${page}&limit=${limit}`, {
       credentials: 'include',
     })
-      .then(res => res.json())
+      .then(async (res) => {
+        const data = await res.json();
+        console.log(data);
+
+        if (!res.ok)
+          throw new Error(data.message || "Something went wrong");
+
+        return data;
+      })
       .then(data => {
         setLogs(data.logs);
         setTotalPages(data.totalPages)
-      });
-  }, [page])
+        setPage(data.page);
+      }).catch(err => console.log(err));
+    }
+
+    fetchLogs();
+
+    if (page === 1) {
+      intervalId = setInterval(fetchLogs, 1000 * 60);
+    }
+
+    return () => {
+      if (intervalId)
+        clearInterval(intervalId);
+    };
+
+  }, [page]);
+
   return (
     <>
       <h1 className="text-3xl text-purple-600 mb-6">Dashboard</h1>
@@ -67,7 +91,7 @@ export default function Dashboard() {
           <List className="w-5 h-5" />
           View All Jobs
         </Link>
-        <Link to='/create' className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">
+        <Link to='/create' className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 active:scale-[0.98]">
           <PlusCircle className="w-5 h-5" />
           Create Job
         </Link>
@@ -96,7 +120,7 @@ export default function Dashboard() {
             />
           )}
         </div>
-          <Pagination page={page} setPage={setPage} totalPages={totalPages} />
+        <Pagination page={page} setPage={setPage} totalPages={totalPages} />
       </div>
     </>
   );

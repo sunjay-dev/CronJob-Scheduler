@@ -3,11 +3,13 @@ import { Clock, Settings } from 'lucide-react';
 import { Common, Advanced } from '../components';
 import { useParams, useNavigate } from 'react-router-dom';
 import type { JobDetails } from '../types'
+import ConfirmModal from '../components/ConfirmMenu';
 
 export default function EditJob() {
     const { jobId } = useParams();
     const navigate = useNavigate();
     const [tab, setTab] = useState<'common' | 'advanced'>('common');
+    const [confirmEdit, setConfirmEdit] = useState(false)
     const [isLoading, setIsLoading] = useState(false);
     const [jobDetails, setJobDetails] = useState<JobDetails>({
         name: '',
@@ -56,8 +58,7 @@ export default function EditJob() {
 
     }, [jobId])
 
-    const handleEdit = (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleEditJob = () => {
 
         if (!jobDetails.url.trim() || !jobDetails.cron.trim()) {
             alert('Please fill required fields');
@@ -124,7 +125,10 @@ export default function EditJob() {
                 </button>
             </div>
 
-            <form onSubmit={handleEdit} className="bg-white p-6 rounded-xl shadow mb-4">
+            <form onSubmit={e => {
+                e.preventDefault();
+                setConfirmEdit(true);
+                }} className="bg-white p-6 rounded-xl shadow mb-4">
                 <fieldset disabled={isLoading} className='space-y-5'>
                     {tab === 'common' ? (
                         <Common jobDetails={jobDetails} setJobDetails={setJobDetails} />
@@ -141,6 +145,20 @@ export default function EditJob() {
                     </button>
                 </fieldset>
             </form>
+
+            {confirmEdit &&
+                <ConfirmModal
+                    title='Confirm Edit'
+                    message="Are you sure you want to Edit this job?"
+                    confirmText="Yes, Edit"
+                    confirmColor="bg-purple-500 hover:bg-purple-700 text-white"
+                    onConfirm={() => {
+                        handleEditJob();
+                        setConfirmEdit(false);
+                    }}
+                    onCancel={() => setConfirmEdit(false)}
+                />
+            }
         </>
     )
 }

@@ -32,12 +32,12 @@ export default function Jobs() {
     <>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-3xl font-normal text-purple-500">Cron jobs</h1>
-        <Link to="/create" className="p-2.5 bg-purple-500 text-white flex items-center gap-1 rounded-sm">
-          <Timer />
+        <Link to="/create" className="py-2 px-4 bg-purple-500 text-white flex items-center gap-1 rounded-sm active:scale-[0.98]">
+          <Timer className='w-5 h-5' />
           Create Job
         </Link>
       </div>
-
+    
       <div className="p-6 bg-white rounded-2xl mb-4">
         <div className="hidden md:grid grid-cols-[3fr_1.5fr_1fr_1fr_1fr_50px] gap-4 text-sm text-gray-600 font-medium px-4 mb-4">
           <span>Title, URL</span>

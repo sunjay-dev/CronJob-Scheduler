@@ -1,6 +1,7 @@
 import { Pencil, FileText, MoreVertical, Trash2, CheckCircle, XCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
+import ConfirmModal from './ConfirmMenu';
 
 interface Props {
   _id: string;
@@ -15,6 +16,7 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, disabled
   const backendUrl = import.meta.env.VITE_BACKEND_URL!;
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -50,7 +52,7 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, disabled
     fetch(`${backendUrl}/api/jobs/status`, {
       method: "PUT",
       credentials: "include",
-      headers: { "Content-Type": "application/json"},
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ jobId: _id, status })
     }).then(async (res) => {
       const data = await res.json();
@@ -68,14 +70,14 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, disabled
   }
 
   return (
-    <div className="bg-white cursor-pointer hover:shadow-sm border border-gray-300 rounded-lg p-4 transition grid grid-cols-1 md:grid-cols-[3fr_1.5fr_1fr_1fr_1fr_50px] items-center text-sm gap-4 relative">
+    <div className="bg-white cursor-pointer border border-gray-300 rounded-lg p-4 transition grid grid-cols-1 md:grid-cols-[3fr_1.5fr_1fr_1fr_1fr_50px] items-center text-sm gap-4 relative">
       <div>
         <h2 className="font-semibold text-gray-800">{jobName}</h2>
         <p className="text-xs text-gray-500 lowercase">
           <span className="uppercase">{method}</span> • {url}
         </p>
       </div>
-      
+
       <div title={new Date(nextRunAt).toLocaleString()} className="text-gray-700 text-sm truncate">
         {new Date(nextRunAt).toLocaleString()}
       </div>
@@ -88,14 +90,14 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, disabled
         )}
       </div>
 
-      <Link to={`/job/${_id}/edit`} className="flex justify-start md:justify-center">
+      <Link to={`/job/${_id}/edit`} className="flex hover:text-purple-500 justify-start md:justify-center">
         <button className="flex items-center gap-1 hover:underline">
           <Pencil className="w-4 h-4" />
           Edit
         </button>
       </Link>
 
-      <Link to={`/jobs/${_id}`} className="flex justify-start md:justify-center items-center">
+      <Link to={`/jobs/${_id}`} className="flex justify-start hover:text-purple-500 md:justify-center items-center">
         <button className="flex items-center gap-1 hover:underline">
           <FileText className="w-4 h-4" />
           History
@@ -103,7 +105,7 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, disabled
       </Link>
 
       <div className="relative text-end" ref={menuRef}>
-        <button onClick={() => setOpen(!open)} className="p-1 rounded hover:bg-gray-100">
+        <button onClick={() => setOpen(!open)} className="px-1 py-1.5 rounded hover:bg-gray-100">
           <MoreVertical className="w-5 h-5" />
         </button>
 
@@ -112,7 +114,10 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, disabled
 
             <button
               className="w-full flex items-center gap-2 text-left px-4 py-2 hover:bg-gray-100"
-              onClick={handleDeleteJob}
+              onClick={() => {
+                setOpen(false);
+                setConfirmDelete(true);
+              }}
             >
               <Trash2 className="w-4 h-4 text-red-500" />
               Delete
@@ -139,6 +144,20 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, disabled
 
         )}
       </div>
+      {confirmDelete &&
+        <ConfirmModal
+          title='Confirm Deletion'
+          message="Are you sure you want to delete this job?"
+          confirmText="Yes, Delete"
+          confirmColor="bg-red-500 hover:bg-red-700 text-white"
+          onConfirm={() => {
+            handleDeleteJob();
+            setConfirmDelete(false);
+          }}
+          onCancel={() => setConfirmDelete(false)}
+        />
+      }
+
     </div>
   );
 }

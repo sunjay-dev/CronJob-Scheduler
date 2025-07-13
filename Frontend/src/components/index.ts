@@ -10,4 +10,5 @@ import StatCard from './StatCard'
 import LogChart from "./LogChart";
 import Preference from "./Preference";
 import Pagination from "./Pagination";
-export { Layout, Header, Sidebar, JobCard, LogChart, StatCard, LogCard, Common, Advanced, Preference, Pagination, Footer }
+import ConfirmMenu from './ConfirmMenu'
+export { Layout, Header, Sidebar, JobCard, LogChart, StatCard, LogCard, Common, Advanced, Preference, Pagination, ConfirmMenu,Footer }
