@@ -15,7 +15,7 @@ export default function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/create" element={<CreateJob />} />
           <Route path="/jobs" element={<Jobs />} />
-          <Route path="/jobs/:jobId" element={<JobLogs />} />
+          <Route path="/job/:jobId/logs" element={<JobLogs />} />
           <Route path="/job/:jobId/edit" element={<EditJob />} />
           <Route path="/logs" element={<Logs />} />
           <Route path="/settings" element={<Settings />} />

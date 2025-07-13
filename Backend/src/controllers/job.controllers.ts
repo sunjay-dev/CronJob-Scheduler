@@ -93,6 +93,21 @@ export const handleUserJobs = async (req: Request, res: Response, next: NextFunc
 export const handleUserJobById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { jobId } = req.params;
   const { userId } = req.user;
+
+  if(!jobId) {
+    res.status(400).json({
+      message: "field jobId is required"
+    })
+    return ;
+  }
+
+  if (!ObjectId.isValid(jobId)) {
+    res.status(400).json({
+      message: "Invalid jobId"
+    });
+    return;
+  }
+
   try {
     const jobs = await agenda.jobs({ 'data.userId': userId, _id: new ObjectId(jobId) });
     res.status(200).json(jobs);
@@ -111,6 +126,13 @@ export const handleJobStatus = async (req: Request, res: Response, next: NextFun
     res.status(400).json({
       message: "Please Provide both jobId and status"
     })
+    return;
+  }
+
+  if (!ObjectId.isValid(jobId)) {
+    res.status(400).json({
+      message: "Invalid jobId"
+    });
     return;
   }
 
@@ -187,6 +209,20 @@ export const handleRunJobNow = async (req: Request, res: Response, next: NextFun
   const { userId } = req.user;
   const { jobId } = req.body;
 
+  if(!jobId) {
+    res.status(400).json({
+      message: "field jobId is required"
+    })
+    return ;
+  }
+
+  if (!ObjectId.isValid(jobId)) {
+    res.status(400).json({
+      message: "Invalid jobId"
+    });
+    return;
+  }
+
   try {
     const jobs = await agenda.jobs({ _id: new ObjectId(jobId), 'data.userId': userId });
 
@@ -230,6 +266,13 @@ export const handleJobEdit = async (req: Request, res: Response, next: NextFunct
     res.status(400).json({ message: "Missing required fields" });
     return;
   }  
+
+  if (!ObjectId.isValid(jobId)) {
+    res.status(400).json({
+      message: "Invalid jobId"
+    });
+    return;
+  }
 
   try {
     const jobs = await agenda.jobs({ 'data.userId': userId, _id: new ObjectId(jobId) });

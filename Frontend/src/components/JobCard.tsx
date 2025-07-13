@@ -97,7 +97,7 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, disabled
         </button>
       </Link>
 
-      <Link to={`/jobs/${_id}`} className="flex justify-start hover:text-purple-500 md:justify-center items-center">
+      <Link to={`/job/${_id}/logs`} className="flex justify-start hover:text-purple-500 md:justify-center items-center">
         <button className="flex items-center gap-1 hover:underline">
           <FileText className="w-4 h-4" />
           History

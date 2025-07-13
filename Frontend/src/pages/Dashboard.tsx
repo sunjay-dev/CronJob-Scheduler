@@ -1,4 +1,4 @@
-import { PlusCircle, List, Clock } from 'lucide-react';
+import { PlusCircle, List, Clock, FileWarning } from 'lucide-react';
 import { StatCard, LogCard, Pagination } from '../components';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -43,23 +43,23 @@ export default function Dashboard() {
     let intervalId: ReturnType<typeof setInterval> | undefined;
 
     const fetchLogs = () => {
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/logs?page=${page}&limit=${limit}`, {
-      credentials: 'include',
-    })
-      .then(async (res) => {
-        const data = await res.json();
-        console.log(data);
-
-        if (!res.ok)
-          throw new Error(data.message || "Something went wrong");
-
-        return data;
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/logs?page=${page}&limit=${limit}`, {
+        credentials: 'include',
       })
-      .then(data => {
-        setLogs(data.logs);
-        setTotalPages(data.totalPages)
-        setPage(data.page);
-      }).catch(err => console.log(err));
+        .then(async (res) => {
+          const data = await res.json();
+          console.log(data);
+
+          if (!res.ok)
+            throw new Error(data.message || "Something went wrong");
+
+          return data;
+        })
+        .then(data => {
+          setLogs(data.logs);
+          setTotalPages(data.totalPages)
+          setPage(data.page);
+        }).catch(err => console.log(err));
     }
 
     fetchLogs();
@@ -110,17 +110,27 @@ export default function Dashboard() {
           <span className="text-center">Status</span>
         </div>
 
-        <div className="text-sm text-gray-600 space-y-1">
-          {logs?.map(log =>
-            <LogCard key={log._id}
-              timestamp={log.createdAt}
-              url={log.url}
-              method={log.method}
-              status={log.status}
-            />
-          )}
-        </div>
-        <Pagination page={page} setPage={setPage} totalPages={totalPages} />
+        {logs.length === 0 ? (
+          <div className="py-12 text-center text-gray-500 text-sm flex flex-col items-center">
+            <FileWarning className="w-8 h-8 mb-3 text-gray-400" />
+            <p>No logs found.</p>
+          </div>
+        ) : (
+          <>
+            <div className="text-sm text-gray-600 space-y-1">
+              {logs.map(log => (
+                <LogCard
+                  key={log._id}
+                  timestamp={log.createdAt}
+                  url={log.url}
+                  method={log.method}
+                  status={log.status}
+                />
+              ))}
+            </div>
+            <Pagination page={page} setPage={setPage} totalPages={totalPages} />
+          </>
+        )}
       </div>
     </>
   );

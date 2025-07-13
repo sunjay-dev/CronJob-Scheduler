@@ -1,4 +1,4 @@
-import { Timer } from 'lucide-react';
+import { Ban, Timer } from 'lucide-react';
 import { JobCard } from '../components';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -38,7 +38,7 @@ export default function Jobs() {
         </Link>
       </div>
     
-      <div className="p-6 bg-white rounded-2xl mb-4">
+      <div className="p-6 bg-white rounded-xl shadow mb-4">
         <div className="hidden md:grid grid-cols-[3fr_1.5fr_1fr_1fr_1fr_50px] gap-4 text-sm text-gray-600 font-medium px-4 mb-4">
           <span>Title, URL</span>
           <span>Next execution</span>
@@ -48,17 +48,26 @@ export default function Jobs() {
           <span className="text-center">Actions</span>
         </div>
 
-        <div className="space-y-3">
-          {jobs?.map(job =>
-            <JobCard key={job._id}
-              _id={job._id}
-              url={job.data.url}
-              jobName={job.data.name}
-              method={job.data.method}
-              nextRunAt={job.nextRunAt}
-              disabled={job.disabled ?? false}
-            />)}
-        </div>
+        {jobs.length === 0 ? (
+          <div className="py-12 text-center text-gray-500 text-sm flex flex-col items-center">
+            <Ban className="w-8 h-8 mb-3 text-gray-400" />
+            <p>No jobs found. Create a new one to get started!</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {jobs.map(job => (
+              <JobCard
+                key={job._id}
+                _id={job._id}
+                url={job.data.url}
+                jobName={job.data.name}
+                method={job.data.method}
+                nextRunAt={job.nextRunAt}
+                disabled={job.disabled ?? false}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </>
   );

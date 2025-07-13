@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import type { UserLogInterface } from '../types';
 import { LogCard, Pagination } from '../components';
+import { FileWarning } from 'lucide-react';
 
 export default function JobLogs() {
     const [jobName, setJobName] = useState('')
@@ -26,7 +27,7 @@ export default function JobLogs() {
             return data;
         }).then(data => {
             console.log(data);
-            
+
             setJobName(data?.logs[0]?.name)
             setLogs(data.logs);
             setTotalPages(data.totalPages);
@@ -51,15 +52,27 @@ export default function JobLogs() {
                     <span className="text-center">Status</span>
                 </div>
 
-                <div className="text-sm text-gray-600 space-y-1">
-                    {logs?.map(log =>
-                        <LogCard key={log._id} timestamp={log.createdAt}
-                            url={log.url}
-                            method={log.method}
-                            status={log.status} />
-                    )}
-                </div>
-                <Pagination page={page} setPage={setPage} totalPages={totalPages} />
+                {logs.length === 0 ? (
+                    <div className="py-12 text-center text-gray-500 text-sm flex flex-col items-center">
+                        <FileWarning className="w-8 h-8 mb-3 text-gray-400" />
+                        <p>No logs found for this job.</p>
+                    </div>
+                ) : (
+                    <>
+                        <div className="text-sm text-gray-600 space-y-1">
+                            {logs.map(log => (
+                                <LogCard
+                                    key={log._id}
+                                    timestamp={log.createdAt}
+                                    url={log.url}
+                                    method={log.method}
+                                    status={log.status}
+                                />
+                            ))}
+                        </div>
+                        <Pagination page={page} setPage={setPage} totalPages={totalPages} />
+                    </>
+                )}
             </div>
         </>
     );

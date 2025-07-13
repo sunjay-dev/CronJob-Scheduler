@@ -36,7 +36,7 @@ export const handleUserLogin = async (req: Request, res: Response, next: NextFun
         res.cookie('token', token, {
             httpOnly: true,
             secure: true,            
-            sameSite: 'Strict',      
+            sameSite: 'strict',      
             maxAge: 3600000,        
         });
         res.status(200).json({
@@ -80,7 +80,7 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
         res.cookie('token', token, {
             httpOnly: true,
             secure: true,            
-            sameSite: 'Strict',      
+            sameSite: 'strict',      
             maxAge: 3600000,        
         });
 

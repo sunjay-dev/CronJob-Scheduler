@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import logsModels from "../models/logs.models";
+import { ObjectId } from "mongodb";
 
 export const handleUserLogs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { userId } = req.user;
@@ -35,12 +36,19 @@ export const handleJobLogs = async (req: Request, res: Response, next: NextFunct
 
   if (!jobId) {
     res.status(400).json({
-      message: "Job Id is required"
+      message: "field jobId is required"
+    })
+    return;
+  }
+
+  if (!ObjectId.isValid(jobId)) {
+    res.status(400).json({
+      message: "Invalid jobId"
     });
     return;
   }
   try {
-     const [logs, total] = await Promise.all([
+    const [logs, total] = await Promise.all([
       logsModels.find({ userId, jobId }).sort({ createdAt: -1 }).skip(skip).limit(limit),
       logsModels.countDocuments({ userId, jobId })
     ]);
@@ -60,6 +68,20 @@ export const handleFailedLogs = async (req: Request, res: Response, next: NextFu
 
   const { jobId } = req.params;
   const { userId } = req.user;
+
+  if (!jobId) {
+    res.status(400).json({
+      message: "field jobId is required"
+    })
+    return;
+  }
+
+  if (!ObjectId.isValid(jobId)) {
+    res.status(400).json({
+      message: "Invalid jobId"
+    });
+    return;
+  }
 
   try {
     const logs = await logsModels.find({
