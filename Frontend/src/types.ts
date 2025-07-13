@@ -27,3 +27,13 @@ export interface UserLogInterface {
     method: string;
     status: "success" | "failed";
 }
+
+export interface User {
+    name: string;
+    email:string;
+    timezone: string;
+    mode: "day" | "dark";
+    timeFormat24: boolean;
+    emailNotifications: boolean;
+    pushAlerts: boolean;
+}

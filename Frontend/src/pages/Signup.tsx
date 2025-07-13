@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '../hooks';
 import { setAuth } from '../slices/authSlice';
+import type { User } from "../types";
 
 export default function Signup() {
     const navigate = useNavigate();
@@ -41,9 +42,20 @@ export default function Signup() {
 
                 return data;
             })
-            .then(data => {
+            .then((data) => {
+                const userData: User = data.user;
                 setDetails({ name: '', email: '', password: '' });
-                dispatch(setAuth({ user: { name: data.user.name, email: data.user.email, timezone: data.user.timezone } }));
+                dispatch(setAuth({ 
+                    user: {
+                        name: userData.name,
+                        email: userData.email,
+                        timezone: userData.timezone,
+                        mode: userData.mode,
+                        timeFormat24: userData.timeFormat24,
+                        emailNotifications: userData.emailNotifications,
+                        pushAlerts: userData.pushAlerts
+                    } 
+                }));
                 console.log(data);
                 navigate('/');
             }).catch(err => console.log(err))

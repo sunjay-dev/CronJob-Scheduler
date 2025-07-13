@@ -35,9 +35,9 @@ export const handleUserLogin = async (req: Request, res: Response, next: NextFun
         const token = signToken({ userId: user.id, email: user.email });
         res.cookie('token', token, {
             httpOnly: true,
-            secure: true,            
-            sameSite: 'strict',      
-            maxAge: 3600000,        
+            secure: true,
+            sameSite: 'strict',
+            maxAge: 3600000,
         });
         res.status(200).json({
             message: "Login successful",
@@ -56,7 +56,7 @@ export const handleUserLogin = async (req: Request, res: Response, next: NextFun
 }
 
 export const handleUserRegister = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { name, email, password, timezone= 'UTC' } = req.body;
+    const { name, email, password, timezone = 'UTC' } = req.body;
 
     if (!name || !email || !password) {
         res.status(401).json({
@@ -79,9 +79,9 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
 
         res.cookie('token', token, {
             httpOnly: true,
-            secure: true,            
-            sameSite: 'strict',      
-            maxAge: 3600000,        
+            secure: true,
+            sameSite: 'strict',
+            maxAge: 3600000,
         });
 
         res.status(200).json({
@@ -118,3 +118,71 @@ export const handleUserDetails = async (req: Request, res: Response, next: NextF
         res.status(500).json({ message: "Error while fetching user details" });
     }
 }
+
+export const handleChangeUserDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const { userId } = req.user;
+    const { name, timezone, mode, timeFormat24, emailNotifications, pushAlerts } = req.body;
+
+    const updateFields: any = {};
+
+    if (name !== undefined) {
+        if (typeof name !== 'string' || name.trim() === '') {
+            res.status(400).json({ message: "Invalid name" });
+            return;
+        }
+        updateFields.name = name.trim();
+    }
+
+    if (timezone !== undefined) {
+        if (typeof timezone !== 'string' || timezone.trim() === '') {
+            res.status(400).json({ message: "Invalid timezone" });
+            return;
+        }
+        updateFields.timezone = timezone.trim();
+    }
+
+    if (mode !== undefined) {
+        if (mode !== 'day' && mode !== 'dark') {
+            res.status(400).json({ message: "Invalid mode (must be 'day' or 'dark')" });
+            return;
+        }
+        updateFields.mode = mode;
+    }
+
+    if (timeFormat24 !== undefined) {
+        if (typeof timeFormat24 !== 'boolean') {
+            res.status(400).json({ message: "Invalid timeFormat24 (must be boolean)" });
+            return;
+        }
+        updateFields.timeFormat24 = timeFormat24;
+    }
+
+    if (emailNotifications !== undefined) {
+        if (typeof emailNotifications !== 'boolean') {
+            res.status(400).json({ message: "Invalid emailNotifications (must be boolean)" });
+            return;
+        }
+        updateFields.emailNotifications = emailNotifications;
+    }
+
+    if (pushAlerts !== undefined) {
+        if (typeof pushAlerts !== 'boolean') {
+            res.status(400).json({ message: "Invalid pushAlerts (must be boolean)" });
+            return;
+        }
+        updateFields.pushAlerts = pushAlerts;
+    }
+
+    try {
+        const user = await userModel.findByIdAndUpdate(
+            userId,
+            updateFields,
+            { new: true }
+        );
+
+        res.status(200).json({ message: "User updated successfully", user });
+    } catch (error) {
+        console.log("Error while updating user details.", error);
+        res.status(500).json({ message: "Error while updating user details" });
+    }
+};
