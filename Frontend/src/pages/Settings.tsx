@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Preference } from '../components';
 import { Pencil, Save } from "lucide-react";
 import { useAppDispatch, useAppSelector } from '../hooks';
@@ -129,7 +129,7 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        <Preference />
+        <Preference details={details} setDetails={setDetails} />
 
         <div className='border border-gray-200 rounded-lg px-4 py-6 space-y-6'>
           <h2 className="text-lg font-semibold text-gray-800 mb-4">Notifications</h2>

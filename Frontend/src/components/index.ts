@@ -11,4 +11,5 @@ import LogChart from "./LogChart";
 import Preference from "./Preference";
 import Pagination from "./Pagination";
 import ConfirmMenu from './ConfirmMenu'
-export { Layout, Header, Sidebar, JobCard, LogChart, StatCard, LogCard, Common, Advanced, Preference, Pagination, ConfirmMenu,Footer }
+import ProtectedRoute from "./ProtectedRoute";
+export { ProtectedRoute ,Layout,Header, Sidebar, JobCard, LogChart, StatCard, LogCard, Common, Advanced, Preference, Pagination, ConfirmMenu,Footer }

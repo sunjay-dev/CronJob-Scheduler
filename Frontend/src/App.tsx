@@ -1,7 +1,6 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { Login, Signup, Dashboard, CreateJob, Jobs, EditJob,Logs, JobLogs,Settings } from './pages';
-import { Layout } from './components';
-
+import { Layout, ProtectedRoute } from './components';
 
 export default function App() {
 
@@ -11,6 +10,7 @@ export default function App() {
         <Route path='/login' element={<Login />} />
         <Route path='/signup' element={<Signup />} />
 
+        <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/create" element={<CreateJob />} />
@@ -20,6 +20,9 @@ export default function App() {
           <Route path="/logs" element={<Logs />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
+        </Route>
+
+        <Route path='*' element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   )
