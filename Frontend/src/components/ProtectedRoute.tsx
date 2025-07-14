@@ -29,7 +29,9 @@ export default function Layout() {
       })
       .then((data: User | null) => {
         if (!data) return;
+
         setAuthorized(true);
+        
         dispatch(setAuth({
           user: {
             name: data.name,
@@ -44,6 +46,7 @@ export default function Layout() {
       })
       .catch(err => {
         console.error('User not logged in', err);
+        dispatch(logout());
         setAuthorized(false)
       }).finally(()=> setIsLoading(false));
 

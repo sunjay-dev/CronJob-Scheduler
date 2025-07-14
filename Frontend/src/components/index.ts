@@ -12,4 +12,5 @@ import Preference from "./Preference";
 import Pagination from "./Pagination";
 import ConfirmMenu from './ConfirmMenu'
 import ProtectedRoute from "./ProtectedRoute";
-export { ProtectedRoute ,Layout,Header, Sidebar, JobCard, LogChart, StatCard, LogCard, Common, Advanced, Preference, Pagination, ConfirmMenu,Footer }
+import PublicRoute from "./PublicRoute";
+export { ProtectedRoute , PublicRoute, Layout,Header, Sidebar, JobCard, LogChart, StatCard, LogCard, Common, Advanced, Preference, Pagination, ConfirmMenu,Footer }
