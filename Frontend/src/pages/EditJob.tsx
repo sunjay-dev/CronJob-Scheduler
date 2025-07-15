@@ -4,6 +4,8 @@ import { Common, Advanced } from '../components';
 import { useParams, useNavigate } from 'react-router-dom';
 import type { JobDetails } from '../types'
 import ConfirmModal from '../components/ConfirmMenu';
+import { useAppDispatch } from '../hooks';
+import { updateJob } from '../slices/jobSlice';
 
 export default function EditJob() {
     const { jobId } = useParams();
@@ -21,6 +23,9 @@ export default function EditJob() {
         enabled: true,
         timezone: 'UTC'
     });
+
+    const dispatch = useAppDispatch();
+
 
     useEffect(() => {
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/jobs/${jobId}`, {
@@ -83,8 +88,8 @@ export default function EditJob() {
             return data;
         })
             .then(data => {
+                dispatch(updateJob(data.job));
                 navigate('/jobs');
-                console.log(data);
             }).catch(err => console.log(err))
             .finally(() => {
                 setIsLoading(false);

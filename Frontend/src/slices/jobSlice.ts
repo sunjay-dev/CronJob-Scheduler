@@ -23,6 +23,13 @@ const jobSlice = createSlice({
     removeJob(state, action: PayloadAction<string>) {
       state.jobs = state.jobs.filter(job => job._id !== action.payload);
     },
+    updateJob(state, action: PayloadAction<JobInterface>){
+      const index = state.jobs.findIndex(job => job._id === action.payload._id);
+      console.log(index)
+      if(index !== -1){
+        state.jobs[index] = action.payload;
+      }
+    },
     updateJobStatus(state, action: PayloadAction<{ jobId: string; disabled: boolean }>) {
       const job = state.jobs.find(job => job._id === action.payload.jobId);
       if (job) {
@@ -35,5 +42,5 @@ const jobSlice = createSlice({
   },
 });
 
-export const { setJobs, addJob, removeJob, updateJobStatus, clearJobs } = jobSlice.actions;
+export const { setJobs, addJob, removeJob, updateJob, updateJobStatus, clearJobs } = jobSlice.actions;
 export default jobSlice.reducer;
