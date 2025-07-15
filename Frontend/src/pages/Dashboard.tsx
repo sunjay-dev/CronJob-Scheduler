@@ -13,6 +13,7 @@ export default function Dashboard() {
     total: 0,
     active: 0,
     disabled: 0,
+    logs: 0
   });
 
   useEffect(() => {
@@ -21,7 +22,6 @@ export default function Dashboard() {
     })
       .then(async (res) => {
         const data = await res.json();
-        console.log(data);
 
         if (!res.ok)
           throw new Error(data.message || "Something went wrong");
@@ -31,11 +31,12 @@ export default function Dashboard() {
       .then((data: JobInterface[]) => {
         const activeCount = data.reduce((count, job) => job.disabled ? count : count + 1, 0)
 
-        setAnalytics({
+        setAnalytics(pre => ({
+          ...pre,
           total: data.length,
           active: activeCount,
-          disabled: data.length - activeCount
-        })
+          disabled: data.length - activeCount,
+        }))
       }).catch(err => console.log(err));
   }, [])
 
@@ -48,14 +49,14 @@ export default function Dashboard() {
       })
         .then(async (res) => {
           const data = await res.json();
-          console.log(data);
 
           if (!res.ok)
             throw new Error(data.message || "Something went wrong");
 
           return data;
         })
-        .then(data => {
+        .then(data => {          
+          setAnalytics(pre => ({...pre, logs: data.total}));
           setLogs(data.logs);
           setTotalPages(data.totalPages)
           setPage(data.page);
@@ -83,7 +84,7 @@ export default function Dashboard() {
         <StatCard title="Total Jobs" value={analytics.total} />
         <StatCard title="Active Jobs" value={analytics.active} />
         <StatCard title="Disabled Jobs" value={analytics.disabled} />
-        <StatCard title="Executed Today" value={3} />
+        <StatCard title="Total Logs" value={analytics.logs} />
       </div>
 
       <div className="flex justify-end gap-4 mb-6">

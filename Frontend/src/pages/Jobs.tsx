@@ -64,6 +64,7 @@ export default function Jobs() {
                 method={job.data.method}
                 nextRunAt={job.nextRunAt}
                 disabled={job.disabled ?? false}
+                onDelete={(id:string) => setJobs(pre => pre.filter(job => job._id !== id))}
               />
             ))}
           </div>

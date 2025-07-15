@@ -18,7 +18,7 @@ export default function Layout() {
 
         if (res.status === 401) {
           dispatch(logout());
-          setAuthorized(false)
+          setAuthorized(false);
           return null;
         }
 
@@ -31,7 +31,7 @@ export default function Layout() {
         if (!data) return;
 
         setAuthorized(true);
-        
+
         dispatch(setAuth({
           user: {
             name: data.name,
@@ -45,14 +45,14 @@ export default function Layout() {
         }));
       })
       .catch(err => {
-        console.error('User not logged in', err);
+        console.error(err.message);
         dispatch(logout());
-        setAuthorized(false)
-      }).finally(()=> setIsLoading(false));
+        setAuthorized(false);
+      }).finally(() => setIsLoading(false));
 
   }, [dispatch]);
 
-  if(isLoading) return <div className="p-6 text-gray-500">Checking authentication...</div>;
+  if (isLoading) return <div className="p-6 text-gray-500">Checking authentication...</div>;
 
-  return authorized? <Outlet /> : <Navigate to='/login' replace />;
+  return authorized ? <Outlet /> : <Navigate to='/login' replace />;
 }
