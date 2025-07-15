@@ -11,11 +11,11 @@ interface Props {
   nextRunAt: string;
   disabled?: boolean;
   onDelete: (_id: string) => void;
+  onUpdateStatus: (jobId:string, disabled:boolean) => void
 }
 
-export default function JobCard({ _id, jobName, method, url, nextRunAt, disabled = false, onDelete }: Props) {
+export default function JobCard({ _id, jobName, method, url, nextRunAt, disabled = false, onDelete, onUpdateStatus }: Props) {
   const backendUrl = import.meta.env.VITE_BACKEND_URL!;
-  const [isDisabled, setIsDisabled] = useState(disabled);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -69,7 +69,9 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, disabled
     })
       .then(data => {
         console.log(data);
-        setIsDisabled(pre => !pre);
+        console.log(status);
+        
+        onUpdateStatus(_id, !status)
       }).catch(err => console.log(err))
   }
 
@@ -87,7 +89,7 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, disabled
       </div>
 
       <div>
-        {isDisabled ? (
+        {disabled ? (
           <span className="text-xs text-red-700 bg-red-100 px-2 py-0.5 rounded-full">disabled</span>
         ) : (
           <span className="text-xs text-green-700 bg-green-100 px-2 py-0.5 rounded-full">enabled</span>
@@ -128,20 +130,20 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, disabled
             </button>
 
             <button
-              className={`w-full flex items-center gap-2 text-left px-4 py-2 ${!isDisabled ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'
+              className={`w-full flex items-center gap-2 text-left px-4 py-2 ${!disabled ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'
                 }`}
-              disabled={!isDisabled}
+              disabled={!disabled}
               onClick={() => handleChangeStatus(true)}
             >
-              <CheckCircle className={`w-4 h-4 ${!isDisabled ? 'text-gray-400' : 'text-green-600'}`} />
+              <CheckCircle className={`w-4 h-4 ${!disabled ? 'text-gray-400' : 'text-green-600'}`} />
               Enable
             </button>
 
-            <button className={`w-full flex items-center gap-2 text-left px-4 py-2 ${isDisabled ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'}`}
-              disabled={isDisabled}
+            <button className={`w-full flex items-center gap-2 text-left px-4 py-2 ${disabled ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'}`}
+              disabled={disabled}
               onClick={() => handleChangeStatus(false)}
             >
-              <XCircle className={`w-4 h-4 ${isDisabled ? 'text-gray-400' : 'text-yellow-500'}`} />
+              <XCircle className={`w-4 h-4 ${disabled ? 'text-gray-400' : 'text-yellow-500'}`} />
               Disable
             </button>
           </div>

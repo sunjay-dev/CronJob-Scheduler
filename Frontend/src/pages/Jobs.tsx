@@ -1,14 +1,18 @@
 import { Ban, Timer } from 'lucide-react';
 import { JobCard } from '../components';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import type { JobInterface } from '../types'
-
+import { useAppSelector, useAppDispatch } from '../hooks';
+import { removeJob, setJobs, updateJobStatus } from '../slices/jobSlice';
 
 export default function Jobs() {
+  const jobs = useAppSelector(state => state.jobs.jobs);
+  const dispatch = useAppDispatch();
 
-  const [jobs, setJobs] = useState<JobInterface[]>([]);
   useEffect(() => {
+    if(jobs.length !== 0)
+      return;
+    
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/jobs`, {
       credentials: 'include',
     })
@@ -23,10 +27,10 @@ export default function Jobs() {
       })
       .then(data => {
         console.log(data);
-        setJobs(data)
+        dispatch(setJobs(data))
       }).catch(err => console.log(err))
 
-  }, [])
+  }, [dispatch, jobs])
 
   return (
     <>
@@ -64,7 +68,8 @@ export default function Jobs() {
                 method={job.data.method}
                 nextRunAt={job.nextRunAt}
                 disabled={job.disabled ?? false}
-                onDelete={(id:string) => setJobs(pre => pre.filter(job => job._id !== id))}
+                onDelete={(id:string) => dispatch(removeJob(id))}
+                onUpdateStatus= {(jobId:string, disabled:boolean) => dispatch(updateJobStatus({jobId, disabled}))}
               />
             ))}
           </div>

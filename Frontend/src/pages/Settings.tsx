@@ -22,17 +22,18 @@ export default function SettingsPage() {
   });
 
   useEffect(() => {
-    if (user) {
-      setDetails({
-        name: user.name,
-        email: user.email,
-        timezone: user.timezone,
-        emailNotifications: user.emailNotifications,
-        pushAlerts: user.pushAlerts,
-        mode: user.mode,
-        timeFormat24: user.timeFormat24
-      })
-    }
+    if (!user)
+      return
+    
+    setDetails({
+      name: user.name,
+      email: user.email,
+      timezone: user.timezone,
+      emailNotifications: user.emailNotifications,
+      pushAlerts: user.pushAlerts,
+      mode: user.mode,
+      timeFormat24: user.timeFormat24
+    })
   }, [user]);
 
   const handleSaveChanges = () => {

@@ -1,39 +1,56 @@
 export interface JobDetails {
- name: string,
-    url: string,
-    method: string,
-    cron: string,
-    headers: string,
-    body: string,
-    enabled: boolean,
-    timezone? : string
+  name: string,
+  url: string,
+  method: string,
+  cron: string,
+  headers: string,
+  body: string,
+  enabled: boolean,
+  timezone?: string
 }
 
 export interface JobInterface {
-  data : {
-    url: string;
+  _id: string;
+  name: string;
+  type: string;
+  priority: number;
+  disabled: boolean;
+  repeatInterval: string;
+  repeatTimezone: string;
+  nextRunAt: string;
+  lastRunAt: string;
+  lastFinishedAt: string;
+  lockedAt: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  skipDays: string | null;
+  shouldSaveResult: boolean;
+  lastModifiedBy: string | null;
+  userId: string;
+
+  data: {
     name: string;
-    method:string;
-  }
-  _id:string
-  nextRunAt:string;
-  disabled? :boolean
+    url: string;
+    method: string;
+    headers: Record<string, string>;
+  };
 }
 
+
 export interface UserLogInterface {
-    _id: string;
-    createdAt: string;
-    url:string;
-    method: string;
-    status: "success" | "failed";
+  _id: string;
+  createdAt: string;
+  url: string;
+  method: string;
+  status: "success" | "failed";
 }
 
 export interface User {
-    name: string;
-    email:string;
-    timezone: string;
-    mode: "day" | "dark";
-    timeFormat24: boolean;
-    emailNotifications: boolean;
-    pushAlerts: boolean;
+  name: string;
+  email: string;
+  timezone: string;
+  mode: "day" | "dark";
+  timeFormat24: boolean;
+  emailNotifications: boolean;
+  pushAlerts: boolean;
 }

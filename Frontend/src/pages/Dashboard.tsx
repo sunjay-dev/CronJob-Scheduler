@@ -2,6 +2,8 @@ import { PlusCircle, List, Clock, FileWarning } from 'lucide-react';
 import { StatCard, LogCard, Pagination } from '../components';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { setJobs } from '../slices/jobSlice';
+import { useAppDispatch, useAppSelector } from '../hooks';
 import type { JobInterface, UserLogInterface } from '../types'
 
 export default function Dashboard() {
@@ -15,8 +17,25 @@ export default function Dashboard() {
     disabled: 0,
     logs: 0
   });
+  const jobs = useAppSelector(state => state.jobs.jobs);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
+    if(!jobs.length) return ;
+    
+    const activeCount = jobs.reduce((count, job) => job.disabled ? count : count + 1, 0);
+    setAnalytics(pre => ({
+      ...pre,
+      total: jobs.length,
+      active: activeCount,
+      disabled: jobs.length - activeCount,
+    }));
+  }, [jobs]);
+
+  useEffect(() => {
+
+    if (jobs.length !== 0) return;
+
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/jobs`, {
       credentials: 'include',
     })
@@ -29,16 +48,11 @@ export default function Dashboard() {
         return data;
       })
       .then((data: JobInterface[]) => {
-        const activeCount = data.reduce((count, job) => job.disabled ? count : count + 1, 0)
+        console.log(data);
 
-        setAnalytics(pre => ({
-          ...pre,
-          total: data.length,
-          active: activeCount,
-          disabled: data.length - activeCount,
-        }))
+        dispatch(setJobs(data));
       }).catch(err => console.log(err));
-  }, [])
+  }, [dispatch, jobs.length])
 
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval> | undefined;
@@ -55,8 +69,8 @@ export default function Dashboard() {
 
           return data;
         })
-        .then(data => {          
-          setAnalytics(pre => ({...pre, logs: data.total}));
+        .then(data => {
+          setAnalytics(pre => ({ ...pre, logs: data.total }));
           setLogs(data.logs);
           setTotalPages(data.totalPages)
           setPage(data.page);
