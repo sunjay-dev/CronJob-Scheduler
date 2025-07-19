@@ -3,20 +3,25 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '../hooks';
 import { setAuth } from '../slices/authSlice';
 import type { User } from "../types";
+import { Tailspin } from 'ldrs/react';
+import 'ldrs/react/Tailspin.css';
+import { Popup } from "../components";
 
 export default function Signup() {
     const navigate = useNavigate();
     const [details, setDetails] = useState({ name: '', email: '', password: '' });
     const [isLoading, setIsLoading] = useState(false);
+    const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
     const dispatch = useAppDispatch();
 
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setIsLoading(true);
 
         if (!details.name.trim() || !details.email.trim() || !details.password.trim()) {
-            return
+            return;
         }
+
+        setIsLoading(true);
 
         const signupDetails = {
             name: details.name,
@@ -43,10 +48,10 @@ export default function Signup() {
                 return data;
             })
             .then((data) => {
-                                
+                console.log(data);
+
                 const userData: User = data.user;
-                setDetails({ name: '', email: '', password: '' });
-                dispatch(setAuth({ 
+                dispatch(setAuth({
                     user: {
                         name: userData.name,
                         email: userData.email,
@@ -55,19 +60,30 @@ export default function Signup() {
                         timeFormat24: userData.timeFormat24,
                         emailNotifications: userData.emailNotifications,
                         pushAlerts: userData.pushAlerts
-                    } 
+                    }
                 }));
-                console.log(data);
-                navigate('/');
-            }).catch(err => console.log(err))
+
+                setMessage({ type: 'success', text: 'Signup successful!' });
+
+                setTimeout(() => navigate('/'), 300);
+            }).catch(err => {
+                console.log(err);
+                setMessage({ type: 'error', text: err.message || 'Signup failed' });
+            })
             .finally(() => {
+                setDetails(pre => ({ ...pre, password: '' }));
                 setIsLoading(false);
             });
     }
 
 
     return (
-        <div className="font-[Inter] selection:bg-purple-500 selection:text-white h-dvh w-dvw grid grid-cols-1 md:grid-cols-2">
+        <div className="font-[Inter] selection:bg-purple-500 selection:text-white h-dvh w-dvw grid grid-cols-1 md:grid-cols-2 overflow-x-hidden">
+            {isLoading && (
+                <div className="fixed inset-0 flex items-center justify-center  z-50">
+                    <Tailspin size={40} stroke={5} speed={0.9} color="black" />
+                </div>
+            )}
             <div className="bg-purple-100 hidden md:flex items-center justify-center">
                 <img
                     src="/Signup-illustration.webp"
@@ -88,11 +104,16 @@ export default function Signup() {
                                 <p className="text-sm text-gray-500">Please enter your details</p>
                             </div>
 
+                            {message && <Popup type={message.type} message={message.text} />}
+
+
                             <div className="flex flex-col space-y-1">
                                 <label htmlFor="name" className="text-sm font-medium">Name</label>
-                                <input
+                                <input required
                                     type="name"
                                     name="name"
+                                    aria-label="name"
+                                    autoComplete="name"
                                     onChange={e => setDetails(pre => ({ ...pre, name: e.target.value }))}
                                     value={details.name}
                                     className="border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
@@ -101,6 +122,7 @@ export default function Signup() {
                             <div className="flex flex-col space-y-1">
                                 <label htmlFor="email" className="text-sm font-medium">Email address</label>
                                 <input
+                                    required
                                     type="email"
                                     name="email"
                                     onChange={e => setDetails(pre => ({ ...pre, email: e.target.value }))}
@@ -111,7 +133,7 @@ export default function Signup() {
 
                             <div className="flex flex-col space-y-1">
                                 <label htmlFor="password" className="text-sm font-medium">Password</label>
-                                <input
+                                <input required
                                     type="password"
                                     name="password"
                                     onChange={e => setDetails(pre => ({ ...pre, password: e.target.value }))}

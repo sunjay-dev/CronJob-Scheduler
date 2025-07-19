@@ -1,13 +1,17 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../hooks';
 import { setAuth } from '../slices/authSlice';
+import { Popup } from "../components";
+import { Tailspin } from 'ldrs/react';
+import 'ldrs/react/Tailspin.css';
+
 
 export default function Login() {
   const navigate = useNavigate();
   const [details, setDetails] = useState({ email: '', password: '' });
   const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
   const dispatch = useAppDispatch();
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -48,21 +52,26 @@ export default function Login() {
             pushAlerts: data.user.pushAlerts
           }
         }));
-        navigate('/');
-        console.log(data);
-      }).catch(err => console.log(err))
+        setMessage({ type: 'success', text: 'Login successful!' });
+        setTimeout(() => navigate('/'), 300);
+      }).catch(err => {
+        setMessage({ type: 'error', text: err.message || 'Login failed' });
+        console.log(err);
+      })
       .finally(() => {
+        setDetails(pre => ({...pre, password: ''}));
         setIsLoading(false);
       });
-
-
   }
 
   return (
-    <div className="font-[Inter] selection:bg-purple-500 selection:text-white h-dvh w-dvw grid grid-cols-1 md:grid-cols-2">
-
+    <div className="font-[Inter] selection:bg-purple-500 selection:text-white h-dvh w-dvw grid grid-cols-1 md:grid-cols-2 overflow-x-hidden">
+          {isLoading && (
+            <div className="fixed inset-0 flex items-center justify-center  z-50">
+              <Tailspin size={40} stroke={5} speed={0.9} color="black" />
+            </div>
+          )}
       <div className="flex flex-col px-8 md:px-6 py-6">
-
         <img src="/logo.webp" alt="logo" className="md:ml-2 h-10 w-10 mb-8" />
 
         <div className="flex-grow flex flex-col justify-center items-center">
@@ -72,6 +81,7 @@ export default function Login() {
                 <h1 className="text-3xl font-bold">Welcome back</h1>
                 <p className="text-sm text-gray-500">Please enter your details</p>
               </div>
+              {message && <Popup type={message.type} message={message.text} />}
 
               <div className="flex flex-col space-y-1">
                 <label htmlFor="email" className="text-sm font-medium">Email address</label>

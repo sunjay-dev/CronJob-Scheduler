@@ -13,5 +13,5 @@ import Pagination from "./Pagination";
 import ConfirmMenu from './ConfirmMenu'
 import ProtectedRoute from "./ProtectedRoute";
 import PublicRoute from "./PublicRoute";
-import Success from "./Success";
-export { ProtectedRoute , PublicRoute, Layout,Header, Sidebar, JobCard, LogChart, StatCard, LogCard, Common, Advanced, Preference, Pagination, Success,ConfirmMenu,Footer }
+import Popup from "./Popup";
+export { ProtectedRoute , PublicRoute, Layout,Header, Sidebar, JobCard, LogChart, StatCard, LogCard, Common, Advanced, Preference, Pagination, Popup,ConfirmMenu,Footer }
