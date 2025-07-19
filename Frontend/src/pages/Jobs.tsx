@@ -1,5 +1,5 @@
 import { Ban, Timer } from 'lucide-react';
-import { JobCard } from '../components';
+import { JobCard, Success } from '../components';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../hooks';
@@ -41,7 +41,7 @@ export default function Jobs() {
           Create Job
         </Link>
       </div>
-    
+          
       <div className="p-6 bg-white rounded-xl shadow mb-4">
         <div className="hidden md:grid grid-cols-[3fr_1.5fr_1fr_1fr_1fr_50px] gap-4 text-sm text-gray-600 font-medium px-4 mb-4">
           <span>Title, URL</span>

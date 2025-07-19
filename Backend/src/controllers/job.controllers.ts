@@ -306,7 +306,6 @@ export const handleJobEdit = async (req: Request, res: Response, next: NextFunct
       job.enable();
     }
     
-    
     await job.save();
 
     res.status(200).json({ message: "Job updated successfully", job });
