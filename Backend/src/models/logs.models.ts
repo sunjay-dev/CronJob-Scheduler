@@ -18,7 +18,7 @@ const joblogsSchema = new mongoose.Schema({
     status: {
         type: String,
         required: true,
-        enum: ["success", "error"],
+        enum: ["success", "failed"],
         index: true
     },
     method: {
@@ -35,7 +35,16 @@ const joblogsSchema = new mongoose.Schema({
     response: {
         type: String,
         required: false
-    }
+    },
+    responseTime: {
+        DNS: Number,
+        Connect: Number,
+        SSL: Number,
+        Send: Number,
+        Wait: Number,
+        Receive: Number,
+        Total: Number
+    },
 }, {
     timestamps: true
 })

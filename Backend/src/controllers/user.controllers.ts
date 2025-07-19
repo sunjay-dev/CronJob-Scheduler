@@ -36,16 +36,15 @@ export const handleUserLogin = async (req: Request, res: Response, next: NextFun
         res.cookie('token', token, {
             httpOnly: true,
             secure: true,
-            sameSite: 'strict',
+            sameSite: 'none',
             maxAge: 3600000,
         });
+
+        const { password: _, ...safeUser } = user.toObject();
+
         res.status(200).json({
             message: "Login successful",
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-            },
+            user: safeUser,
             token
         });
 
@@ -80,18 +79,15 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
         res.cookie('token', token, {
             httpOnly: true,
             secure: true,
-            sameSite: 'strict',
+            sameSite: 'none',
             maxAge: 3600000,
         });
 
+        const { password: _, ...safeUser } = newUser.toObject();
+
         res.status(200).json({
             message: "Signup successful",
-            user: {
-                id: newUser._id,
-                name: newUser.name,
-                email: newUser.email,
-                timezone: newUser.timezone
-            },
+            user: safeUser,
             token
         });
     } catch (error) {

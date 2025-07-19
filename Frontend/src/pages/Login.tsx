@@ -35,7 +35,19 @@ export default function Login() {
         return data;
       })
       .then(data => {
-        dispatch(setAuth({ user: { name: data.user.name, email: data.user.email, timezone: data.user.timezone } }));
+        console.log(data);
+        
+        dispatch(setAuth({
+          user: {
+            name: data.user.name,
+            email: data.user.email,
+            timezone: data.user.timezone,
+            mode: data.user.mode,
+            timeFormat24: data.user.timeFormat24,
+            emailNotifications: data.user.emailNotifications,
+            pushAlerts: data.user.pushAlerts
+          }
+        }));
         navigate('/');
         console.log(data);
       }).catch(err => console.log(err))

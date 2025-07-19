@@ -1,5 +1,5 @@
 import { Ban, Timer } from 'lucide-react';
-import { JobCard, Success } from '../components';
+import { JobCard } from '../components';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../hooks';

@@ -5,8 +5,8 @@ import cors from 'cors';
 
 const app = express();
 app.use(cors({
-    origin: process.env.CLIENT_URL!,
-  credentials: true,  
+  origin: process.env.CLIENT_URL!,
+  credentials: true,
 }));
 app.use(express.json());
 app.use(cookieParser());
@@ -27,12 +27,12 @@ import './agenda';
 const port = process.env.PORT || 3000;
 
 async function start() {
-    await connectDB();
-    await agenda.start();
+  await connectDB();
+  await agenda.start();
 
-    await agenda.every("1 hour", "clean-now-jobs");
+  await agenda.every("1 hour", "clean-now-jobs");
 
-    app.listen(port, () => console.log('Server running on Port', port));
+  app.listen(port, () => console.log('Server running on Port', port));
 }
 
 start();

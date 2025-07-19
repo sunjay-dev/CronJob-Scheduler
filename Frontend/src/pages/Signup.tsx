@@ -43,6 +43,7 @@ export default function Signup() {
                 return data;
             })
             .then((data) => {
+                                
                 const userData: User = data.user;
                 setDetails({ name: '', email: '', password: '' });
                 dispatch(setAuth({ 
