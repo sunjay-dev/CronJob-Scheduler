@@ -1,7 +1,7 @@
 import { Pencil, FileText, MoreVertical, Trash2, CheckCircle, XCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
-import ConfirmModal from './ConfirmMenu';
+import ConfirmMenu from './ConfirmMenu';
 
 interface Props {
   _id: string;
@@ -151,7 +151,7 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, disabled
         )}
       </div>
       {confirmDelete &&
-        <ConfirmModal
+        <ConfirmMenu
           title='Confirm Deletion'
           message="Are you sure you want to delete this job?"
           confirmText="Yes, Delete"

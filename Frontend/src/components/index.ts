@@ -14,4 +14,5 @@ import ConfirmMenu from './ConfirmMenu'
 import ProtectedRoute from "./ProtectedRoute";
 import PublicRoute from "./PublicRoute";
 import Popup from "./Popup";
-export { ProtectedRoute , PublicRoute, Layout,Header, Sidebar, JobCard, LogChart, StatCard, LogCard, Common, Advanced, Preference, Pagination, Popup,ConfirmMenu,Footer }
+import Loader from "./Loader";
+export { ProtectedRoute , PublicRoute, Layout,Header, Sidebar, JobCard, LogChart, StatCard, LogCard, Common, Advanced, Preference, Pagination, Popup,Loader,ConfirmMenu,Footer }

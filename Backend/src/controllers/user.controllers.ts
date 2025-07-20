@@ -37,7 +37,7 @@ export const handleUserLogin = async (req: Request, res: Response, next: NextFun
             httpOnly: true,
             secure: true,
             sameSite: 'none',
-            maxAge: 3600000,
+            maxAge: 24 * 60 * 60 * 1000
         });
 
         const { password: _, ...safeUser } = user.toObject();
@@ -80,7 +80,7 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
             httpOnly: true,
             secure: true,
             sameSite: 'none',
-            maxAge: 3600000,
+            maxAge: 24 * 60 * 60 * 1000
         });
 
         const { password: _, ...safeUser } = newUser.toObject();

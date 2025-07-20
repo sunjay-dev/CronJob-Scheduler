@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Clock, Settings } from 'lucide-react';
-import { Common, Advanced } from '../components';
+import { Clock, Loader, Settings } from 'lucide-react';
+import { Common, Advanced, ConfirmMenu } from '../components';
 import { useParams, useNavigate } from 'react-router-dom';
 import type { JobDetails } from '../types'
-import ConfirmModal from '../components/ConfirmMenu';
 import { useAppDispatch } from '../hooks';
 import { updateJob } from '../slices/jobSlice';
 
@@ -26,13 +25,13 @@ export default function EditJob() {
 
     const dispatch = useAppDispatch();
 
-
     useEffect(() => {
+        setIsLoading(true)
+
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/jobs/${jobId}`, {
             credentials: "include",
         }).then(async (res) => {
             const data = await res.json();
-            console.log(data);
 
             if (!res.ok)
                 throw new Error(data.message || "Something went wrong");
@@ -56,12 +55,15 @@ export default function EditJob() {
                     cron: job.repeatInterval,
                     body: ''
                 })
-            }).catch(err => console.log(err))
+            }).catch(err => {
+                console.log(err);
+                navigate('/jobs')
+            })
             .finally(() => {
                 setIsLoading(false);
             });
 
-    }, [jobId])
+    }, [jobId, navigate])
 
     const handleEditJob = () => {
 
@@ -98,6 +100,7 @@ export default function EditJob() {
 
     return (
         <>
+            {isLoading && <Loader />}
             <h1 className="text-3xl text-purple-600 mb-6">Edit Cron Job</h1>
 
             <div className="flex gap-8 mb-4">
@@ -133,7 +136,7 @@ export default function EditJob() {
             <form onSubmit={e => {
                 e.preventDefault();
                 setConfirmEdit(true);
-                }} className="bg-white p-6 rounded-xl shadow mb-4">
+            }} className="bg-white p-6 rounded-xl shadow mb-4">
                 <fieldset disabled={isLoading} className='space-y-5'>
                     {tab === 'common' ? (
                         <Common jobDetails={jobDetails} setJobDetails={setJobDetails} />
@@ -152,7 +155,7 @@ export default function EditJob() {
             </form>
 
             {confirmEdit &&
-                <ConfirmModal
+                <ConfirmMenu
                     title='Confirm Edit'
                     message="Are you sure you want to Edit this job?"
                     confirmText="Yes, Edit"

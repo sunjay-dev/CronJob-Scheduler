@@ -1,7 +1,7 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import type { UserLogInterface } from '../types';
-import { LogCard, Pagination } from '../components';
+import { LogCard, Pagination, Loader } from '../components';
 import { FileWarning } from 'lucide-react';
 
 export default function JobLogs() {
@@ -11,9 +11,10 @@ export default function JobLogs() {
     const [totalPages, setTotalPages] = useState(1);
     const { jobId } = useParams();
     const [logs, setLogs] = useState<UserLogInterface[]>([]);
-    const [loading, setLoading] = useState(true);
-
+    const [isLoading, setIsLoading] = useState(true);
+    const navigate = useNavigate();
     useEffect(() => {
+        setIsLoading(true);
 
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/logs/${jobId}/?page=${page}&limit=${limit}`, {
             credentials: "include"
@@ -32,17 +33,19 @@ export default function JobLogs() {
             setLogs(data.logs);
             setTotalPages(data.totalPages);
             setPage(data.page);
-        }).catch(err => console.log(err))
-            .finally(() => {
-                setLoading(false);
-            })
+        }).catch(err => {
+            console.log(err);
+            navigate('/jobs')
+        }).finally(() => {
+            setIsLoading(false);
+        })
 
-    }, [jobId, page]);
-
-    if (loading) return <div className="p-4">Loading logs...</div>;
+    }, [jobId, navigate, page]);
 
     return (
         <>
+            {isLoading &&  <Loader />}
+            
             <h2 className="text-3xl font-normal mb-6 text-purple-500 truncate">Logs for Job : {jobName}</h2>
             <div className="bg-white p-6 mb-6 rounded-xl shadow">
                 <div className="grid grid-cols-[1fr_2fr_2fr_1fr] text-sm gap-4 items-center text-gray-500 font-medium px-4 mb-2">

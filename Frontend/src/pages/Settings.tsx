@@ -4,7 +4,7 @@ import { Pencil, Save } from "lucide-react";
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { setAuth } from '../slices/authSlice';
 import type { User } from '../types';
-import ConfirmModal from '../components/ConfirmMenu';
+import ConfirmMenu from '../components/ConfirmMenu';
 
 export default function SettingsPage() {
   const user = useAppSelector(state => state.auth.user);
@@ -193,7 +193,7 @@ export default function SettingsPage() {
         </div>
       </form >
       {confirmUpdate &&
-        <ConfirmModal
+        <ConfirmMenu
           title="Confirm Changes"
           message="Are you sure you want to update your account settings?"
           confirmText="Yes, Update"

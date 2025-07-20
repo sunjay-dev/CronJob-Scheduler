@@ -1,4 +1,4 @@
-interface ConfirmModalProps {
+interface ConfirmMenuProps {
   title: string;
   message: string;
   confirmText: string;
@@ -7,14 +7,14 @@ interface ConfirmModalProps {
   confirmColor?: string;
 }
 
-export default function ConfirmModal({
+export default function ConfirmMenu({
   title,
   message,
   confirmText,
   onConfirm,
   onCancel,
   confirmColor,
-}: ConfirmModalProps) {
+}: ConfirmMenuProps) {
   return (
     <div className="fixed inset-0 items-center justify-center z-50 bg-black/50 flex">
       <div className="bg-white rounded-lg shadow-lg p-6 w-11/12 max-w-md">

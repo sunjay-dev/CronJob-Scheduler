@@ -2,7 +2,7 @@ import { LogOut, Menu } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { logout } from '../slices/authSlice';
-import ConfirmModal from './ConfirmMenu';
+import ConfirmMenu from './ConfirmMenu';
 import { useState } from 'react';
 
 interface Props {
@@ -63,7 +63,7 @@ export default function Header({ sidebarOpen, setSidebarOpen }: Props) {
       </header>
       {
         confirmLogout &&
-        <ConfirmModal
+        <ConfirmMenu
           title="Confirm Logout"
           message="Are you sure you want to logout from your account?"
           confirmText="Yes, Logout"
