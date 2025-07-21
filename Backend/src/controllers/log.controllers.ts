@@ -95,3 +95,41 @@ export const handleFailedLogs = async (req: Request, res: Response, next: NextFu
     res.status(500).json({ message: "Error while fetching failed logs" });
   }
 }
+
+export const handleGetLogById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const { userId } = req.user;
+  const { logId } = req.params;
+
+  if (!logId) {
+    res.status(400).json({
+      message: "field logId is required"
+    })
+    return;
+  }
+
+  if (!ObjectId.isValid(logId)) {
+    res.status(400).json({
+      message: "Invalid logId"
+    });
+    return;
+  }
+
+  try {
+
+    const log = await logsModels.findOne({ _id: new ObjectId(logId), userId });
+
+    if (!log) {
+      res.status(404).json({
+        message: "No Log found"
+      });
+      return;
+    }
+
+    res.status(200).json(log);
+
+  } catch (error) {
+    console.error("Error while fetching log by Id", error)
+    res.status(500).json({ message: "Error while fetching log by Id" });
+  }
+
+}

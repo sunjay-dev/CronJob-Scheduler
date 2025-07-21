@@ -70,10 +70,7 @@ export default function Logs() {
               {logs.map(log => (
                 <LogCard
                   key={log._id}
-                  timestamp={log.createdAt}
-                  url={log.url}
-                  method={log.method}
-                  status={log.status}
+                  log={log}
                 />
               ))}
             </div>

@@ -15,4 +15,5 @@ import ProtectedRoute from "./ProtectedRoute";
 import PublicRoute from "./PublicRoute";
 import Popup from "./Popup";
 import Loader from "./Loader";
-export { ProtectedRoute , PublicRoute, Layout,Header, Sidebar, JobCard, LogChart, StatCard, LogCard, Common, Advanced, Preference, Pagination, Popup,Loader,ConfirmMenu,Footer }
+import LogDetails from './LogDetails'
+export { ProtectedRoute, PublicRoute, Layout, Header, Sidebar, JobCard, LogChart, StatCard, LogCard, LogDetails,Common, Advanced, Preference, Pagination, Popup, Loader, ConfirmMenu, Footer }

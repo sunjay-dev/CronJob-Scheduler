@@ -44,38 +44,37 @@ export default function JobLogs() {
 
     return (
         <>
-            {isLoading &&  <Loader />}
-            
+
+
             <h2 className="text-3xl font-normal mb-6 text-purple-500 truncate">Logs for Job : {jobName}</h2>
             <div className="bg-white p-6 mb-6 rounded-xl shadow">
-                <div className="grid grid-cols-[1fr_2fr_2fr_1fr] text-sm gap-4 items-center text-gray-500 font-medium px-4 mb-2">
+                <div className="grid grid-cols-[1fr_2fr_2fr_2fr_1fr] text-sm gap-4 items-center text-gray-500 font-medium px-4 mb-2">
                     <span>Method</span>
                     <span>URL</span>
                     <span>Time</span>
-                    <span className="text-center">Status</span>
+                    <span>Status</span>
+                    <span>Actions</span>
                 </div>
-
-                {logs.length === 0 ? (
-                    <div className="py-12 text-center text-gray-500 text-sm flex flex-col items-center">
-                        <FileWarning className="w-8 h-8 mb-3 text-gray-400" />
-                        <p>No logs found for this job.</p>
-                    </div>
-                ) : (
-                    <>
-                        <div className="text-sm text-gray-600 space-y-1">
-                            {logs.map(log => (
-                                <LogCard
-                                    key={log._id}
-                                    timestamp={log.createdAt}
-                                    url={log.url}
-                                    method={log.method}
-                                    status={log.status}
-                                />
-                            ))}
+                {isLoading ?
+                    (<Loader />) : logs.length === 0 ? (
+                        <div className="py-12 text-center text-gray-500 text-sm flex flex-col items-center">
+                            <FileWarning className="w-8 h-8 mb-3 text-gray-400" />
+                            <p>No logs found for this job.</p>
                         </div>
-                        <Pagination page={page} setPage={setPage} totalPages={totalPages} />
-                    </>
-                )}
+                    ) : (
+                        <>
+                            <div className="text-sm text-gray-600 space-y-1">
+                                {logs.map(log => (
+                                    <LogCard
+                                        key={log._id}
+                                        log={log}
+                                    />
+                                ))}
+                            </div>
+                            <Pagination page={page} setPage={setPage} totalPages={totalPages} />
+                        </>
+                    )
+                }
             </div>
         </>
     );

@@ -43,6 +43,18 @@ export interface UserLogInterface {
   url: string;
   method: string;
   status: "success" | "failed";
+  jobId:string;
+  name:string;
+  statusCode?: string;
+  responseTime: {
+    DNS: number,
+    Connect: number,
+    SSL: number,
+    Send: number,
+    Wait: number,
+    Receive: number,
+    Total: number
+  }
 }
 
 export interface User {
