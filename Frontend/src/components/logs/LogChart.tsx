@@ -18,11 +18,7 @@ interface Log {
   status: 'success' | 'failed';
 }
 
-interface Props {
-  logs: Log[];
-}
-
-export default function LogLineChart({ logs }: Props) {
+export default function LogChart({ logs }: {logs: Log[]}) {
   const { labels, successData, failedData } = useMemo(() => {
     const labels = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`);
     const successData = Array(24).fill(0);

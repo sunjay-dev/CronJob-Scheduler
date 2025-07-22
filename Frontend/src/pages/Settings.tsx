@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Preference } from '../components';
 import { Pencil, Save } from "lucide-react";
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { setAuth } from '../slices/authSlice';
 import type { User } from '../types';
-import ConfirmMenu from '../components/ConfirmMenu';
+import { ConfirmMenu, Preference } from '../components';
 
 export default function SettingsPage() {
   const user = useAppSelector(state => state.auth.user);
@@ -24,7 +23,7 @@ export default function SettingsPage() {
   useEffect(() => {
     if (!user)
       return
-    
+
     setDetails({
       name: user.name,
       email: user.email,

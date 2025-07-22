@@ -30,7 +30,7 @@ async function start() {
   await connectDB();
   await agenda.start();
 
-  await agenda.every("1 hour", "clean-now-jobs");
+  await agenda.every("1 day", "clean-now-jobs");
 
   app.listen(port, () => console.log('Server running on Port', port));
 }

@@ -1,7 +1,7 @@
 import { Pencil, FileText, MoreVertical, Trash2, CheckCircle, XCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
-import ConfirmMenu from './ConfirmMenu';
+import ConfirmMenu from '../common/ConfirmMenu';
 
 interface Props {
   _id: string;

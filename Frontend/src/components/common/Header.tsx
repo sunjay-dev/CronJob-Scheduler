@@ -1,7 +1,7 @@
 import { LogOut, Menu } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../hooks';
-import { logout } from '../slices/authSlice';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { logout } from '../../slices/authSlice';
 import ConfirmMenu from './ConfirmMenu';
 import { useState } from 'react';
 

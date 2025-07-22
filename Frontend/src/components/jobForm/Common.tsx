@@ -1,7 +1,7 @@
 import Cron from 'react-js-cron';
 import 'react-js-cron/dist/styles.css';
 import { Copy } from 'lucide-react';
-import type { JobDetails } from '../types'
+import type { JobDetails } from '../../types'
 
 
 interface Props {

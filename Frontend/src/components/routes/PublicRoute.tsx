@@ -1,6 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import type { RootState } from '../store';
+import type { RootState } from '../../store';
 import type { JSX } from 'react';
 
 export default function PublicRoute({ children }: { children: JSX.Element }) {

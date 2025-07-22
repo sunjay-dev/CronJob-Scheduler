@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { CheckCircle, XCircle, Clock, EllipsisVertical } from 'lucide-react';
 import LogDetails from './LogDetails';
-import type { UserLogInterface } from '../types';
+import type { UserLogInterface } from '../../types';
 
 
 export default function LogCard({ log }: {log: UserLogInterface}) {

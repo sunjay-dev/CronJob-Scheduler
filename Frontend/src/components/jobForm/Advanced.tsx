@@ -1,4 +1,4 @@
-import type {JobDetails} from '../types'
+import type {JobDetails} from '../../types'
 interface Props {
   jobDetails: JobDetails;
   setJobDetails: React.Dispatch<React.SetStateAction<JobDetails>>;

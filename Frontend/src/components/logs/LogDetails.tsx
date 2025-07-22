@@ -1,4 +1,5 @@
 import React from 'react';
+import type { UserLogInterface } from '../../types';
 import { Bar } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -11,7 +12,6 @@ import {
 } from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
-import type { UserLogInterface } from '../types';
 
 interface Props {
     details: UserLogInterface;

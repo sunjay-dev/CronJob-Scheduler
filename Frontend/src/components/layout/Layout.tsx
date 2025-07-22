@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Header, Sidebar, Footer } from './';
+import { Header, Sidebar, Footer } from '../common';
 import { Outlet } from 'react-router-dom';
 
 export default function Layout() {

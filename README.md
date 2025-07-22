@@ -1,5 +1,7 @@
 # CronJob-Scheduler
 
+<img src="https://raw.githubusercontent.com/sunjay-dev/CronJob-Scheduler/refs/heads/main/assets/preview.webp" alt="CronJob image" width="100%" />
+
 A simple yet powerful cron job scheduler to automate recurring API requests (GET/POST) using [Agenda.js](https://github.com/agenda/agenda). Schedule jobs, view logs, and control execution — all from a modern web dashboard.
 
 ---

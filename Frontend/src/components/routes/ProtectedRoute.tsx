@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
-import { logout, setAuth } from '../slices/authSlice';
-import { useAppDispatch } from '../hooks';
-import type { User } from '../types';
+import { logout, setAuth } from '../../slices/authSlice';
+import { useAppDispatch } from '../../hooks';
+import type { User } from '../../types';
 
 export default function Layout() {
 
