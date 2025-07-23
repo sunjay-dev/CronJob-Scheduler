@@ -102,7 +102,7 @@ export default function Dashboard() {
       </div>
 
       <div className="flex justify-end gap-4 mb-6">
-        <Link to="/logs" className="flex items-center gap-2 px-4 py-2 border border-purple-600 text-purple-600 rounded hover:bg-purple-50">
+        <Link to="/jobs" className="flex items-center gap-2 px-4 py-2 border border-purple-600 text-purple-600 rounded hover:bg-purple-50">
           <List className="w-5 h-5" />
           View All Jobs
         </Link>
@@ -118,11 +118,12 @@ export default function Dashboard() {
           Recent Logs
         </div>
 
-        <div className="grid grid-cols-[1fr_2fr_2fr_1fr] text-sm gap-4 items-center text-gray-500 font-medium px-4 mb-2">
+        <div className="grid grid-cols-[1fr_2fr_2fr_2fr_1fr] text-sm gap-4 items-center text-gray-500 font-medium px-4 mb-2">
           <span>Method</span>
           <span>URL</span>
           <span>Time</span>
-          <span className="text-center">Status</span>
+          <span>Status</span>
+          <span>Actions</span>
         </div>
 
         {logs.length === 0 ? (

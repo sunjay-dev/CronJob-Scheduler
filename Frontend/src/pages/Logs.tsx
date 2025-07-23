@@ -52,11 +52,12 @@ export default function Logs() {
 
       <LogChart logs={logs ?? []} />
       <div className="bg-white p-6 mb-6 rounded-xl shadow">
-        <div className="grid grid-cols-[1fr_2fr_2fr_1fr] text-sm gap-4 items-center text-gray-500 font-medium px-4 mb-2">
+        <div className="grid grid-cols-[1fr_2fr_2fr_2fr_1fr] text-sm gap-4 items-center text-gray-500 font-medium px-4 mb-2">
           <span>Method</span>
           <span>URL</span>
           <span>Time</span>
-          <span className="text-center">Status</span>
+          <span>Status</span>
+          <span>Actions</span>
         </div>
 
         {logs.length === 0 ? (

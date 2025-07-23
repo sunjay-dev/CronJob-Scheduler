@@ -44,8 +44,6 @@ export default function JobLogs() {
 
     return (
         <>
-
-
             <h2 className="text-3xl font-normal mb-6 text-purple-500 truncate">Logs for Job : {jobName}</h2>
             <div className="bg-white p-6 mb-6 rounded-xl shadow">
                 <div className="grid grid-cols-[1fr_2fr_2fr_2fr_1fr] text-sm gap-4 items-center text-gray-500 font-medium px-4 mb-2">

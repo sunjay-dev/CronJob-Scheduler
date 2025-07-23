@@ -11,46 +11,46 @@ export const handleNewCronJobs = async (req: Request, res: Response, next: NextF
   const { userId } = req.user;
 
   if (!name || !url || !method || !cron || !timezone || enabled === undefined) {
-    res.status(400).json({ error: "Missing required fields" });
+    res.status(400).json({ message: "Missing required fields" });
     return;
   }
 
   if (typeof url !== 'string') {
-    res.status(400).json({ error: "url must be a string" });
+    res.status(400).json({ message: "url must be a string" });
     return
   }
 
   if (!validator.isURL(url, { protocols: ['http', 'https'], require_protocol: true })) {
-    res.status(400).json({ error: "Invalid url" });
+    res.status(400).json({ message: "Invalid url" });
     return;
   }
 
   if (typeof cron !== 'string') {
-    res.status(400).json({ error: "url must be a string" });
+    res.status(400).json({ message: "url must be a string" });
     return
   }
 
   if (!isValidCron(cron, { seconds: true })) {
-    res.status(400).json({ error: "Invalid cron expression" });
+    res.status(400).json({ message: "Invalid cron expression" });
     return;
   }
 
   if (typeof method !== 'string') {
-    res.status(400).json({ error: "Method must be a string" });
+    res.status(400).json({ message: "Method must be a string" });
     return
   }
 
   if (!['GET', 'POST', 'PUT', 'DELETE'].includes(method.toUpperCase())) {
-    res.status(400).json({ error: "Invalid method type" });
+    res.status(400).json({ message: "Invalid method type" });
     return;
   }
 
   if (typeof timezone !== 'string') {
-    res.status(400).json({ error: "timezone must be a string" });
+    res.status(400).json({ message: "timezone must be a string" });
     return
   }
   if (typeof enabled !== 'boolean') {
-    res.status(400).json({ error: "enabled must be a boolean" });
+    res.status(400).json({ message: "enabled must be a boolean" });
     return
   }
   try {
@@ -72,7 +72,7 @@ export const handleNewCronJobs = async (req: Request, res: Response, next: NextF
     }
     await job.save();
 
-    res.status(200).json(job);
+    res.status(200).json({ message: "Job created successfully", job });
   } catch (error) {
     console.error("Error while creating new job", error)
     res.status(500).json({ message: "Error while creating new job" });
@@ -94,11 +94,11 @@ export const handleUserJobById = async (req: Request, res: Response, next: NextF
   const { jobId } = req.params;
   const { userId } = req.user;
 
-  if(!jobId) {
+  if (!jobId) {
     res.status(400).json({
       message: "field jobId is required"
     })
-    return ;
+    return;
   }
 
   if (!ObjectId.isValid(jobId)) {
@@ -122,7 +122,7 @@ export const handleJobStatus = async (req: Request, res: Response, next: NextFun
   const { jobId, status } = req.body;
 
 
-  if(!jobId || typeof status === "undefined" ){
+  if (!jobId || typeof status === "undefined") {
     res.status(400).json({
       message: "Please Provide both jobId and status"
     })
@@ -136,7 +136,7 @@ export const handleJobStatus = async (req: Request, res: Response, next: NextFun
     return;
   }
 
-  if(typeof status !== "boolean"){
+  if (typeof status !== "boolean") {
     res.status(400).json({
       message: "status must be a boolean"
     })
@@ -168,7 +168,7 @@ export const handleDeleteJob = async (req: Request, res: Response, next: NextFun
   const { jobId } = req.params;
   const { userId } = req.user;
 
-  if(!jobId) {
+  if (!jobId) {
     res.status(400).json({
       message: "Field jobId is required."
     });
@@ -189,8 +189,8 @@ export const handleDeleteJob = async (req: Request, res: Response, next: NextFun
       });
       return;
     }
-    
-    await logsModels.deleteMany({jobId});
+
+    await logsModels.deleteMany({ jobId });
 
 
     res.status(200).json({
@@ -209,11 +209,11 @@ export const handleRunJobNow = async (req: Request, res: Response, next: NextFun
   const { userId } = req.user;
   const { jobId } = req.body;
 
-  if(!jobId) {
+  if (!jobId) {
     res.status(400).json({
       message: "field jobId is required"
     })
-    return ;
+    return;
   }
 
   if (!ObjectId.isValid(jobId)) {
@@ -261,11 +261,11 @@ export const handleJobEdit = async (req: Request, res: Response, next: NextFunct
     timezone,
     enabled
   } = req.body;
-  
+
   if (!jobId || !name || !url || !method || !cron) {
     res.status(400).json({ message: "Missing required fields" });
     return;
-  }  
+  }
 
   if (!ObjectId.isValid(jobId)) {
     res.status(400).json({
@@ -297,15 +297,15 @@ export const handleJobEdit = async (req: Request, res: Response, next: NextFunct
 
     job.attrs.repeatInterval = cron;
     job.attrs.repeatTimezone = timezone;
-    
+
     job.computeNextRunAt();
-    
+
     if (enabled === false) {
       job.disable();
     } else {
       job.enable();
     }
-    
+
     await job.save();
 
     res.status(200).json({ message: "Job updated successfully", job });

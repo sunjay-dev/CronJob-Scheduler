@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Clock, Loader, Settings } from 'lucide-react';
-import { Common, Advanced, ConfirmMenu } from '../components';
+import { Clock, Settings } from 'lucide-react';
+import { Common, Advanced, ConfirmMenu, Loader } from '../components';
 import { useParams, useNavigate } from 'react-router-dom';
 import type { JobDetails } from '../types'
 import { useAppDispatch } from '../hooks';

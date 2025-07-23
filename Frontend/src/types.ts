@@ -66,3 +66,8 @@ export interface User {
   emailNotifications: boolean;
   pushAlerts: boolean;
 }
+
+export interface JobResponse {
+  type: "success" | "error";
+  message: string
+}
