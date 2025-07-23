@@ -1,21 +1,10 @@
 import { Pencil, FileText, MoreVertical, Trash2, CheckCircle, XCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
-import ConfirmMenu from '../common/ConfirmMenu';
+import { ConfirmMenu } from '../common';
+import type {JobCardProps} from '../../types';
 
-interface Props {
-  _id: string;
-  jobName: string;
-  method: string;
-  url: string;
-  nextRunAt: string;
-  disabled?: boolean;
-  onDelete: (_id: string) => void;
-  onUpdateStatus: (jobId:string, disabled:boolean) => void
-}
-
-export default function JobCard({ _id, jobName, method, url, nextRunAt, disabled = false, onDelete, onUpdateStatus }: Props) {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL!;
+export default function JobCard({ _id, jobName, method, url, nextRunAt, disabled = false, handleDeleteJob, handleChangeStatus  }: JobCardProps) {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -29,51 +18,7 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, disabled
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
-
-  const handleDeleteJob = () => {
-    fetch(`${backendUrl}/api/jobs/${_id}`, {
-      method: "DELETE",
-      credentials: "include"
-    }).then(async (res) => {
-      const data = await res.json();
-      console.log(data);
-
-      if (!res.ok)
-        throw new Error(data.message || "Something went wrong");
-
-      return data;
-    })
-      .then(data => {
-        console.log(data);
-        if(onDelete){
-          onDelete(_id);
-        }
-      }).catch(err => console.log(err))
-  }
-
-  const handleChangeStatus = (status: boolean) => {
-
-    fetch(`${backendUrl}/api/jobs/status`, {
-      method: "PUT",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ jobId: _id, status })
-    }).then(async (res) => {
-      const data = await res.json();
-      console.log(data);
-
-      if (!res.ok)
-        throw new Error(data.message || "Something went wrong");
-
-      return data;
-    })
-      .then(data => {
-        console.log(data);
-        console.log(status);
-        
-        onUpdateStatus(_id, !status)
-      }).catch(err => console.log(err))
-  }
+ 
 
   return (
     <div className="bg-white cursor-pointer border border-gray-300 rounded-lg p-4 transition grid grid-cols-1 md:grid-cols-[3fr_1.5fr_1fr_1fr_1fr_50px] items-center text-sm gap-4 relative">
@@ -133,7 +78,7 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, disabled
               className={`w-full flex items-center gap-2 text-left px-4 py-2 ${!disabled ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'
                 }`}
               disabled={!disabled}
-              onClick={() => handleChangeStatus(true)}
+              onClick={() => handleChangeStatus(_id,true)}
             >
               <CheckCircle className={`w-4 h-4 ${!disabled ? 'text-gray-400' : 'text-green-600'}`} />
               Enable
@@ -141,7 +86,7 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, disabled
 
             <button className={`w-full flex items-center gap-2 text-left px-4 py-2 ${disabled ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'}`}
               disabled={disabled}
-              onClick={() => handleChangeStatus(false)}
+              onClick={() => handleChangeStatus(_id, false)}
             >
               <XCircle className={`w-4 h-4 ${disabled ? 'text-gray-400' : 'text-yellow-500'}`} />
               Disable
@@ -157,7 +102,7 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, disabled
           confirmText="Yes, Delete"
           confirmColor="bg-red-500 hover:bg-red-700 text-white"
           onConfirm={() => {
-            handleDeleteJob();
+            handleDeleteJob(_id);
             setConfirmDelete(false);
           }}
           onCancel={() => setConfirmDelete(false)}

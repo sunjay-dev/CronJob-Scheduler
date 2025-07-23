@@ -1,18 +1,22 @@
 import { Ban, Timer } from 'lucide-react';
-import { JobCard } from '../components';
-import { useEffect } from 'react';
+import { JobCard, Loader } from '../components';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../hooks';
 import { removeJob, setJobs, updateJobStatus } from '../slices/jobSlice';
 
 export default function Jobs() {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL!;
   const jobs = useAppSelector(state => state.jobs.jobs);
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     if(jobs.length !== 0)
       return;
     
+    setIsLoading(true)
+
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/jobs`, {
       credentials: 'include',
     })
@@ -29,11 +33,61 @@ export default function Jobs() {
         console.log(data);
         dispatch(setJobs(data))
       }).catch(err => console.log(err))
+      .finally(()=> setIsLoading(false));
 
   }, [dispatch, jobs])
 
+
+  const handleChangeStatus = (id:string, status: boolean) => {
+    setIsLoading(true);
+    fetch(`${backendUrl}/api/jobs/status`, {
+      method: "PUT",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ jobId: id, status })
+    }).then(async (res) => {
+      const data = await res.json();
+      console.log(data);
+
+      if (!res.ok)
+        throw new Error(data.message || "Something went wrong");
+
+      return data;
+    })
+      .then(data => {
+        console.log(data);
+
+        dispatch(updateJobStatus({jobId: id, disabled: !status}))
+
+      }).catch(err => console.log(err))
+      .finally(()=> setIsLoading(false));
+  }
+
+  const handleDeleteJob = (id: string) => {
+    setIsLoading(true);
+    fetch(`${backendUrl}/api/jobs/${id}`, {
+      method: "DELETE",
+      credentials: "include"
+    }).then(async (res) => {
+      const data = await res.json();
+      console.log(data);
+
+      if (!res.ok)
+        throw new Error(data.message || "Something went wrong");
+
+      return data;
+    })
+      .then(data => {
+        console.log(data);
+        dispatch(removeJob(id));
+
+      }).catch(err => console.log(err))
+      .finally(()=> setIsLoading(false));
+  }
+
   return (
     <>
+    {isLoading && <Loader />}
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-3xl font-normal text-purple-500">Cron jobs</h1>
         <Link to="/create" className="py-2 px-4 bg-purple-500 text-white flex items-center gap-1 rounded-sm active:scale-[0.98]">
@@ -68,8 +122,8 @@ export default function Jobs() {
                 method={job.data.method}
                 nextRunAt={job.nextRunAt}
                 disabled={job.disabled ?? false}
-                onDelete={(id:string) => dispatch(removeJob(id))}
-                onUpdateStatus= {(jobId:string, disabled:boolean) => dispatch(updateJobStatus({jobId, disabled}))}
+                handleChangeStatus={handleChangeStatus}
+                handleDeleteJob={handleDeleteJob}
               />
             ))}
           </div>

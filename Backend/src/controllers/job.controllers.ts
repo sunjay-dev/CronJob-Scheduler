@@ -157,7 +157,7 @@ export const handleJobStatus = async (req: Request, res: Response, next: NextFun
     status ? job.enable() : job.disable();
     await job.save();
 
-    res.status(200).json({ message: `Job ${status ? "enabled" : "disabled"}` });
+    res.status(200).json({ message: `Job ${status ? "enabled" : "disabled"}`, status });
   } catch (error) {
     console.error("Server error while updating job status", error)
     res.status(500).json({ message: "Server error while updating job status" });

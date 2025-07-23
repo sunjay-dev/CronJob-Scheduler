@@ -71,3 +71,14 @@ export interface JobResponse {
   type: "success" | "error";
   message: string
 }
+
+export interface JobCardProps {
+_id: string;
+  jobName: string;
+  method: string;
+  url: string;
+  nextRunAt: string;
+  disabled?: boolean;
+  handleDeleteJob: (id:string) => void;
+  handleChangeStatus: (id:string, status: boolean) => void;
+}
