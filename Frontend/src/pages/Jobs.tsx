@@ -97,10 +97,11 @@ export default function Jobs() {
       </div>
           
       <div className="p-6 bg-white rounded-xl shadow mb-4">
-        <div className="hidden md:grid grid-cols-[3fr_1.5fr_1fr_1fr_1fr_50px] gap-4 text-sm text-gray-600 font-medium px-4 mb-4">
+        <div className="hidden md:grid md:grid-cols-[2.5fr_1.5fr_1.5fr_1fr_1fr_1fr_40px] gap-4 text-sm text-gray-600 font-medium px-4 mb-4">
           <span>Title, URL</span>
-          <span>Next execution</span>
-          <span>Status</span>
+          <span className="text-center">Last execution</span>
+          <span className="text-center">Next execution</span>
+          <span className="text-center">Status</span>
           <span className="text-center">Edit</span>
           <span className="text-center">History</span>
           <span className="text-center">Actions</span>
@@ -121,6 +122,7 @@ export default function Jobs() {
                 jobName={job.data.name}
                 method={job.data.method}
                 nextRunAt={job.nextRunAt}
+                lastRunAt={job.lastRunAt}
                 disabled={job.disabled ?? false}
                 handleChangeStatus={handleChangeStatus}
                 handleDeleteJob={handleDeleteJob}

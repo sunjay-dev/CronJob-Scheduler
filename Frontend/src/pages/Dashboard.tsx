@@ -94,7 +94,7 @@ export default function Dashboard() {
     <>
       <h1 className="text-3xl text-purple-600 mb-6">Dashboard</h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <StatCard title="Total Jobs" value={analytics.total} />
         <StatCard title="Active Jobs" value={analytics.active} />
         <StatCard title="Disabled Jobs" value={analytics.disabled} />

@@ -3,6 +3,7 @@ import { Outlet, Navigate } from 'react-router-dom';
 import { logout, setAuth } from '../../slices/authSlice';
 import { useAppDispatch } from '../../hooks';
 import type { User } from '../../types';
+import { Loader } from '../common';
 
 export default function Layout() {
 
@@ -52,7 +53,7 @@ export default function Layout() {
 
   }, [dispatch]);
 
-  if (isLoading) return <div className="p-6 text-gray-500">Checking authentication...</div>;
+  if (isLoading) return <Loader />;
 
   return authorized ? <Outlet /> : <Navigate to='/login' replace />;
 }

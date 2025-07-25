@@ -86,20 +86,18 @@ export default function SettingsPage() {
       }} className="space-y-10 bg-white p-6 rounded-xl shadow">
 
         <div className='border border-gray-200 rounded-lg px-4 py-6 space-y-6'>
-          <div>
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Profile</h2>
 
             <div className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700">Full Name</label>
-
+              <div>
+                <label className="block mb-1 font-medium text-gray-700">Full Name</label>
                 <div className="flex items-center gap-2">
                   <input
                     type="text"
                     value={details.name}
                     onChange={e => setDetails({ ...details, name: e.target.value })}
                     readOnly={!isEditingName}
-                    className={`flex-1 rounded-md px-3 py-2 border transition text-sm
+                    className={`flex-1 rounded-md px-3 py-2 border transition
       ${isEditingName
                         ? 'bg-white border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500'
                         : 'bg-gray-100 text-gray-500 cursor-not-allowed border-gray-200'
@@ -114,19 +112,18 @@ export default function SettingsPage() {
                     {isEditingName ? <Save className="w-4 h-4" /> : <Pencil className="w-4 h-4" />}
                   </button>
                 </div>
-              </div>
-
-              <div>
-                <label className="block  font-medium text-gray-700">Email</label>
+                </div>
+                <div>
+                <label className="block mb-1 font-medium text-gray-700">Email</label>
                 <input
                   type="email"
                   value={details.email}
                   readOnly
                   className="w-full mt-1 bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-500 cursor-not-allowed"
                 />
-              </div>
+                </div>
             </div>
-          </div>
+
         </div>
 
         <Preference details={details} setDetails={setDetails} />

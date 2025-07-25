@@ -78,6 +78,7 @@ _id: string;
   method: string;
   url: string;
   nextRunAt: string;
+  lastRunAt: string;
   disabled?: boolean;
   handleDeleteJob: (id:string) => void;
   handleChangeStatus: (id:string, status: boolean) => void;

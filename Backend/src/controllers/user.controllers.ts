@@ -210,11 +210,10 @@ export const handleGoogleCallBack = async (req: Request, res: Response, next: Ne
             maxAge: 24 * 60 * 60 * 1000
         });
 
-        res.redirect(`${process.env.CLIENT_URL}/dashboard`);
+        res.redirect(`${process.env.CLIENT_URL}/`);
 
     } catch (error) {
         console.log("Error while creating account with Google.", error);
         res.status(500).json({ message: "Error while creating account with Google." });
     }
-
 }
