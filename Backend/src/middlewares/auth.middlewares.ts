@@ -1,32 +1,32 @@
-import { Request, Response,NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { verifyToken } from "../utils/jwt.utils";
 
 declare global {
   namespace Express {
     interface Request {
-      user?: any;
+      jwtUser?: any
     }
   }
 }
 
-export function restrictUserLogin(req: Request, res: Response, next: NextFunction):void {
-    const token = req.cookies?.token;
-    
-    if(!token){
-        res.status(401).json({
-            message: "Please Login"
-        });
-        return;
-    }
+export function restrictUserLogin(req: Request, res: Response, next: NextFunction): void {
+  const token = req.cookies?.token;
 
-    try {
+  if (!token) {
+    res.status(401).json({
+      message: "Please login or create new account."
+    });
+    return;
+  }
+
+  try {
     const verifiedUser = verifyToken(token);
     if (!verifiedUser) {
       res.status(401).json({ message: "Invalid or expired token" });
       return;
     }
 
-    req.user = verifiedUser; 
+    req.jwtUser = verifiedUser;
     next();
   } catch (err) {
     console.error("Auth error:", err);

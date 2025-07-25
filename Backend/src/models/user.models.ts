@@ -14,12 +14,11 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
+        required: false,
         select: false
     },
     timezone: {
         type: String,
-        required: true,
         default: 'UTC'
     },
     mode: {
@@ -42,7 +41,7 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 userSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) return next();
+    if (!this.isModified("password") || !this.password) return next();
     this.password = await bcrypt.hash(this.password, 7);
     next();
 });

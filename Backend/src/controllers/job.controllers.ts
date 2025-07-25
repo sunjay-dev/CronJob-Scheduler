@@ -8,7 +8,7 @@ import logsModels from "../models/logs.models";
 export const handleNewCronJobs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
   const { name, url, method, headers, cron, timezone, enabled } = req.body;
-  const { userId } = req.user;
+  const { userId } = req.jwtUser;
 
   if (!name || !url || !method || !cron || !timezone || enabled === undefined) {
     res.status(400).json({ message: "Missing required fields" });
@@ -80,7 +80,7 @@ export const handleNewCronJobs = async (req: Request, res: Response, next: NextF
 }
 
 export const handleUserJobs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const { userId } = req.user;
+  const { userId } = req.jwtUser;
   try {
     const jobs = await agenda.jobs({ 'data.userId': userId });
     res.status(200).json(jobs);
@@ -92,7 +92,7 @@ export const handleUserJobs = async (req: Request, res: Response, next: NextFunc
 
 export const handleUserJobById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { jobId } = req.params;
-  const { userId } = req.user;
+  const { userId } = req.jwtUser;
 
   if (!jobId) {
     res.status(400).json({
@@ -118,7 +118,7 @@ export const handleUserJobById = async (req: Request, res: Response, next: NextF
 }
 
 export const handleJobStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const { userId } = req.user;
+  const { userId } = req.jwtUser;
   const { jobId, status } = req.body;
 
 
@@ -166,7 +166,7 @@ export const handleJobStatus = async (req: Request, res: Response, next: NextFun
 
 export const handleDeleteJob = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { jobId } = req.params;
-  const { userId } = req.user;
+  const { userId } = req.jwtUser;
 
   if (!jobId) {
     res.status(400).json({
@@ -206,7 +206,7 @@ export const handleDeleteJob = async (req: Request, res: Response, next: NextFun
 }
 
 export const handleRunJobNow = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const { userId } = req.user;
+  const { userId } = req.jwtUser;
   const { jobId } = req.body;
 
   if (!jobId) {
@@ -249,7 +249,7 @@ export const handleRunJobNow = async (req: Request, res: Response, next: NextFun
 
 export const handleJobEdit = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { jobId } = req.params;
-  const { userId } = req.user;
+  const { userId } = req.jwtUser;
 
   const {
     name,

@@ -5,3 +5,4 @@ export { default as Loader } from './Loader';
 export { default as Pagination } from './Pagination';
 export { default as Popup } from './Popup';
 export { default as Sidebar } from './Sidebar';
+export { default as GoogleAuth } from './GoogleAuth';

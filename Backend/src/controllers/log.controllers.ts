@@ -3,7 +3,7 @@ import logsModels from "../models/logs.models";
 import { ObjectId } from "mongodb";
 
 export const handleUserLogs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const { userId } = req.user;
+  const { userId } = req.jwtUser;
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 10;
   const skip = (page - 1) * limit;
@@ -28,7 +28,7 @@ export const handleUserLogs = async (req: Request, res: Response, next: NextFunc
 
 export const handleJobLogs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { jobId } = req.params
-  const { userId } = req.user;
+  const { userId } = req.jwtUser;
 
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 10;
@@ -67,7 +67,7 @@ export const handleJobLogs = async (req: Request, res: Response, next: NextFunct
 export const handleFailedLogs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
   const { jobId } = req.params;
-  const { userId } = req.user;
+  const { userId } = req.jwtUser;
 
   if (!jobId) {
     res.status(400).json({
@@ -97,7 +97,7 @@ export const handleFailedLogs = async (req: Request, res: Response, next: NextFu
 }
 
 export const handleGetLogById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const { userId } = req.user;
+  const { userId } = req.jwtUser;
   const { logId } = req.params;
 
   if (!logId) {

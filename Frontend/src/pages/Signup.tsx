@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '../hooks';
 import { setAuth } from '../slices/authSlice';
 import type { User } from "../types";
-import { Loader, Popup } from "../components";
+import { GoogleAuth, Loader, Popup } from "../components";
 
 export default function Signup() {
     const navigate = useNavigate();
@@ -63,7 +63,7 @@ export default function Signup() {
 
                 setMessage({ type: 'success', text: 'Signup successful!' });
 
-                setTimeout(() => navigate('/'), 300);
+                setTimeout(() => navigate('/jobs'), 300);
             }).catch(err => {
                 console.log(err);
                 setMessage({ type: 'error', text: err.message || 'Signup failed' });
@@ -73,7 +73,6 @@ export default function Signup() {
                 setIsLoading(false);
             });
     }
-
 
     return (
         <>
@@ -141,10 +140,8 @@ export default function Signup() {
                                     Sign up
                                 </button>
 
-                                <button type="button" className="w-full border border-gray-300 py-1.5 rounded-md flex items-center justify-center gap-2 hover:bg-gray-50 transition text-sm">
-                                    <img src="/google.webp" alt="Google" className="w-4 h-4" />
-                                    <span>Sign in with Google</span>
-                                </button>
+                                {<GoogleAuth text="Sign up with Google" />}
+                                
                                 <p className="text-center text-sm text-gray-600">
                                     Already have an account? {' '}
                                     <Link to="/login" className="text-purple-700 hover:underline">Sign in</Link>

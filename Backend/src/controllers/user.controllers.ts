@@ -23,6 +23,11 @@ export const handleUserLogin = async (req: Request, res: Response, next: NextFun
             return;
         }
 
+        if (!user.password) {
+            res.status(400).json({ message: 'Please try login using Google.' });
+            return;
+        }
+
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
@@ -103,7 +108,7 @@ export const handleUserLogout = async (req: Request, res: Response, next: NextFu
 }
 
 export const handleUserDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { userId } = req.user;
+    const { userId } = req.jwtUser;
 
     try {
         const user = await userModel.findById(userId);
@@ -116,7 +121,10 @@ export const handleUserDetails = async (req: Request, res: Response, next: NextF
 }
 
 export const handleChangeUserDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { userId } = req.user;
+
+
+    const { userId } = req.jwtUser;
+
     const { name, timezone, mode, timeFormat24, emailNotifications, pushAlerts } = req.body;
 
     const updateFields: any = {};
@@ -182,3 +190,31 @@ export const handleChangeUserDetails = async (req: Request, res: Response, next:
         res.status(500).json({ message: "Error while updating user details" });
     }
 };
+
+export const handleGoogleCallBack = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const user = req.user;
+
+    if (!user || typeof user !== 'object' || !('_id' in user) || !('email' in user)) {
+        console.error("Invalid user object from Google callback:", user);
+        res.status(400).json({ message: "Invalid user data from Google authentication" });
+        return;
+    }
+
+    try {
+        const token = signToken({ userId: user._id!, email: user.email! });
+
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+            maxAge: 24 * 60 * 60 * 1000
+        });
+
+        res.redirect(`${process.env.CLIENT_URL}/dashboard`);
+
+    } catch (error) {
+        console.log("Error while creating account with Google.", error);
+        res.status(500).json({ message: "Error while creating account with Google." });
+    }
+
+}

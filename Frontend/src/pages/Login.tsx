@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAppDispatch } from '../hooks';
 import { setAuth } from '../slices/authSlice';
-import { Loader, Popup } from "../components";
+import { Loader, Popup, GoogleAuth } from "../components";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -61,6 +61,8 @@ export default function Login() {
       });
   }
 
+  
+
   return (
     <>
       {isLoading && <Loader />}
@@ -110,10 +112,7 @@ export default function Login() {
                 <button disabled={isLoading} type="submit" className="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-2 rounded-md text-sm transition">
                   Sign in
                 </button>
-                <button type="button" className="w-full border border-gray-300 py-1.5 rounded-md flex items-center justify-center gap-2 hover:bg-gray-50 transition text-sm">
-                  <img src="/google.webp" alt="Google" className="w-4 h-4" />
-                  <span>Sign in with Google</span>
-                </button>
+                {<GoogleAuth text="Sign in with Google" />}
 
                 <p className="text-center text-sm text-gray-600">
                   Don’t have an account?{' '}
