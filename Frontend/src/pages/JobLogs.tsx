@@ -13,6 +13,7 @@ export default function JobLogs() {
     const [logs, setLogs] = useState<UserLogInterface[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
+    
     useEffect(() => {
         setIsLoading(true);
 

@@ -1,5 +1,5 @@
 import { PlusCircle, List, Clock, FileWarning } from 'lucide-react';
-import { StatCard, LogCard, Pagination } from '../components';
+import { StatCard, LogCard, Pagination, Loader } from '../components';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { setJobs } from '../slices/jobSlice';
@@ -19,6 +19,7 @@ export default function Dashboard() {
   });
   const jobs = useAppSelector(state => state.jobs.jobs);
   const dispatch = useAppDispatch();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if(!jobs.length) return ;
@@ -58,6 +59,7 @@ export default function Dashboard() {
     let intervalId: ReturnType<typeof setInterval> | undefined;
 
     const fetchLogs = () => {
+      setIsLoading(true);
       fetch(`${import.meta.env.VITE_BACKEND_URL}/api/logs?page=${page}&limit=${limit}`, {
         credentials: 'include',
       })
@@ -74,7 +76,8 @@ export default function Dashboard() {
           setLogs(data.logs);
           setTotalPages(data.totalPages)
           setPage(data.page);
-        }).catch(err => console.log(err));
+        }).catch(err => console.log(err))
+        .finally(()=> setIsLoading(false))
     }
 
     fetchLogs();
@@ -126,7 +129,8 @@ export default function Dashboard() {
           <span>Actions</span>
         </div>
 
-        {logs.length === 0 ? (
+      {isLoading? <Loader/> : 
+        logs.length === 0 ? (
           <div className="py-12 text-center text-gray-500 text-sm flex flex-col items-center">
             <FileWarning className="w-8 h-8 mb-3 text-gray-400" />
             <p>No logs found.</p>

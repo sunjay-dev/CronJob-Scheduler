@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { LogChart, LogCard, Pagination } from '../components';
+import { LogChart, LogCard, Pagination, Loader } from '../components';
 import type { UserLogInterface } from '../types'
 import { FileWarning } from 'lucide-react';
 
@@ -8,11 +8,14 @@ export default function Logs() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [logs, setLogs] = useState<UserLogInterface[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval> | undefined;
 
     const fetchLogs = () => {
+      setIsLoading(true);
+
       fetch(`${import.meta.env.VITE_BACKEND_URL}/api/logs?page=${page}&limit=${limit}`, {
         credentials: 'include',
       })
@@ -30,7 +33,8 @@ export default function Logs() {
           setPage(data.page);
           setTotalPages(data.totalPages)
           setLogs(data.logs)
-        }).catch(err => console.log(err));
+        }).catch(err => console.log(err))
+        .finally(()=> setIsLoading(false));
     }
 
     fetchLogs();
@@ -60,7 +64,8 @@ export default function Logs() {
           <span>Actions</span>
         </div>
 
-        {logs.length === 0 ? (
+        {isLoading ? <Loader /> : 
+        logs.length === 0 ? (
           <div className="py-12 text-center text-gray-500 text-sm flex flex-col items-center">
             <FileWarning className="w-8 h-8 mb-3 text-gray-400" />
             <p>No logs found.</p>

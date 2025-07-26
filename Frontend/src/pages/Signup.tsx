@@ -94,7 +94,7 @@ export default function Signup() {
                         <form onSubmit={handleFormSubmit} className="w-full max-w-sm">
                             <fieldset className="space-y-4">
                                 <div className="space-y-1">
-                                    <h1 className="text-3xl font-bold">Sign up</h1>
+                                    <h1 className="text-3xl font-bold">SIGN UP</h1>
                                     <p className="text-sm text-gray-500">Please enter your details</p>
                                 </div>
 
