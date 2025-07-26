@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAppDispatch } from '../hooks';
 import { setAuth } from '../slices/authSlice';
-import { Loader, Popup, GoogleAuth } from "../components";
+import { Loader, Popup, GoogleAuth, PasswordInput } from "../components";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -84,22 +84,14 @@ export default function Login() {
                   <input
                     type="email"
                     name="email"
+                    required
                     onChange={e => setDetails(pre => ({ ...pre, email: e.target.value }))}
                     value={details.email}
                     className="border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
                   />
                 </div>
 
-                <div className="flex flex-col space-y-1">
-                  <label htmlFor="password" className="text-sm font-medium">Password</label>
-                  <input
-                    type="password"
-                    name="password"
-                    onChange={e => setDetails(pre => ({ ...pre, password: e.target.value }))}
-                    value={details.password}
-                    className="border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
-                  />
-                </div>
+                {<PasswordInput details={details} setDetails={setDetails} />}
 
                 <div className="flex items-center justify-between text-sm">
                   <label className="flex items-center gap-2">

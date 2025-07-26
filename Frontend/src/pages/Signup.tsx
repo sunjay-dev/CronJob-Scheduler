@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '../hooks';
 import { setAuth } from '../slices/authSlice';
 import type { User } from "../types";
-import { GoogleAuth, Loader, Popup } from "../components";
+import { GoogleAuth, Loader, Popup, PasswordInput } from "../components";
 
 export default function Signup() {
     const navigate = useNavigate();
@@ -125,16 +125,7 @@ export default function Signup() {
                                     />
                                 </div>
 
-                                <div className="flex flex-col space-y-1">
-                                    <label htmlFor="password" className="text-sm font-medium">Password</label>
-                                    <input required
-                                        type="password"
-                                        name="password"
-                                        onChange={e => setDetails(pre => ({ ...pre, password: e.target.value }))}
-                                        value={details.password}
-                                        className="border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
-                                    />
-                                </div>
+                                {<PasswordInput details={details} setDetails={setDetails} />}
 
                                 <button disabled={isLoading} type="submit" className="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-2 rounded-md text-sm transition">
                                     Sign up
