@@ -104,7 +104,7 @@ export default function Signup() {
                                 <div className="flex flex-col space-y-1">
                                     <label htmlFor="name" className="text-sm font-medium">Name</label>
                                     <input required
-                                        type="name"
+                                        type="text"
                                         name="name"
                                         aria-label="name"
                                         autoComplete="name"
@@ -132,7 +132,7 @@ export default function Signup() {
                                 </button>
 
                                 {<GoogleAuth text="Sign up with Google" />}
-                                
+
                                 <p className="text-center text-sm text-gray-600">
                                     Already have an account? {' '}
                                     <Link to="/login" className="text-purple-700 hover:underline">Sign in</Link>

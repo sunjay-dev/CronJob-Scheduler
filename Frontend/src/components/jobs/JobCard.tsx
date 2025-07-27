@@ -22,16 +22,18 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, lastRunA
 
   return (
     <div className="bg-white cursor-pointer border border-gray-300 rounded-lg p-4 transition grid grid-cols-1 md:grid-cols-[2.5fr_1.5fr_1.5fr_1fr_1fr_1fr_40px] items-center text-sm gap-4 relative">
-      <div>
-        <h2 className="font-semibold text-gray-800">{jobName}</h2>
-        <p className="text-gray-500 lowercase">
+      
+      <div className="overflow-hidden">
+        <h2 className="font-semibold text-gray-800 truncate">{jobName}</h2>
+        <p title={url} className="text-gray-500 lowercase truncate max-w-[250px] whitespace-nowrap overflow-hidden text-ellipsis">
           <span className="uppercase">{method}</span> • {url}
         </p>
       </div>
 
-      <div title={new Date(lastRunAt).toLocaleString()} className="text-gray-700 truncate">
+      {lastRunAt ? (<div title={new Date(lastRunAt).toLocaleString()} className="text-gray-700 truncate">
         {new Date(lastRunAt).toLocaleString()}
-      </div>
+      </div>) : <span className='text-center'>-</span>}
+
 
       {disabled ? (
         <span className="flex items-center justify-center gap-1 text-gray-400 italic">

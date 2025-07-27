@@ -21,7 +21,7 @@ export const handleNewCronJobs = async (req: Request, res: Response, next: NextF
   }
 
   if (!validator.isURL(url, { protocols: ['http', 'https'], require_protocol: true })) {
-    res.status(400).json({ message: "Invalid url" });
+    res.status(400).json({ message: "Please enter a valid url" });
     return;
   }
 

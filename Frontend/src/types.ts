@@ -3,7 +3,7 @@ export interface JobDetails {
   url: string,
   method: string,
   cron: string,
-  headers: string,
+  headers: {key: string, value: string}[],
   body: string,
   enabled: boolean,
   timezone?: string

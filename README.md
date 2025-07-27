@@ -9,7 +9,7 @@ A simple yet powerful cron job scheduler to automate recurring API requests (GET
 ## 🚀 Features
 
 - 🕒 Schedule recurring jobs using cron expressions
-- 📡 Supports GET & POST requests with custom headers/body
+- 📡 Supports GET, POST and many other requests options with custom headers/body
 - 🧠 Built on **Agenda.js** for robust background processing
 - 📊 View job execution logs and status (success/failure)
 - ✨ Toggle jobs on/off without deleting them
@@ -23,10 +23,15 @@ A simple yet powerful cron job scheduler to automate recurring API requests (GET
 ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white) 
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white) 
 ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB) 
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4.svg?style=for-the-badge&logo=tailwindcss&logoColor=white)
 ![Chart.js](https://img.shields.io/badge/chart.js-F5788D.svg?style=for-the-badge&logo=chart.js&logoColor=white) 
+![Lucide-React](https://img.shields.io/badge/Lucide--React-000000.svg?style=for-the-badge&logo=lucide&logoColor=white)
 ![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB)
 ![Redux](https://img.shields.io/badge/redux-%23593d88.svg?style=for-the-badge&logo=redux&logoColor=white)
-[![Agenda.js](https://img.shields.io/badge/Agenda.js-%23ef4444.svg?style=for-the-badge&logo=clock&logoColor=white)](https://github.com/agenda/agenda)
+![Agenda.js](https://img.shields.io/badge/Agenda.js-%23ef4444.svg?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![PNPM](https://img.shields.io/badge/pnpm-%234a4a4a.svg?style=for-the-badge&logo=pnpm&logoColor=f69220)
+![Passport.js](https://img.shields.io/badge/Passport.js-000000.svg?style=for-the-badge&logo=passport&logoColor=00ff99)
+
 ---
 
 ## 📦 Installation
@@ -90,6 +95,7 @@ CronJob-Scheduler/
 * <del> Job toggle (enable/disable)</del>
 * <del> Execution logs viewer</del>
 * <del> User account settings <del>
+* <del> Google login configed <del>
 * [ ] Email notifications on failure
 * [ ] Support for PUT/DELETE requests
 * [ ] Retry on failure + backoff strategy
