@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Clock, Settings } from 'lucide-react';
-import { Common, Advanced, ConfirmMenu, Loader } from '../components';
+import { Common, Advanced, ConfirmMenu, Loader, Popup } from '../components';
 import { useParams, useNavigate } from 'react-router-dom';
-import type { JobDetails } from '../types'
+import type { JobDetails, JobResponse } from '../types'
 import { useAppDispatch } from '../hooks';
 import { updateJob } from '../slices/jobSlice';
 
@@ -10,14 +10,15 @@ export default function EditJob() {
     const { jobId } = useParams();
     const navigate = useNavigate();
     const [tab, setTab] = useState<'common' | 'advanced'>('common');
-    const [confirmEdit, setConfirmEdit] = useState(false)
+    const [confirmEdit, setConfirmEdit] = useState(false);
+    const [response, setResponse] = useState<JobResponse | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [jobDetails, setJobDetails] = useState<JobDetails>({
         name: '',
         url: 'https://',
         method: 'GET',
         cron: '*/5 * * * *',
-        headers: '',
+        headers: [],
         body: '',
         enabled: true,
         timezone: 'UTC'
@@ -46,15 +47,16 @@ export default function EditJob() {
                 setJobDetails({
                     name: job.data.name,
                     method: job.data.method,
-                    headers: Array.isArray(job.data?.headers)
-                        ? job.data.headers.map(([key, value]: string) => `${key}: ${value}`).join('\n')
-                        : "",
                     url: job.data.url,
                     enabled: !job.disabled,
                     timezone: job.repeatTimezone,
                     cron: job.repeatInterval,
-                    body: ''
+                    body: '',
+                    headers: job.data?.headers && typeof job.data.headers === 'object'
+                        ? Object.entries(job.data.headers).map(([key, value]) => ({ key, value: String(value) }))
+                        : []
                 })
+
             }).catch(err => {
                 console.log(err);
                 navigate('/jobs')
@@ -90,12 +92,15 @@ export default function EditJob() {
             return data;
         })
             .then(data => {
+                setResponse({ type: "success", message: data.message });
                 dispatch(updateJob(data.job));
                 navigate('/jobs');
-            }).catch(err => console.log(err))
-            .finally(() => {
+            }).catch(err => {
+                setResponse({ type: "error", message: err.message });
+            }).finally(() => {
+                setTimeout(() => setResponse(null), 8000);
                 setIsLoading(false);
-            });
+            })
     };
 
     return (
@@ -133,10 +138,10 @@ export default function EditJob() {
                 </button>
             </div>
 
-            <form onSubmit={e => {
-                e.preventDefault();
-                setConfirmEdit(true);
-            }} className="bg-white p-6 rounded-xl shadow mb-4">
+            <form onSubmit={e => { e.preventDefault(); setConfirmEdit(true); }} className="bg-white p-6 rounded-xl shadow mb-4">
+                {response && (<div className='w-full'>
+                    <Popup type={response.type} message={response.message} />
+                </div>)}
                 <fieldset disabled={isLoading} className='space-y-5'>
                     {tab === 'common' ? (
                         <Common jobDetails={jobDetails} setJobDetails={setJobDetails} />

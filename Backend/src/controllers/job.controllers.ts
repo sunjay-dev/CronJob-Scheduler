@@ -10,55 +10,18 @@ export const handleNewCronJobs = async (req: Request, res: Response, next: NextF
   const { name, url, method, headers, cron, timezone, enabled } = req.body;
   const { userId } = req.jwtUser;
 
-  if (!name || !url || !method || !cron || !timezone || enabled === undefined) {
-    res.status(400).json({ message: "Missing required fields" });
-    return;
-  }
+  const headersObj = Array.isArray(headers) ? headers.reduce((acc, { key, value }) => {
+      if (key && value) acc[key] = value;
+      return acc;
+    }, {})
+  : {};
 
-  if (typeof url !== 'string') {
-    res.status(400).json({ message: "url must be a string" });
-    return
-  }
-
-  if (!validator.isURL(url, { protocols: ['http', 'https'], require_protocol: true })) {
-    res.status(400).json({ message: "Please enter a valid url" });
-    return;
-  }
-
-  if (typeof cron !== 'string') {
-    res.status(400).json({ message: "url must be a string" });
-    return
-  }
-
-  if (!isValidCron(cron, { seconds: true })) {
-    res.status(400).json({ message: "Invalid cron expression" });
-    return;
-  }
-
-  if (typeof method !== 'string') {
-    res.status(400).json({ message: "Method must be a string" });
-    return
-  }
-
-  if (!['GET', 'POST', 'PUT', 'DELETE'].includes(method.toUpperCase())) {
-    res.status(400).json({ message: "Invalid method type" });
-    return;
-  }
-
-  if (typeof timezone !== 'string') {
-    res.status(400).json({ message: "timezone must be a string" });
-    return
-  }
-  if (typeof enabled !== 'boolean') {
-    res.status(400).json({ message: "enabled must be a boolean" });
-    return
-  }
   try {
     const job = agenda.create("http-request", {
       name,
       url,
       method,
-      headers: headers || {},
+      headers: headersObj,
       userId,
     });
 
@@ -251,28 +214,13 @@ export const handleJobEdit = async (req: Request, res: Response, next: NextFunct
   const { jobId } = req.params;
   const { userId } = req.jwtUser;
 
-  const {
-    name,
-    url,
-    method,
-    headers,
-    body,
-    cron,
-    timezone,
-    enabled
-  } = req.body;
+  const {name, url, method, headers, body, cron, timezone, enabled } = req.body;
 
-  if (!jobId || !name || !url || !method || !cron) {
-    res.status(400).json({ message: "Missing required fields" });
-    return;
-  }
-
-  if (!ObjectId.isValid(jobId)) {
-    res.status(400).json({
-      message: "Invalid jobId"
-    });
-    return;
-  }
+  const headersObj = Array.isArray(headers) ? headers.reduce((acc, { key, value }) => {
+      if (key && value) acc[key] = value;
+      return acc;
+    }, {})
+  : {};
 
   try {
     const jobs = await agenda.jobs({ 'data.userId': userId, _id: new ObjectId(jobId) });
@@ -291,7 +239,7 @@ export const handleJobEdit = async (req: Request, res: Response, next: NextFunct
       name,
       url,
       method,
-      headers: headers || {},
+      headers: headersObj,
       body,
     };
 

@@ -18,7 +18,7 @@ export default function CreateJob() {
     url: 'https://',
     method: 'GET',
     cron: '*/5 * * * *',
-    headers: '',
+    headers: [],
     body: '',
     enabled: true,
     timezone: user?.timezone || 'UTC'
