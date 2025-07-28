@@ -54,7 +54,6 @@ agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJob
     });
 
   } catch (err: any) {
-    console.log(err)
     const statusCode = err?.response?.statusCode || 0;
     const timings = err?.response?.timings?.phases || {};
 

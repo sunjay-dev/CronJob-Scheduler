@@ -51,7 +51,7 @@ export default function Login() {
         setTimeout(() => navigate('/'), 300);
       }).catch(err => {
         setMessage({ type: 'error', text: err.message || 'Login failed' });
-        console.log(err);
+        console.error(err);
       })
       .finally(() => {
         setDetails(pre => ({ ...pre, password: '' }));

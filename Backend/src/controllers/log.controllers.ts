@@ -91,7 +91,7 @@ export const handleFailedLogs = async (req: Request, res: Response, next: NextFu
     });
     res.status(200).json(logs);
   } catch (error) {
-    console.log("Error while fetching failed logs", error);
+    console.error("Error while fetching failed logs", error);
     res.status(500).json({ message: "Error while fetching failed logs" });
   }
 }

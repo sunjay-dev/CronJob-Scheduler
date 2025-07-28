@@ -31,7 +31,7 @@ export default function Logs() {
           setPage(data.page);
           setTotalPages(data.totalPages)
           setLogs(data.logs)
-        }).catch(err => console.log(err))
+        }).catch(err => console.error(err))
         .finally(()=> setIsLoading(false));
     }
 

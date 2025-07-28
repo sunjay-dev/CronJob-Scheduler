@@ -62,7 +62,7 @@ export default function Signup() {
 
                 setTimeout(() => navigate('/jobs'), 300);
             }).catch(err => {
-                console.log(err);
+                console.error(err);
                 setMessage({ type: 'error', text: err.message || 'Signup failed' });
             })
             .finally(() => {

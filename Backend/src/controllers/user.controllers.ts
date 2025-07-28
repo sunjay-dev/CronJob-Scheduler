@@ -54,7 +54,7 @@ export const handleUserLogin = async (req: Request, res: Response, next: NextFun
         });
 
     } catch (error) {
-        console.log("Error while user Login", error);
+        console.error("Error while user Login", error);
         res.status(500).json({ message: "Error while user Login." });
     }
 }
@@ -96,7 +96,7 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
             token
         });
     } catch (error) {
-        console.log("Error while user register", error);
+        console.error("Error while user register", error);
         res.status(500).json({ message: "Error while user register." });
     }
 }
@@ -115,7 +115,7 @@ export const handleUserDetails = async (req: Request, res: Response, next: NextF
         res.status(200).json(user);
 
     } catch (error) {
-        console.log("Error while fetching user details.", error);
+        console.error("Error while fetching user details.", error);
         res.status(500).json({ message: "Error while fetching user details" });
     }
 }
@@ -186,7 +186,7 @@ export const handleChangeUserDetails = async (req: Request, res: Response, next:
 
         res.status(200).json({ message: "User updated successfully", user });
     } catch (error) {
-        console.log("Error while updating user details.", error);
+        console.error("Error while updating user details.", error);
         res.status(500).json({ message: "Error while updating user details" });
     }
 };
@@ -213,7 +213,7 @@ export const handleGoogleCallBack = async (req: Request, res: Response, next: Ne
         res.redirect(`${process.env.CLIENT_URL}/`);
 
     } catch (error) {
-        console.log("Error while creating account with Google.", error);
+        console.error("Error while creating account with Google.", error);
         res.status(500).json({ message: "Error while creating account with Google." });
     }
 }

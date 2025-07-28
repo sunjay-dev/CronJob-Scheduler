@@ -4,6 +4,7 @@ import { logout, setAuth } from '../../slices/authSlice';
 import { useAppDispatch } from '../../hooks';
 import type { User } from '../../types';
 import { Loader } from '../common';
+import { clearJobs } from '../../slices/jobSlice';
 
 export default function Layout() {
 
@@ -19,6 +20,7 @@ export default function Layout() {
 
         if (res.status === 401) {
           dispatch(logout());
+          dispatch(clearJobs());
           setAuthorized(false);
           return null;
         }
@@ -48,6 +50,7 @@ export default function Layout() {
       .catch(err => {
         console.error(err.message);
         dispatch(logout());
+        dispatch(clearJobs());
         setAuthorized(false);
       }).finally(() => setIsLoading(false));
 

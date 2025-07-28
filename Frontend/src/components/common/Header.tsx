@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks';
 import { logout } from '../../slices/authSlice';
 import ConfirmMenu from './ConfirmMenu';
 import { useState } from 'react';
+import { clearJobs } from '../../slices/jobSlice';
 
 interface Props {
   sidebarOpen: boolean;
@@ -30,9 +31,10 @@ export default function Header({ sidebarOpen, setSidebarOpen }: Props) {
         return data;
       })
       .then(() => {
-        dispatch(logout())
+        dispatch(logout());
+        dispatch(clearJobs());
         navigate('/login');
-      }).catch(err => console.log(err))
+      }).catch(err => console.error(err))
 
   }
   return (

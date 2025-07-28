@@ -10,11 +10,18 @@ declare global {
 }
 
 export function restrictUserLogin(req: Request, res: Response, next: NextFunction): void {
-  const token = req.cookies?.token;
+  let token = req.cookies?.token;
+
+  if (!token && typeof req.headers.authorization === "string") {
+    const authHeader = req.headers.authorization;
+    if (authHeader.startsWith("Bearer ")) {
+      token = authHeader.split(" ")[1];
+    }
+  }
 
   if (!token) {
     res.status(401).json({
-      message: "Please login or create new account."
+      message: "Please login again or create new account."
     });
     return;
   }

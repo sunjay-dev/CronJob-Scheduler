@@ -67,7 +67,7 @@ export default function SettingsPage() {
           }
         }))
       })
-      .catch(err => console.log(err))
+      .catch(err => console.error(err))
   }
 
   if (!user) return <div>Loading user info...</div>;

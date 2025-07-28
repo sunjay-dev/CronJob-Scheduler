@@ -58,7 +58,7 @@ export default function EditJob() {
                 })
 
             }).catch(err => {
-                console.log(err);
+                console.error(err);
                 navigate('/jobs')
             })
             .finally(() => {

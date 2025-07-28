@@ -51,7 +51,7 @@ export default function Dashboard() {
       .then((data: JobInterface[]) => {
 
         dispatch(setJobs(data));
-      }).catch(err => console.log(err));
+      }).catch(err => console.error(err));
   }, [dispatch, jobs.length])
 
   useEffect(() => {
@@ -75,7 +75,7 @@ export default function Dashboard() {
           setLogs(data.logs);
           setTotalPages(data.totalPages)
           setPage(data.page);
-        }).catch(err => console.log(err))
+        }).catch(err => console.error(err))
         .finally(()=> setIsLoading(false))
     }
 

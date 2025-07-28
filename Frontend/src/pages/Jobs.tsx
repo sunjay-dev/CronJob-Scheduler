@@ -30,7 +30,7 @@ export default function Jobs() {
       })
       .then(data => {
         dispatch(setJobs(data))
-      }).catch(err => console.log(err))
+      }).catch(err => console.error(err))
       .finally(() => setIsLoading(false));
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -56,7 +56,7 @@ export default function Jobs() {
         
         dispatch(updateJobStatus({ jobId: id, disabled: !status }))
 
-      }).catch(err => console.log(err))
+      }).catch(err => console.error(err))
       .finally(() => setIsLoading(false));
   }
 
@@ -76,7 +76,7 @@ export default function Jobs() {
       .then(() => {
         dispatch(removeJob(id));
 
-      }).catch(err => console.log(err))
+      }).catch(err => console.error(err))
       .finally(() => setIsLoading(false));
   }
 

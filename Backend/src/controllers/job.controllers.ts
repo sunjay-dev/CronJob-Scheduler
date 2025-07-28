@@ -186,7 +186,7 @@ export const handleDeleteJob = async (req: Request, res: Response, next: NextFun
     });
 
   } catch (error) {
-    console.log("Error while deleting job", error);
+    console.error("Error while deleting job", error);
     res.status(500).json({ message: "Error while deleting job" });
   }
 }
@@ -228,7 +228,7 @@ export const handleRunJobNow = async (req: Request, res: Response, next: NextFun
     res.status(200).json({ message: "Job executed immediately" });
 
   } catch (error) {
-    console.log("Error while running job now", error);
+    console.error("Error while running job now", error);
     res.status(500).json({ message: "Error while running job now" });
   }
 }

@@ -56,7 +56,6 @@ export default function Advanced({ jobDetails, setJobDetails }: Props) {
 
       <Headers jobDetails={jobDetails} setJobDetails={setJobDetails} />
 
-
       <div className="border border-gray-200 rounded-lg px-4 py-6 space-y-6">
         <div className="flex flex-col space-y-2">
           <label className="font-medium text-gray-700">Timezone</label>
