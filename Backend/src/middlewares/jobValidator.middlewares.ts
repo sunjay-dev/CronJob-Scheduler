@@ -4,7 +4,7 @@ import { Request,Response,NextFunction } from 'express';
 
 export function jobValidatorMiddleware(req:Request, res:Response, next:NextFunction): void {
 
-  const { name, url, method, headers, cron, timezone, enabled } = req.body;
+  const { name, url, method, headers, cron, body ,timezone, enabled } = req.body;
 
   if (!name || !url || !method || !cron || !timezone || enabled === undefined) {
     res.status(400).json({ message: "Missing required fields" });
@@ -46,6 +46,13 @@ export function jobValidatorMiddleware(req:Request, res:Response, next:NextFunct
       res.status(400).json({ message: "Each header key and value must be a string" });
       return;
     }
+  }
+
+  if (typeof body !== 'string') {
+    res.status(400).json({
+      message: `Body must be provided as string.`,
+    });
+    return;
   }
 
   next();

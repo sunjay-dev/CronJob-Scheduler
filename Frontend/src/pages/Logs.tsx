@@ -21,7 +21,6 @@ export default function Logs() {
       })
         .then(async (res) => {
           const data = await res.json();
-          console.log(data);
 
           if (!res.ok)
             throw new Error(data.message || "Something went wrong");
@@ -29,7 +28,6 @@ export default function Logs() {
           return data;
         })
         .then(data => {
-          console.log(data);
           setPage(data.page);
           setTotalPages(data.totalPages)
           setLogs(data.logs)

@@ -1,29 +1,52 @@
 import { Request, Response, NextFunction } from "express";
 import agenda from "../agenda/agenda";
-import { isValidCron } from 'cron-validator';
 import { ObjectId } from 'mongodb';
-import validator from "validator";
 import logsModels from "../models/logs.models";
 
 export const handleNewCronJobs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
-  const { name, url, method, headers, cron, timezone, enabled } = req.body;
+  const { name, url, method, headers, body, cron, timezone, enabled } = req.body;
   const { userId } = req.jwtUser;
 
   const headersObj = Array.isArray(headers) ? headers.reduce((acc, { key, value }) => {
-      if (key && value) acc[key] = value;
-      return acc;
-    }, {})
-  : {};
+    if (key && value) acc[key] = value;
+    return acc;
+  }, {})
+    : {};
+
+  let payload = { name, url, method, headers: headersObj, userId } as any;
+
+  if (body && body.trim() !== "") {
+    const allowedMethods = ['POST', 'PUT', 'PATCH'];
+
+    if (!allowedMethods.includes(method.toUpperCase())) {
+      res.status(400).json({
+        message: `Method ${method} should not include a body.`,
+      });
+      return;
+    }
+
+    if (body.length > 10000) {
+      res.status(413).json({ message: 'Body too large.' });
+      return;
+    }
+
+    const contentType = headersObj['Content-Type'] || headersObj['content-type'];
+
+    if (contentType === 'application/json') {
+      try {
+        JSON.parse(body);
+      } catch (error) {
+        res.status(400).json({ message: 'Invalid JSON in body.' });
+        return;
+      }
+    }
+  }
+
+  payload.body = body.trim();
 
   try {
-    const job = agenda.create("http-request", {
-      name,
-      url,
-      method,
-      headers: headersObj,
-      userId,
-    });
+    const job = agenda.create("http-request", payload);
 
     job.repeatEvery(cron, {
       timezone,
@@ -214,13 +237,44 @@ export const handleJobEdit = async (req: Request, res: Response, next: NextFunct
   const { jobId } = req.params;
   const { userId } = req.jwtUser;
 
-  const {name, url, method, headers, body, cron, timezone, enabled } = req.body;
+  const { name, url, method, headers, body, cron, timezone, enabled } = req.body;
 
   const headersObj = Array.isArray(headers) ? headers.reduce((acc, { key, value }) => {
-      if (key && value) acc[key] = value;
-      return acc;
-    }, {})
-  : {};
+    if (key && value) acc[key] = value;
+    return acc;
+  }, {})
+    : {};
+
+  let payload = { name, url, method, headers: headersObj, userId } as any;
+
+  if (body && body.trim() !== "") {
+    const allowedMethods = ['POST', 'PUT', 'PATCH'];
+
+    if (!allowedMethods.includes(method.toUpperCase())) {
+      res.status(400).json({
+        message: `Method ${method} should not include a body.`,
+      });
+      return;
+    }
+
+    if (body.length > 10000) {
+      res.status(413).json({ message: 'Body too large.' });
+      return;
+    }
+
+    const contentType = headersObj['Content-Type'] || headersObj['content-type'];
+
+    if (contentType === 'application/json') {
+      try {
+        JSON.parse(body);
+      } catch (error) {
+        res.status(400).json({ message: 'Invalid JSON in body.' });
+        return;
+      }
+    }
+  }
+
+  payload.body = body.trim();
 
   try {
     const jobs = await agenda.jobs({ 'data.userId': userId, _id: new ObjectId(jobId) });
@@ -234,15 +288,7 @@ export const handleJobEdit = async (req: Request, res: Response, next: NextFunct
 
     const job = jobs[0];
 
-    job.attrs.data = {
-      ...job.attrs.data,
-      name,
-      url,
-      method,
-      headers: headersObj,
-      body,
-    };
-
+    job.attrs.data = payload;
     job.attrs.repeatInterval = cron;
     job.attrs.repeatTimezone = timezone;
 

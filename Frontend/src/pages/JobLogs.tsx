@@ -21,14 +21,12 @@ export default function JobLogs() {
             credentials: "include"
         }).then(async (res) => {
             const data = await res.json();
-            console.log(data);
 
             if (!res.ok)
                 throw new Error(data.message || "Something went wrong");
 
             return data;
         }).then(data => {
-            console.log(data);
 
             setJobName(data?.logs[0]?.name)
             setLogs(data.logs);

@@ -10,27 +10,30 @@ interface HttpRequestJobData {
   headers?: Record<string, string>;
   userId: string;
   jobId?: string;
+  body: string;
 }
 
 agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJobData>) => {
   const { _id, data } = job.attrs;
-  const { name, url, method, headers, userId } = data;
+  const { name, url, method, headers, userId, body } = data;
 
   const jobId = data.jobId || _id.toString();
 
   try {
     const response = await got(url, {
       method,
-      headers,
+      headers: {
+        'user-agent': 'CronJon/1.0 (+https://www.cronjon.site)',
+        ...headers,
+      },
+      body: body || undefined,
       throwHttpErrors: false,
       responseType: 'buffer',
       resolveBodyOnly: false,
       decompress: false,
       retry: 0
     });
-
     const { dns, tcp, tls, request, firstByte, download, total } = response?.timings?.phases;
-
     await logsModel.create({
       name,
       jobId,
@@ -51,7 +54,7 @@ agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJob
     });
 
   } catch (err: any) {
-    
+    console.log(err)
     const statusCode = err?.response?.statusCode || 0;
     const timings = err?.response?.timings?.phases || {};
 

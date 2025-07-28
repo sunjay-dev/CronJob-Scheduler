@@ -43,7 +43,6 @@ export default function EditJob() {
                 if (!Array.isArray(res) || res.length === 0) return;
                 const job = res[0];
 
-                console.log(job);
                 setJobDetails({
                     name: job.data.name,
                     method: job.data.method,
@@ -51,7 +50,8 @@ export default function EditJob() {
                     enabled: !job.disabled,
                     timezone: job.repeatTimezone,
                     cron: job.repeatInterval,
-                    body: '',
+                    body: job.data.body,
+
                     headers: job.data?.headers && typeof job.data.headers === 'object'
                         ? Object.entries(job.data.headers).map(([key, value]) => ({ key, value: String(value) }))
                         : []
@@ -84,7 +84,6 @@ export default function EditJob() {
             body: JSON.stringify(jobDetails),
         }).then(async (res) => {
             const data = await res.json();
-            console.log(data);
 
             if (!res.ok)
                 throw new Error(data.message || "Something went wrong");

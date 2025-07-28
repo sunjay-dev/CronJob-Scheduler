@@ -49,7 +49,6 @@ export default function Dashboard() {
         return data;
       })
       .then((data: JobInterface[]) => {
-        console.log(data);
 
         dispatch(setJobs(data));
       }).catch(err => console.log(err));

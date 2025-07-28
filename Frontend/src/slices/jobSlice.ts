@@ -25,7 +25,6 @@ const jobSlice = createSlice({
     },
     updateJob(state, action: PayloadAction<JobInterface>){
       const index = state.jobs.findIndex(job => job._id === action.payload._id);
-      console.log(index)
       if(index !== -1){
         state.jobs[index] = action.payload;
       }

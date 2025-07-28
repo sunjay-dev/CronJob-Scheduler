@@ -1,4 +1,4 @@
-import { Ban, Timer } from 'lucide-react';
+import { Ban, PlusCircle } from 'lucide-react';
 import { JobCard, Loader } from '../components';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -12,9 +12,9 @@ export default function Jobs() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if(jobs.length !== 0)
+    if (jobs.length !== 0)
       return;
-    
+
     setIsLoading(true)
 
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/jobs`, {
@@ -22,7 +22,6 @@ export default function Jobs() {
     })
       .then(async (res) => {
         const data = await res.json();
-        console.log(data);
 
         if (!res.ok)
           throw new Error(data.message || "Something went wrong");
@@ -30,15 +29,15 @@ export default function Jobs() {
         return data;
       })
       .then(data => {
-        console.log(data);
         dispatch(setJobs(data))
       }).catch(err => console.log(err))
-      .finally(()=> setIsLoading(false));
+      .finally(() => setIsLoading(false));
 
-  }, [dispatch, jobs])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
 
-  const handleChangeStatus = (id:string, status: boolean) => {
+  const handleChangeStatus = (id: string, status: boolean) => {
     setIsLoading(true);
     fetch(`${backendUrl}/api/jobs/status`, {
       method: "PUT",
@@ -47,20 +46,18 @@ export default function Jobs() {
       body: JSON.stringify({ jobId: id, status })
     }).then(async (res) => {
       const data = await res.json();
-      console.log(data);
 
       if (!res.ok)
         throw new Error(data.message || "Something went wrong");
 
       return data;
     })
-      .then(data => {
-        console.log(data);
-
-        dispatch(updateJobStatus({jobId: id, disabled: !status}))
+      .then(() => {
+        
+        dispatch(updateJobStatus({ jobId: id, disabled: !status }))
 
       }).catch(err => console.log(err))
-      .finally(()=> setIsLoading(false));
+      .finally(() => setIsLoading(false));
   }
 
   const handleDeleteJob = (id: string) => {
@@ -70,32 +67,30 @@ export default function Jobs() {
       credentials: "include"
     }).then(async (res) => {
       const data = await res.json();
-      console.log(data);
 
       if (!res.ok)
         throw new Error(data.message || "Something went wrong");
 
       return data;
     })
-      .then(data => {
-        console.log(data);
+      .then(() => {
         dispatch(removeJob(id));
 
       }).catch(err => console.log(err))
-      .finally(()=> setIsLoading(false));
+      .finally(() => setIsLoading(false));
   }
 
   return (
     <>
-    {isLoading && <Loader />}
+      {isLoading && <Loader />}
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-3xl font-normal text-purple-500">Cron jobs</h1>
-        <Link to="/create" className="py-2 px-4 bg-purple-500 text-white flex items-center gap-1 rounded-sm active:scale-[0.98]">
-          <Timer className='w-5 h-5' />
+        <Link to="/create" className="py-2 px-4 bg-purple-500 text-white flex items-center gap-1.5 rounded-sm active:scale-[0.98]">
+          <PlusCircle className='w-5 h-5' />
           Create Job
         </Link>
       </div>
-          
+
       <div className="p-6 bg-white rounded-xl shadow mb-4">
         <div className="hidden md:grid md:grid-cols-[2.5fr_1.5fr_1.5fr_1fr_1fr_1fr_40px] gap-4 text-sm text-gray-600 font-medium px-4 mb-4">
           <span>Title, URL</span>

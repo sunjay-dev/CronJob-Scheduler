@@ -46,7 +46,6 @@ export default function SettingsPage() {
       body: JSON.stringify(details)
     }).then(async (res) => {
       const data = await res.json();
-      console.log(data);
 
       if (!res.ok)
         throw new Error(data.message || "Something went wrong");
@@ -56,8 +55,6 @@ export default function SettingsPage() {
       .then(data => {
         const userDetails: User = data.user;
         setDetails(userDetails);
-        console.log(userDetails);
-        console.log(details);
         dispatch(setAuth({
           user: {
             name: userDetails.name,

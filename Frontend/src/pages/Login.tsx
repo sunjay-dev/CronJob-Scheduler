@@ -28,16 +28,14 @@ export default function Login() {
     })
       .then(async (res) => {
         const data = await res.json();
-        console.log(data);
-
+       
         if (!res.ok)
           throw new Error(data.message || "Something went wrong");
 
         return data;
       })
       .then(data => {
-        console.log(data);
-
+        
         dispatch(setAuth({
           user: {
             name: data.user.name,
