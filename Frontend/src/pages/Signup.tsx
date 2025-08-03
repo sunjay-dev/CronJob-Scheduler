@@ -40,7 +40,7 @@ export default function Signup() {
                 const data = await res.json();
 
                 if (!res.ok)
-                    throw new Error(data.message || "Something went wrong");
+                    throw new Error(data.message || "Something went wrong, Please try again later.");
 
                 return data;
             })

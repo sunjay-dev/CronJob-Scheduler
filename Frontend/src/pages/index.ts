@@ -7,4 +7,5 @@ import Logs from './Logs';
 import Settings  from './Settings';
 import JobLogs from './JobLogs';
 import EditJob from './EditJob';
-export {Login, Signup, Dashboard, CreateJob, Jobs, EditJob,Logs, JobLogs,Settings}
+import NotFoundPage from './NotFoundPage';
+export {Login, Signup, Dashboard, CreateJob, Jobs, EditJob,Logs, NotFoundPage,JobLogs,Settings}

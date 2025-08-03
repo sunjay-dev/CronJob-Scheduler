@@ -95,7 +95,7 @@ CronJob-Scheduler/
 * <del> Job toggle (enable/disable)</del>
 * <del> Execution logs viewer</del>
 * <del> User account settings <del>
-* <del> Google login configed <del>
+* <del> Google login config <del>
 * [ ] Email notifications on failure
 * [ ] Support for PUT/DELETE requests
 * [ ] Retry on failure + backoff strategy

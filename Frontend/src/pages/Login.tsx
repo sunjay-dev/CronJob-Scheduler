@@ -30,7 +30,7 @@ export default function Login() {
         const data = await res.json();
        
         if (!res.ok)
-          throw new Error(data.message || "Something went wrong");
+          throw new Error(data.message || "Something went wrong, Please try again later.");
 
         return data;
       })
@@ -72,7 +72,7 @@ export default function Login() {
             <form onSubmit={handleFormSubmit} className="w-full max-w-sm">
               <fieldset disabled={isLoading} className="space-y-4" >
                 <div className="space-y-1">
-                  <h1 className="text-3xl font-bold">Welcome back</h1>
+                  <h1 className="text-3xl font-bold">Welcome Back</h1>
                   <p className="text-sm text-gray-500">Please enter your details</p>
                 </div>
                 {message && <Popup type={message.type} message={message.text} />}

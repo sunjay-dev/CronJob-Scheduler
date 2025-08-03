@@ -1,5 +1,5 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import { Login, Signup, Dashboard, CreateJob, Jobs, EditJob, Logs, JobLogs, Settings } from './pages';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Login, Signup, Dashboard, CreateJob, Jobs, EditJob, Logs, JobLogs, Settings, NotFoundPage } from './pages';
 import { Layout, ProtectedRoute, PublicRoute } from './components';
 
 export default function App() {
@@ -31,7 +31,7 @@ export default function App() {
           </Route>
         </Route>
 
-        <Route path='*' element={<Navigate to="/" replace />} />
+        <Route path='*' element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   )
