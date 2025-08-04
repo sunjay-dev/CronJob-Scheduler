@@ -86,7 +86,7 @@ export default function ForgetPassword() {
 
         <div className="bg-purple-100 hidden md:flex items-center justify-center">
           <img
-            src="/Forgot-password.png"
+            src="/Forgot-password.webp"
             alt="Forgot password illustration"
             className="max-w-sm"
           />

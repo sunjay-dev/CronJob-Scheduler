@@ -47,8 +47,7 @@ export default function Layout() {
           }
         }));
       })
-      .catch(err => {
-        console.error(err.message);
+      .catch(() => {
         dispatch(logout());
         dispatch(clearJobs());
         setAuthorized(false);

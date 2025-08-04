@@ -9,4 +9,5 @@ import JobLogs from './JobLogs';
 import EditJob from './EditJob';
 import NotFoundPage from './NotFoundPage';
 import ForgotPassword from './ForgotPassword';
-export {Login, Signup, Dashboard, CreateJob, Jobs, EditJob,Logs, ForgotPassword,NotFoundPage,JobLogs,Settings}
+import ResetPassword from './ResetPassword';
+export {Login, Signup, Dashboard, CreateJob, Jobs, EditJob,Logs, ForgotPassword,ResetPassword,NotFoundPage,JobLogs,Settings}

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express"
 import userModel from "../models/user.models";
 import bcrypt from "bcrypt";
-import { signToken } from "../utils/jwt.utils";
+import { signToken, verifyToken } from "../utils/jwt.utils";
 import sendEmail from "../utils/emailSend.util";
 
 export const handleUserLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -241,14 +241,14 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
             return
         }
 
-        if(user.resetTokenExpiry && user.resetTokenExpiry.getTime() > Date.now()){
-        res.status(429).json({ message: "You can request a reset link only once per hour." });
-        return;
+        if (user.resetTokenExpiry && user.resetTokenExpiry.getTime() > Date.now()) {
+            res.status(429).json({ message: "You can request a reset link only once per hour." });
+            return;
         }
 
         const token = signToken({ userId: user._id }, "1h");
 
-        const url = `${process.env.CLIENT_URL}/forget-password/${token}`;
+        const url = `${process.env.CLIENT_URL}/reset-password/${token}`;
 
         await sendEmail({ url, email, name: user.name });
 
@@ -265,3 +265,20 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
         res.status(500).json({ message: "Something went wrong. Please try again later" });
     }
 }
+
+// export const handleResetPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+
+//     const { token, password } = req.body;
+
+//     try {
+
+//         const decoded = verifyToken(token);
+
+//         const user = await userModel.findOne({ _id: decoded.userId });
+
+
+//     } catch (error) {
+//         console.error("Error while resetting password.", error);
+//         res.status(500).json({ message: "Something went wrong. Please try again later" });
+//     }
+// }
