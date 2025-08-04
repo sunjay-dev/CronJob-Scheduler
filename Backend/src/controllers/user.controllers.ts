@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express"
 import userModel from "../models/user.models";
 import bcrypt from "bcrypt";
 import { signToken } from "../utils/jwt.utils";
+import sendEmail from "../utils/emailSend.util";
 
 export const handleUserLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
@@ -37,7 +38,7 @@ export const handleUserLogin = async (req: Request, res: Response, next: NextFun
             return;
         }
 
-        const token = signToken({ userId: user.id, email: user.email });
+        const token = signToken({ userId: user.id, email: user.email }, "3d");
         res.cookie('token', token, {
             httpOnly: true,
             secure: true,
@@ -79,7 +80,7 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
 
         const newUser = await userModel.create({ name, email, password, timezone });
 
-        const token = signToken({ userId: newUser.id, email: newUser.email });
+        const token = signToken({ userId: newUser.id, email: newUser.email }, "3d");
 
         res.cookie('token', token, {
             httpOnly: true,
@@ -215,5 +216,52 @@ export const handleGoogleCallBack = async (req: Request, res: Response, next: Ne
     } catch (error) {
         console.error("Error while creating account with Google.", error);
         res.status(500).json({ message: "Error while creating account with Google." });
+    }
+}
+
+export const handleForgotPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+
+    const { email } = req.body;
+
+    if (typeof email !== "string" || !email) {
+        res.status(400).json({
+            message: "Please enter a valid email."
+        })
+        return;
+    }
+
+    try {
+
+        const user = await userModel.findOne({ email });
+
+        if (!user) {
+            res.status(404).json({
+                message: "No User Found."
+            });
+            return
+        }
+
+        if(user.resetTokenExpiry && user.resetTokenExpiry.getTime() > Date.now()){
+        res.status(429).json({ message: "You can request a reset link only once per hour." });
+        return;
+        }
+
+        const token = signToken({ userId: user._id }, "1h");
+
+        const url = `${process.env.CLIENT_URL}/forget-password/${token}`;
+
+        await sendEmail({ url, email, name: user.name });
+
+        user.resetToken = token;
+        user.resetTokenExpiry = new Date(Date.now() + 3600000);
+        await user.save();
+
+        res.status(200).json({
+            message: "Email has been successfully sent to reset password"
+        });
+
+    } catch (error) {
+        console.error("Error while forgetting password.", error);
+        res.status(500).json({ message: "Something went wrong. Please try again later" });
     }
 }

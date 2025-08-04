@@ -96,7 +96,7 @@ export default function Login() {
                     <input className="cursor-pointer accent-purple-500" type="checkbox" name="remember" />
                     <span className="text-gray-600">Remember me</span>
                   </label>
-                  <Link to="/forgot" className="text-purple-700 hover:underline">Forgot password</Link>
+                  <Link to="/forgot" className="text-purple-700 hover:underline">Forgot password?</Link>
                 </div>
 
                 <button disabled={isLoading} type="submit" className="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-2 rounded-md text-sm transition">

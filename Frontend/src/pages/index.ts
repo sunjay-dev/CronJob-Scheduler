@@ -8,4 +8,5 @@ import Settings  from './Settings';
 import JobLogs from './JobLogs';
 import EditJob from './EditJob';
 import NotFoundPage from './NotFoundPage';
-export {Login, Signup, Dashboard, CreateJob, Jobs, EditJob,Logs, NotFoundPage,JobLogs,Settings}
+import ForgotPassword from './ForgotPassword';
+export {Login, Signup, Dashboard, CreateJob, Jobs, EditJob,Logs, ForgotPassword,NotFoundPage,JobLogs,Settings}

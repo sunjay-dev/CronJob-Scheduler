@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { Login, Signup, Dashboard, CreateJob, Jobs, EditJob, Logs, JobLogs, Settings, NotFoundPage } from './pages';
+import { Login, Signup, Dashboard, CreateJob, Jobs, EditJob, Logs, JobLogs, Settings, NotFoundPage, ForgotPassword } from './pages';
 import { Layout, ProtectedRoute, PublicRoute } from './components';
 
 export default function App() {
@@ -16,6 +16,11 @@ export default function App() {
         <Route path="/signup" element={
             <PublicRoute>
               <Signup />
+            </PublicRoute>
+          } />
+        <Route path="/forgot" element={
+            <PublicRoute>
+              <ForgotPassword />
             </PublicRoute>
           } />
 

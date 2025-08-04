@@ -8,12 +8,12 @@ export default function NotFoundPage() {
         alt="404 Not Found"
         className="w-full max-w-md"
       />
-      <p className="text-lg text-purple-600 mb-6 text-center max-w-md">
+      <p className="text-lg text-[#ba68c8] mb-6 text-center max-w-md">
         Sorry, the page you're looking for doesn't exist or was moved.
       </p>
       <Link
         to="/"
-        className="px-6 py-3 rounded-md bg-purple-500 text-white hover:bg-purple-800 transition"
+        className="px-4 py-2.5 rounded-md bg-[#ba68c8] text-white hover:bg-[#ba68c8]/90 transition"
       >
         Go Back Home
       </Link>

@@ -37,6 +37,12 @@ const userSchema = new mongoose.Schema({
     pushAlerts: {
         type: Boolean,
         default: false
+    },
+    resetToken: {
+        type: String
+    },
+    resetTokenExpiry: {
+        type: Date
     }
 }, { timestamps: true });
 

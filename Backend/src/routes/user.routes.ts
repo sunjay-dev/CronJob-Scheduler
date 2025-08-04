@@ -1,7 +1,7 @@
 import express from "express";
 import passport from "passport";
 import { Request, Response } from "express";
-import { handleUserLogin, handleUserRegister, handleChangeUserDetails, handleUserLogout, handleUserDetails, handleGoogleCallBack } from "../controllers/user.controllers";
+import { handleUserLogin, handleUserRegister, handleChangeUserDetails, handleForgotPassword, handleUserLogout, handleUserDetails, handleGoogleCallBack } from "../controllers/user.controllers";
 import { restrictUserLogin } from "../middlewares/auth.middlewares";
 const router = express.Router();
 
@@ -21,6 +21,7 @@ router.get('/details', restrictUserLogin, handleUserDetails);
 
 router.post('/login', handleUserLogin);
 router.post('/register', handleUserRegister);
+router.post('/forgot-password', handleForgotPassword);
 
 router.put('/', restrictUserLogin, handleChangeUserDetails);
 
