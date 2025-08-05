@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Loader, Popup } from "../components";
+import { Footer, Loader, Popup } from "../components";
 import { Eye, EyeOff } from "lucide-react";
 
 export default function ResetPassword() {
@@ -19,14 +19,18 @@ export default function ResetPassword() {
 
   const isTokenValid = (token?: string): boolean => {
     if (!token) return false;
+
     const parts = token.split(".");
+
     if (parts.length !== 3) return false;
+
     try {
       const decoded = JSON.parse(atob(parts[1]));
       return typeof decoded === "object";
     } catch {
       return false;
     }
+
   };
 
   useEffect(() => {
@@ -50,28 +54,29 @@ export default function ResetPassword() {
       setMessage({ type: "error", text: "Passwords do not match." });
       return;
     }
+    setIsLoading(true);
 
-    try {
-      setIsLoading(true);
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/reset-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, password }),
-      });
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/reset-password`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token, password }),
+    }).then(async (res) => {
 
       const data = await res.json();
-
       if (!res.ok) {
         throw new Error(data.message || "Something went wrong.");
       }
+      return data;
+    }).then(() => {
 
-      setMessage({ type: "success", text: "Password reset successful. Redirecting to login..." });
-      setTimeout(() => navigate("/login"), 2000);
-    } catch (err: any) {
+      setMessage({ type: "success", text: "Password reset successful. Redirecting to dashboard..." });
+      setTimeout(() => navigate("/"), 2000);
+    }).catch(err => {
       setMessage({ type: "error", text: err.message || "Failed to reset password." });
-    } finally {
+    }).finally(() => {
       setIsLoading(false);
-    }
+    })
   };
 
   return (
@@ -99,6 +104,7 @@ export default function ResetPassword() {
                       type={details.showPassword ? "text" : "password"}
                       id="password"
                       value={details.password}
+                      placeholder="Enter password"
                       onChange={(e) =>
                         setDetails((prev) => ({ ...prev, password: e.target.value }))
                       }
@@ -124,6 +130,7 @@ export default function ResetPassword() {
                     <input
                       type={details.showConfirm ? "text" : "password"}
                       id="confirm"
+                      placeholder="Re-enter your password"
                       value={details.confirm}
                       onChange={(e) =>
                         setDetails((prev) => ({ ...prev, confirm: e.target.value }))
@@ -153,6 +160,7 @@ export default function ResetPassword() {
               </fieldset>
             </form>
           </div>
+          <Footer />
         </div>
 
         <div className="bg-purple-100 hidden md:flex items-center justify-center">

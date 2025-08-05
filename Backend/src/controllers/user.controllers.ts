@@ -43,7 +43,7 @@ export const handleUserLogin = async (req: Request, res: Response, next: NextFun
             httpOnly: true,
             secure: true,
             sameSite: 'none',
-            maxAge: 24 * 60 * 60 * 1000
+            maxAge: 3 * 24 * 60 * 60 * 1000
         });
 
         const { password: _, ...safeUser } = user.toObject();
@@ -86,7 +86,7 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
             httpOnly: true,
             secure: true,
             sameSite: 'none',
-            maxAge: 24 * 60 * 60 * 1000
+            maxAge: 3 * 24 * 60 * 60 * 1000
         });
 
         const { password: _, ...safeUser } = newUser.toObject();
@@ -231,7 +231,6 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
     }
 
     try {
-
         const user = await userModel.findOne({ email });
 
         if (!user) {
@@ -239,6 +238,13 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
                 message: "No User Found."
             });
             return
+        }
+
+        if (user.authProvider === "google") {
+            res.status(403).json({
+                message: "This account is connected with Google. Please sign in using Google."
+            });
+            return;
         }
 
         if (user.resetTokenExpiry && user.resetTokenExpiry.getTime() > Date.now()) {
@@ -266,19 +272,73 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
     }
 }
 
-// export const handleResetPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const handleResetPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const { token, password } = req.body;
 
-//     const { token, password } = req.body;
+    try {
+        if (!token || token.split(".").length !== 3) {
+            res.status(400).json({
+                message: "Invalid or missing reset token."
+            });
+            return;
+        }
 
-//     try {
+        let decoded;
+        try {
+            decoded = verifyToken(token);
+        } catch (error) {
+            res.status(400).json({
+                message: "Invalid or expired token. Please request a new password reset."
+            });
+            return;
+        }
 
-//         const decoded = verifyToken(token);
+        if (typeof decoded !== "object" || decoded === null || !("userId" in decoded)) {
+            res.status(400).json({
+                message: "Token verification failed. Please request a new password reset."
+            });
+            return;
+        }
 
-//         const user = await userModel.findOne({ _id: decoded.userId });
+        if (typeof password !== "string" || !password.trim()) {
+            res.status(400).json({
+                message: "Password is required and must be a valid non-empty string."
+            });
+            return;
+        }
 
+        const user = await userModel.findOne({
+            _id: decoded.userId,
+            resetToken: token,
+            resetTokenExpiry: { $gt: Date.now() }
+        });
 
-//     } catch (error) {
-//         console.error("Error while resetting password.", error);
-//         res.status(500).json({ message: "Something went wrong. Please try again later" });
-//     }
-// }
+        if (!user) {
+            res.status(400).json({
+                message: "The reset link is invalid or has expired. Please request a new one."
+            });
+            return;
+        }
+
+        user.password = password;
+        user.resetToken = undefined;
+        // user.resetTokenExpiry = undefined;
+        await user.save();
+
+        const cookieToken = signToken({ userId: user.id, email: user.email }, "3d");
+        res.cookie('token', cookieToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+            maxAge: 3 * 24 * 60 * 60 * 1000
+        });
+
+        res.status(200).json({
+            message: "Your password has been successfully reset. You’re now logged in."
+        });
+
+    } catch (error) {
+        console.error("Error while resetting password:", error);
+        res.status(500).json({ message: "Something went wrong. Please try again later." });
+    }
+};

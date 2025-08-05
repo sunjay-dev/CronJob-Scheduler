@@ -17,6 +17,11 @@ const userSchema = new mongoose.Schema({
         required: false,
         select: false
     },
+    authProvider: {
+        type: String,
+        enum: ['local', 'google'],
+        default: 'local'
+    },
     timezone: {
         type: String,
         default: 'UTC'
