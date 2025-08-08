@@ -3,6 +3,8 @@ import passport from "passport";
 import { Request, Response } from "express";
 import { handleUserLogin, handleUserRegister, handleChangeUserDetails, handleForgotPassword, handleUserLogout, handleUserDetails, handleGoogleCallBack, handleResetPassword } from "../controllers/user.controllers";
 import { restrictUserLogin } from "../middlewares/auth.middlewares";
+import { changeUserDetailsSchema, forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema  } from "../schemas/user.schema";
+import { validate } from "../middlewares/validate.middleware";
 const router = express.Router();
 
 router.get('/', (req: Request, res: Response): void => {
@@ -19,12 +21,12 @@ router.get('/auth/google/callback',
 router.get('/logout', handleUserLogout);
 router.get('/details', restrictUserLogin, handleUserDetails);
 
-router.post('/login', handleUserLogin);
-router.post('/register', handleUserRegister);
-router.post('/forgot-password', handleForgotPassword);
-router.post('/reset-password', handleResetPassword);
+router.post('/login',  validate(loginSchema), handleUserLogin);
+router.post('/register',validate(registerSchema) , handleUserRegister);
+router.post('/forgot-password', validate(forgotPasswordSchema),handleForgotPassword);
+router.post('/reset-password', validate(resetPasswordSchema), handleResetPassword);
 
-router.put('/', restrictUserLogin, handleChangeUserDetails);
+router.put('/', restrictUserLogin, validate(changeUserDetailsSchema),handleChangeUserDetails);
 
 
 export default router;

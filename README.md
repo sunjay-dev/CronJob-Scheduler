@@ -27,10 +27,14 @@ A simple yet powerful cron job scheduler to automate recurring API requests (GET
 ![Chart.js](https://img.shields.io/badge/chart.js-F5788D.svg?style=for-the-badge&logo=chart.js&logoColor=white) 
 ![Lucide-React](https://img.shields.io/badge/Lucide--React-000000.svg?style=for-the-badge&logo=lucide&logoColor=white)
 ![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB)
-![Redux](https://img.shields.io/badge/redux-%23593d88.svg?style=for-the-badge&logo=redux&logoColor=white)
+![Redux-toolKit](https://img.shields.io/badge/redux_toolkit-%23593d88.svg?style=for-the-badge&logo=redux&logoColor=white)
 ![Agenda.js](https://img.shields.io/badge/Agenda.js-%23ef4444.svg?style=for-the-badge&logo=nodedotjs&logoColor=white)
 ![PNPM](https://img.shields.io/badge/pnpm-%234a4a4a.svg?style=for-the-badge&logo=pnpm&logoColor=f69220)
 ![Passport.js](https://img.shields.io/badge/Passport.js-000000.svg?style=for-the-badge&logo=passport&logoColor=00ff99)
+![Resend](https://img.shields.io/badge/Resend-000000.svg?style=for-the-badge&logo=resend&logoColor=fff)
+
+
+
 
 ---
 
@@ -72,8 +76,13 @@ Example `.env` file for backend:
 PORT=5000
 MONGO_URI=YOUR_MONGO_URI
 MONGO_DB_COLLECTION=agendaJobs
-JWT_SECRET=your_jwt_secret
+JWT_SECRET=YOUR_JWT_SECRET
 CLIENT_URL=http://localhost:5173
+GOOGLE_CLIENT_ID=GOOGLE_CLIENT_ID
+GOOGLE_CLIENT_SECRET=GOOGLE_CLIENT_SECRET
+GOOGLE_CALLBACK_URL=http://localhost:3000/auth/google/callback
+RESEND_EMAIL_API_KEY=RESEND_EMAIL_API_KEY
+SENDEREMAIL=SENDEREMAIL
 ```
 
 ---
@@ -96,6 +105,7 @@ CronJob-Scheduler/
 * <del> Execution logs viewer</del>
 * <del> User account settings <del>
 * <del> Google login config <del>
+* <del> Forget password <del>
 * [ ] Email notifications on failure
 * [ ] Support for PUT/DELETE requests
 * [ ] Retry on failure + backoff strategy

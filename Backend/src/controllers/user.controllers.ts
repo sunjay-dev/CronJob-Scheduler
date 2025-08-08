@@ -8,12 +8,6 @@ export const handleUserLogin = async (req: Request, res: Response, next: NextFun
 
     const { email, password } = req.body;
 
-    if (!email || !password) {
-        res.status(401).json({
-            message: "Both email and password required."
-        });
-        return;
-    }
     try {
         const user = await userModel.findOne({ email }).select('+password');
 
@@ -24,7 +18,7 @@ export const handleUserLogin = async (req: Request, res: Response, next: NextFun
             return;
         }
 
-        if (!user.password) {
+        if (user.authProvider === "google" || !user.password) {
             res.status(400).json({ message: 'Please try login using Google.' });
             return;
         }
@@ -63,12 +57,6 @@ export const handleUserLogin = async (req: Request, res: Response, next: NextFun
 export const handleUserRegister = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { name, email, password, timezone = 'UTC' } = req.body;
 
-    if (!name || !email || !password) {
-        res.status(401).json({
-            message: "All three name, email, and password are required."
-        });
-        return;
-    }
     try {
         const user = await userModel.findOne({ email });
         if (user) {
@@ -78,7 +66,7 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
             return;
         }
 
-        const newUser = await userModel.create({ name, email, password, timezone });
+        const newUser = await userModel.create({ name, email, password, timezone, authProvider: "local" });
 
         const token = signToken({ userId: newUser.id, email: newUser.email }, "3d");
 
@@ -123,61 +111,9 @@ export const handleUserDetails = async (req: Request, res: Response, next: NextF
 
 export const handleChangeUserDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
-
     const { userId } = req.jwtUser;
-
-    const { name, timezone, mode, timeFormat24, emailNotifications, pushAlerts } = req.body;
-
-    const updateFields: any = {};
-
-    if (name !== undefined) {
-        if (typeof name !== 'string' || name.trim() === '') {
-            res.status(400).json({ message: "Invalid name" });
-            return;
-        }
-        updateFields.name = name.trim();
-    }
-
-    if (timezone !== undefined) {
-        if (typeof timezone !== 'string' || timezone.trim() === '') {
-            res.status(400).json({ message: "Invalid timezone" });
-            return;
-        }
-        updateFields.timezone = timezone.trim();
-    }
-
-    if (mode !== undefined) {
-        if (mode !== 'day' && mode !== 'dark') {
-            res.status(400).json({ message: "Invalid mode (must be 'day' or 'dark')" });
-            return;
-        }
-        updateFields.mode = mode;
-    }
-
-    if (timeFormat24 !== undefined) {
-        if (typeof timeFormat24 !== 'boolean') {
-            res.status(400).json({ message: "Invalid timeFormat24 (must be boolean)" });
-            return;
-        }
-        updateFields.timeFormat24 = timeFormat24;
-    }
-
-    if (emailNotifications !== undefined) {
-        if (typeof emailNotifications !== 'boolean') {
-            res.status(400).json({ message: "Invalid emailNotifications (must be boolean)" });
-            return;
-        }
-        updateFields.emailNotifications = emailNotifications;
-    }
-
-    if (pushAlerts !== undefined) {
-        if (typeof pushAlerts !== 'boolean') {
-            res.status(400).json({ message: "Invalid pushAlerts (must be boolean)" });
-            return;
-        }
-        updateFields.pushAlerts = pushAlerts;
-    }
-
+    const updateFields = req.body;
+    
     try {
         const user = await userModel.findByIdAndUpdate(
             userId,
@@ -222,13 +158,6 @@ export const handleGoogleCallBack = async (req: Request, res: Response, next: Ne
 export const handleForgotPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
     const { email } = req.body;
-
-    if (typeof email !== "string" || !email) {
-        res.status(400).json({
-            message: "Please enter a valid email."
-        })
-        return;
-    }
 
     try {
         const user = await userModel.findOne({ email });
@@ -276,13 +205,6 @@ export const handleResetPassword = async (req: Request, res: Response, next: Nex
     const { token, password } = req.body;
 
     try {
-        if (!token || token.split(".").length !== 3) {
-            res.status(400).json({
-                message: "Invalid or missing reset token."
-            });
-            return;
-        }
-
         let decoded;
         try {
             decoded = verifyToken(token);
@@ -296,13 +218,6 @@ export const handleResetPassword = async (req: Request, res: Response, next: Nex
         if (typeof decoded !== "object" || decoded === null || !("userId" in decoded)) {
             res.status(400).json({
                 message: "Token verification failed. Please request a new password reset."
-            });
-            return;
-        }
-
-        if (typeof password !== "string" || !password.trim()) {
-            res.status(400).json({
-                message: "Password is required and must be a valid non-empty string."
             });
             return;
         }

@@ -27,12 +27,13 @@ agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJob
         ...headers,
       },
       body: body || undefined,
-      throwHttpErrors: false,
+      throwHttpErrors: true,
       responseType: 'buffer',
       resolveBodyOnly: false,
       decompress: false,
       retry: 0
     });
+    
     const { dns, tcp, tls, request, firstByte, download, total } = response?.timings?.phases;
     await logsModel.create({
       name,
@@ -40,7 +41,7 @@ agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJob
       userId,
       url,
       method,
-      status: response.statusCode >= 200 && response.statusCode < 300 ? "success" : "failed",
+      status: "success",
       statusCode: response.statusCode,
       responseTime: {
         DNS: dns || 0,
@@ -52,11 +53,11 @@ agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJob
         Total: total || 0,
       },
     });
-
+    
   } catch (err: any) {
     const statusCode = err?.response?.statusCode || 0;
     const timings = err?.response?.timings?.phases || {};
-
+    
     try {
       await logsModel.create({
         name,
