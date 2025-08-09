@@ -4,7 +4,6 @@ import { ObjectId } from 'mongodb';
 import logsModels from "../models/logs.models";
 
 export const handleNewCronJobs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-
   const { name, url, method, headers, body, cron, timezone, enabled } = req.body;
   const { userId } = req.jwtUser;
 
@@ -80,20 +79,6 @@ export const handleUserJobById = async (req: Request, res: Response, next: NextF
   const { jobId } = req.params;
   const { userId } = req.jwtUser;
 
-  if (!jobId) {
-    res.status(400).json({
-      message: "field jobId is required"
-    })
-    return;
-  }
-
-  if (!ObjectId.isValid(jobId)) {
-    res.status(400).json({
-      message: "Invalid jobId"
-    });
-    return;
-  }
-
   try {
     const jobs = await agenda.jobs({ 'data.userId': userId, _id: new ObjectId(jobId) });
     res.status(200).json(jobs);
@@ -107,30 +92,8 @@ export const handleJobStatus = async (req: Request, res: Response, next: NextFun
   const { userId } = req.jwtUser;
   const { jobId, status } = req.body;
 
-
-  if (!jobId || typeof status === "undefined") {
-    res.status(400).json({
-      message: "Please Provide both jobId and status"
-    })
-    return;
-  }
-
-  if (!ObjectId.isValid(jobId)) {
-    res.status(400).json({
-      message: "Invalid jobId"
-    });
-    return;
-  }
-
-  if (typeof status !== "boolean") {
-    res.status(400).json({
-      message: "status must be a boolean"
-    })
-    return;
-  }
-
   try {
-    const jobs = await agenda.jobs({ 'data.userId': userId, _id: new ObjectId(jobId) });
+    const jobs = await agenda.jobs({ 'data.userId': userId, _id: new ObjectId(jobId as string) });
 
     if (jobs.length === 0) {
       res.status(404).json({
@@ -154,18 +117,6 @@ export const handleDeleteJob = async (req: Request, res: Response, next: NextFun
   const { jobId } = req.params;
   const { userId } = req.jwtUser;
 
-  if (!jobId) {
-    res.status(400).json({
-      message: "Field jobId is required."
-    });
-    return;
-  }
-
-  if (!ObjectId.isValid(jobId)) {
-    res.status(400).json({ message: "Invalid jobId" });
-    return;
-  }
-
   try {
     const result = await agenda.cancel({ _id: new ObjectId(jobId), 'data.userId': userId })
 
@@ -177,7 +128,6 @@ export const handleDeleteJob = async (req: Request, res: Response, next: NextFun
     }
 
     await logsModels.deleteMany({ jobId });
-
 
     res.status(200).json({
       message: "Job deleted",
@@ -195,22 +145,8 @@ export const handleRunJobNow = async (req: Request, res: Response, next: NextFun
   const { userId } = req.jwtUser;
   const { jobId } = req.body;
 
-  if (!jobId) {
-    res.status(400).json({
-      message: "field jobId is required"
-    })
-    return;
-  }
-
-  if (!ObjectId.isValid(jobId)) {
-    res.status(400).json({
-      message: "Invalid jobId"
-    });
-    return;
-  }
-
   try {
-    const jobs = await agenda.jobs({ _id: new ObjectId(jobId), 'data.userId': userId });
+    const jobs = await agenda.jobs({ _id: new ObjectId(jobId as string), 'data.userId': userId });
 
     if (jobs.length === 0) {
       res.status(404).json({ message: "Job not found" });

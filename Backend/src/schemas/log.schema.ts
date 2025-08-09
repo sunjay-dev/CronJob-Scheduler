@@ -6,7 +6,7 @@ export const jobLogsParamsSchema = z.object({
     message: "Please provide a valid jobId",
   }),
 });
-export const LogIdParamsSchema = z.object({
+export const LogIdSchema = z.object({
   logId: z.string().refine((val) => ObjectId.isValid(val), {
     message: "Please provide a valid logId",
   }),

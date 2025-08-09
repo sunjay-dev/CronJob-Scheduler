@@ -32,6 +32,7 @@ A simple yet powerful cron job scheduler to automate recurring API requests (GET
 ![PNPM](https://img.shields.io/badge/pnpm-%234a4a4a.svg?style=for-the-badge&logo=pnpm&logoColor=f69220)
 ![Passport.js](https://img.shields.io/badge/Passport.js-000000.svg?style=for-the-badge&logo=passport&logoColor=00ff99)
 ![Resend](https://img.shields.io/badge/Resend-000000.svg?style=for-the-badge&logo=resend&logoColor=fff)
+![Zod](https://img.shields.io/badge/Zod-7C3AED.svg?style=for-the-badge&logo=zod&logoColor=white)
 
 
 

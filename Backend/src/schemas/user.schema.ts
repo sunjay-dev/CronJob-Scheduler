@@ -33,4 +33,4 @@ export const changeUserDetailsSchema = z.object({
   timeFormat24: z.boolean({ message: "Invalid timeFormat24 (must be boolean)" }).optional(),
   emailNotifications: z.boolean({ message: "Invalid emailNotifications (must be boolean)" }).optional(),
   pushAlerts: z.boolean({ message: "Invalid pushAlerts (must be boolean)" }).optional(),
-});
+}).strict();
