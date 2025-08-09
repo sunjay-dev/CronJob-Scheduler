@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useAppDispatch } from '../hooks';
 import { setAuth } from '../slices/authSlice';
 import { Loader, Popup, GoogleAuth, PasswordInput } from "../components";
+import { loginSchema } from '../schemas/authSchemas';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -13,11 +14,15 @@ export default function Login() {
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsLoading(true);
-
-    if (!details.email.trim() || !details.password.trim()) {
-      return
+    
+    const result = loginSchema.safeParse(details);
+    if (!result.success) {
+      setMessage({ type: 'error', text: result.error.issues[0].message });
+      return;
     }
+    
+    setIsLoading(true);
+    
     fetch(`${import.meta.env.VITE_BACKEND_URL}/login`, {
       method: "POST",
       credentials: 'include',
@@ -28,14 +33,14 @@ export default function Login() {
     })
       .then(async (res) => {
         const data = await res.json();
-       
+
         if (!res.ok)
           throw new Error(data.message || "Something went wrong, Please try again later.");
 
         return data;
       })
       .then(data => {
-        
+
         dispatch(setAuth({
           user: {
             name: data.user.name,
@@ -59,7 +64,7 @@ export default function Login() {
       });
   }
 
-  
+
 
   return (
     <>

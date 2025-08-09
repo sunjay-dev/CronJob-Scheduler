@@ -104,11 +104,11 @@ CronJob-Scheduler/
 * <del> Create/Update/Delete jobs</del>
 * <del> Job toggle (enable/disable)</del>
 * <del> Execution logs viewer</del>
+* <del> Support for PUT/DELETE requests</del>
 * <del> User account settings <del>
 * <del> Google login config <del>
 * <del> Forget password <del>
 * [ ] Email notifications on failure
-* [ ] Support for PUT/DELETE requests
 * [ ] Retry on failure + backoff strategy
 
 ## 🤝 Contributing

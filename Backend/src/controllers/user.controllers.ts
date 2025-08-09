@@ -66,7 +66,7 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
             return;
         }
 
-        const newUser = await userModel.create({ name, email, password, timezone, authProvider: "local" });
+        const newUser = await userModel.create({ name: name.trim(), email, password, timezone, authProvider: "local" });
 
         const token = signToken({ userId: newUser.id, email: newUser.email }, "3d");
 

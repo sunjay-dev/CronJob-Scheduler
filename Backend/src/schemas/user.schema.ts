@@ -6,7 +6,7 @@ export const loginSchema = z.object({
 });
 
 export const registerSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
+  name: z.string().trim().min(2, "Name must be at least 2 characters"),
   email: z.email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
@@ -16,8 +16,7 @@ export const forgotPasswordSchema = z.object({
 })
 
 export const resetPasswordSchema = z.object({
-  token: z
-    .string({ message: "Reset token is required" })
+  token: z.string({ message: "Reset token is required" })
     .refine((val) => val.split(".").length === 3, {
       message: "Invalid reset token format",
     }),
@@ -33,4 +32,6 @@ export const changeUserDetailsSchema = z.object({
   timeFormat24: z.boolean({ message: "Invalid timeFormat24 (must be boolean)" }).optional(),
   emailNotifications: z.boolean({ message: "Invalid emailNotifications (must be boolean)" }).optional(),
   pushAlerts: z.boolean({ message: "Invalid pushAlerts (must be boolean)" }).optional(),
-}).strict();
+}).strict().refine((data) => Object.keys(data).length > 0, {
+    message: "At least one field must be provided",
+  });

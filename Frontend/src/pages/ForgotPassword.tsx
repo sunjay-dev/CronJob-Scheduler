@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Footer, Loader, Popup } from "../components";
+import { forgotPasswordSchema } from "../schemas/authSchemas";
 
 export default function ForgetPassword() {
   const [email, setEmail] = useState('');
@@ -10,7 +11,12 @@ export default function ForgetPassword() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!email.trim()) return;
+    const result = forgotPasswordSchema.safeParse({ email });
+    if (!result.success) {
+      setMessage({ type: 'error', text: result.error.issues[0].message });
+      return;
+    }
+
 
     setIsLoading(true);
     setMessage(null);

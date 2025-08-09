@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Footer, Loader, Popup } from "../components";
 import { Eye, EyeOff } from "lucide-react";
+import { resetPasswordSchema, tokenSchema } from "../schemas/authSchemas";
 
 export default function ResetPassword() {
   const { token } = useParams<{ token: string }>();
@@ -17,25 +18,10 @@ export default function ResetPassword() {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
-  const isTokenValid = (token?: string): boolean => {
-    if (!token) return false;
-
-    const parts = token.split(".");
-
-    if (parts.length !== 3) return false;
-
-    try {
-      const decoded = JSON.parse(atob(parts[1]));
-      return typeof decoded === "object";
-    } catch {
-      return false;
-    }
-
-  };
-
   useEffect(() => {
-    if (!isTokenValid(token)) {
-      setMessage({ type: "error", text: "Invalid or tampered token." });
+    const result = tokenSchema.safeParse(token);
+    if (!result.success) {
+      setMessage({ type: "error", text: result.error.issues[0].message });
       setTimeout(() => navigate("/"), 3000);
     }
   }, [navigate, token]);
@@ -43,24 +29,19 @@ export default function ResetPassword() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { password, confirm } = details;
-
-    if (!password || !confirm) {
-      setMessage({ type: "error", text: "Both fields are required." });
+    const result = resetPasswordSchema.safeParse(details);
+    if (!result.success) {
+      setMessage({ type: "error", text: result.error.issues[0].message });
       return;
     }
 
-    if (password !== confirm) {
-      setMessage({ type: "error", text: "Passwords do not match." });
-      return;
-    }
     setIsLoading(true);
 
     fetch(`${import.meta.env.VITE_BACKEND_URL}/reset-password`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token, password }),
+      body: JSON.stringify({ token, password: details.password }),
     }).then(async (res) => {
 
       const data = await res.json();

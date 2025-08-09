@@ -6,7 +6,7 @@ export interface JobDetails {
   headers: {key: string, value: string }[],
   body: string,
   enabled: boolean,
-  timezone?: string
+  timezone: string
 }
 
 export interface JobInterface {
@@ -65,11 +65,6 @@ export interface User {
   timeFormat24: boolean;
   emailNotifications: boolean;
   pushAlerts: boolean;
-}
-
-export interface JobResponse {
-  type: "success" | "error";
-  message: string
 }
 
 export interface JobCardProps {

@@ -4,6 +4,7 @@ import { useAppDispatch } from '../hooks';
 import { setAuth } from '../slices/authSlice';
 import type { User } from "../types";
 import { GoogleAuth, Loader, Popup, PasswordInput } from "../components";
+import { RegisterSchema } from "../schemas/authSchemas";
 
 export default function Signup() {
     const navigate = useNavigate();
@@ -15,7 +16,9 @@ export default function Signup() {
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if (!details.name.trim() || !details.email.trim() || !details.password.trim()) {
+        const result = RegisterSchema.safeParse(details);
+        if (!result.success) {
+            setMessage({ type: 'error', text: result.error.issues[0].message });
             return;
         }
 

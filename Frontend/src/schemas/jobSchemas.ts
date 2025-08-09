@@ -1,23 +1,9 @@
 import { z } from "zod";
-import { ObjectId } from "mongodb";
+import validator from "validator"
 import { isValidCron } from "cron-validator";
-import validator from "validator";
-
-export const jobIdSchema = z.object({
-    jobId: z.string().refine((val) => ObjectId.isValid(val), {
-        message: "Please provide a valid jobId",
-    }),
-});
-
-export const jobStatusSchema = z.object({
-    jobId: z.string().refine((val) => ObjectId.isValid(val), {
-        message: "Please provide a valid jobId",
-    }),
-    status: z.boolean("Please provide status")
-});
 
 export const jobSchema = z.object({
-    name: z.string().trim().min(1, { message: "Please provide a name" }),
+    name: z.string().trim().min(1, { message: "Please provide a job name" }),
     url: z.string().refine(val =>
         validator.isURL(val, { require_protocol: true}),
         { message: "Please provide a valid url" }

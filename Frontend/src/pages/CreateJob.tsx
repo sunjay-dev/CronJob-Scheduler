@@ -4,7 +4,8 @@ import { Common, Advanced, Loader, Popup } from '../components';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { addJob } from '../slices/jobSlice'
-import type { JobDetails, JobResponse } from '../types';
+import type { JobDetails } from '../types';
+import { jobSchema } from '../schemas/jobSchemas';
 
 export default function CreateJob() {
 
@@ -12,7 +13,7 @@ export default function CreateJob() {
   const [isLoading, setIsLoading] = useState(false);
   const user = useAppSelector(state => state.auth.user);
   const dispatch = useAppDispatch();
-  const [response, setResponse] = useState<JobResponse | null>(null);
+  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
   const [jobDetails, setJobDetails] = useState<JobDetails>({
     name: '',
     url: 'https://',
@@ -29,8 +30,9 @@ export default function CreateJob() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!jobDetails.url.trim() || !jobDetails.cron.trim()) {
-      alert('Please fill required fields');
+    const result = jobSchema.safeParse(jobDetails);
+    if (!result.success) {
+      setMessage({ type: 'error', text: result.error.issues[0].message });
       return;
     }
 
@@ -51,13 +53,13 @@ export default function CreateJob() {
 
       return data;
     }).then(data => {
-      setResponse({type:"success", message: data.message});
+      setMessage({ type: "success", text: data.message });
       dispatch(addJob(data.job));
       navigate('/jobs');
     }).catch(err => {
-      setResponse({ type: "error", message: err.message });
+      setMessage({ type: "error", text: err.message });
     }).finally(() => {
-      setTimeout(() => setResponse(null), 8000);
+      setTimeout(() => setMessage(null), 8000);
       setIsLoading(false);
     })
   };
@@ -100,10 +102,10 @@ export default function CreateJob() {
 
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow mb-4">
 
-        {response && (<div className='w-full'>
-          <Popup type={response.type} message={response.message} />
+        {message && (<div className='w-full'>
+          <Popup type={message.type} message={message.text} />
         </div>)}
-        
+
         <fieldset disabled={isLoading} className='space-y-5'>
           {tab === 'common' ? (
             <Common jobDetails={jobDetails} setJobDetails={setJobDetails} />
