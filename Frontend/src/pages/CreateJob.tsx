@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import { Clock, Settings } from 'lucide-react';
-import { Common, Advanced, Loader, Popup } from '../components';
+import { Common, Advanced, Loader, Popup, ConfirmMenu } from '../components';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { addJob } from '../slices/jobSlice'
+import { addJob } from '../slices/jobSlice';
 import type { JobDetails } from '../types';
 import { jobSchema } from '../schemas/jobSchemas';
 
 export default function CreateJob() {
-
   const [tab, setTab] = useState<'common' | 'advanced'>('common');
   const [isLoading, setIsLoading] = useState(false);
+  const [confirmAddJsonHeader, setConfirmAddJsonHeader] = useState(false);
   const user = useAppSelector(state => state.auth.user);
   const dispatch = useAppDispatch();
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
@@ -27,7 +27,35 @@ export default function CreateJob() {
 
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const submitJob = async (job: JobDetails) => {
+    setIsLoading(true);
+
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/jobs`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(job),
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Something went wrong.");
+        return data;
+      })
+      .then(data => {
+        setMessage({ type: "success", text: data.message });
+        dispatch(addJob(data.job));
+        navigate('/jobs');
+      })
+      .catch(err => {
+        setMessage({ type: "error", text: err.message });
+      })
+      .finally(() => {
+        setTimeout(() => setMessage(null), 8000);
+        setIsLoading(false);
+      });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     const result = jobSchema.safeParse(jobDetails);
@@ -36,32 +64,25 @@ export default function CreateJob() {
       return;
     }
 
-    setIsLoading(true);
+    const allowBody = ["POST", "PUT", "PATCH"].includes(jobDetails.method?.toUpperCase());
+    if (allowBody && jobDetails.body.trim()) {
+      try {
+        const parsed = JSON.parse(jobDetails.body);
+        if (typeof parsed === "object" && parsed !== null) {
+          const hasJsonHeader = jobDetails.headers.some(
+            h => h.key?.toLowerCase() === "content-type" && h.value?.toLowerCase() === "application/json"
+          );
+          if (!hasJsonHeader) {
+            setConfirmAddJsonHeader(true);
+            return;
+          }
+        }
+      } catch {
+        // not JSON, skip
+      }
+    }
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/jobs`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(jobDetails),
-    }).then(async (res) => {
-      const data = await res.json();
-
-      if (!res.ok)
-        throw new Error(data.message || "Something went wrong, Please try again later.");
-
-      return data;
-    }).then(data => {
-      setMessage({ type: "success", text: data.message });
-      dispatch(addJob(data.job));
-      navigate('/jobs');
-    }).catch(err => {
-      setMessage({ type: "error", text: err.message });
-    }).finally(() => {
-      setTimeout(() => setMessage(null), 8000);
-      setIsLoading(false);
-    })
+    submitJob(jobDetails);
   };
 
   return (
@@ -73,45 +94,35 @@ export default function CreateJob() {
         <button
           type="button"
           onClick={() => setTab('common')}
-          className={`flex flex-col items-center text-sm font-medium px-4 py-2 
-      transition-all duration-300 ease-in-out
-      ${tab === 'common'
-              ? 'text-purple-600 border-b-2 border-purple-600'
-              : 'text-gray-500 hover:text-purple-500'
-            }`}
+          className={`flex flex-col items-center text-sm font-medium px-4 py-2 transition-all duration-300 ease-in-out
+            ${tab === 'common' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-500 hover:text-purple-500'}`}
         >
           <Clock className="w-6 h-6 mb-1 transition-transform duration-300" />
           COMMON
         </button>
-
         <button
           type="button"
           onClick={() => setTab('advanced')}
-          className={`flex flex-col items-center text-sm font-medium px-4 py-2 
-      transition-all duration-300 ease-in-out
-      ${tab === 'advanced'
-              ? 'text-purple-600 border-b-2 border-purple-600'
-              : 'text-gray-500 hover:text-purple-500'
-            }`}
+          className={`flex flex-col items-center text-sm font-medium px-4 py-2 transition-all duration-300 ease-in-out
+            ${tab === 'advanced' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-500 hover:text-purple-500'}`}
         >
           <Settings className="w-6 h-6 mb-1 transition-transform duration-300" />
           ADVANCED
         </button>
       </div>
 
-
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow mb-4">
-
-        {message && (<div className='w-full'>
-          <Popup type={message.type} message={message.text} />
-        </div>)}
+        {message && (
+          <div className='w-full'>
+            <Popup type={message.type} message={message.text} />
+          </div>
+        )}
 
         <fieldset disabled={isLoading} className='space-y-5'>
-          {tab === 'common' ? (
-            <Common jobDetails={jobDetails} setJobDetails={setJobDetails} />
-          ) : (
-            <Advanced jobDetails={jobDetails} setJobDetails={setJobDetails} />
-          )}
+          {tab === 'common'
+            ? <Common jobDetails={jobDetails} setJobDetails={setJobDetails} />
+            : <Advanced jobDetails={jobDetails} setJobDetails={setJobDetails} />
+          }
 
           <button
             disabled={isLoading}
@@ -122,6 +133,26 @@ export default function CreateJob() {
           </button>
         </fieldset>
       </form>
+      {confirmAddJsonHeader && (
+        <ConfirmMenu
+          title="Add JSON Content-Type?"
+          message="Your request body looks like JSON but no 'Content-Type: application/json' header was found. Add it automatically?"
+          confirmText="Yes, Add"
+          confirmColor="bg-purple-500 hover:bg-purple-700 text-white"
+          onConfirm={() => {
+            const updatedJob = {
+              ...jobDetails,
+              headers: [...jobDetails.headers, { key: "Content-Type", value: "application/json" }]
+            };
+            setConfirmAddJsonHeader(false);
+            submitJob(updatedJob);
+          }}
+          onCancel={() => {
+            setConfirmAddJsonHeader(false);
+            submitJob(jobDetails);
+          }}
+        />
+      )}
     </>
   );
 }

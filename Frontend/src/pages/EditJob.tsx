@@ -12,6 +12,7 @@ export default function EditJob() {
     const navigate = useNavigate();
     const [tab, setTab] = useState<'common' | 'advanced'>('common');
     const [confirmEdit, setConfirmEdit] = useState(false);
+    const [confirmAddJsonHeader, setConfirmAddJsonHeader] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [jobDetails, setJobDetails] = useState<JobDetails>({
@@ -68,13 +69,38 @@ export default function EditJob() {
 
     }, [jobId, navigate])
 
-    const handleEditJob = () => {
+
+    const handleJobEdit = (e: React.FormEvent) => {
+        e.preventDefault();
 
         const result = jobSchema.safeParse(jobDetails);
-            if (!result.success) {
-              setMessage({ type: 'error', text: result.error.issues[0].message });
-              return;
+        if (!result.success) {
+            setMessage({ type: 'error', text: result.error.issues[0].message });
+            return;
+        }
+
+        const allowBody = ["POST", "PUT", "PATCH"].includes(jobDetails.method?.toUpperCase());
+        if (allowBody && jobDetails.body.trim()) {
+            try {
+                const parsed = JSON.parse(jobDetails.body);
+                if (typeof parsed === "object" && parsed !== null) {
+                    const hasJsonHeader = jobDetails.headers.some(
+                        h => h.key?.toLowerCase() === "content-type" && h.value?.toLowerCase() === "application/json"
+                    );
+                    if (!hasJsonHeader) {
+                        setConfirmAddJsonHeader(true);
+                        return;
+                    }
+                }
+            } catch {
+                // not JSON, skip
             }
+        }
+
+        setConfirmEdit(true);
+    };
+
+    const submitEditJob = () => {
 
         setIsLoading(true);
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/jobs/${jobId}`, {
@@ -139,7 +165,7 @@ export default function EditJob() {
                 </button>
             </div>
 
-            <form onSubmit={e => { e.preventDefault(); setConfirmEdit(true); }} className="bg-white p-6 rounded-xl shadow mb-4">
+            <form onSubmit={handleJobEdit} className="bg-white p-6 rounded-xl shadow mb-4">
                 {message && (<div className='w-full'>
                     <Popup type={message.type} message={message.text} />
                 </div>)}
@@ -160,19 +186,41 @@ export default function EditJob() {
                 </fieldset>
             </form>
 
-            {confirmEdit &&
+            {confirmEdit && (
                 <ConfirmMenu
                     title='Confirm Edit'
                     message="Are you sure you want to Edit this job?"
                     confirmText="Yes, Edit"
                     confirmColor="bg-purple-500 hover:bg-purple-700 text-white"
                     onConfirm={() => {
-                        handleEditJob();
+                        submitEditJob();
                         setConfirmEdit(false);
                     }}
                     onCancel={() => setConfirmEdit(false)}
                 />
-            }
+            )}
+
+            {confirmAddJsonHeader && (
+                <ConfirmMenu
+                    title="Add JSON Content-Type?"
+                    message="Your request body looks like JSON but no 'Content-Type: application/json' header was found. Add it automatically?"
+                    confirmText="Yes, Add"
+                    confirmColor="bg-purple-500 hover:bg-purple-700 text-white"
+                    onConfirm={() => {
+                        setJobDetails(prev => ({
+                            ...prev,
+                            headers: [...prev.headers, { key: "Content-Type", value: "application/json" }]
+                        }));
+                        setConfirmAddJsonHeader(false);
+                        setConfirmEdit(true);
+                    }}
+                    onCancel={() => {
+                        setConfirmAddJsonHeader(false);
+                        setConfirmEdit(true);
+                    }}
+                />
+            )}
+
         </>
     )
 }
