@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 import { handleUserLogin, handleUserRegister, handleChangeUserDetails, handleForgotPassword, handleUserLogout, handleUserDetails, handleGoogleCallBack, handleResetPassword } from "../controllers/user.controllers";
 import { restrictUserLogin } from "../middlewares/auth.middlewares";
 import { changeUserDetailsSchema, forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema  } from "../schemas/user.schema";
-import { validate } from "../middlewares/validate.middleware";
+import { validate } from "../middlewares/validate.middlewares";
 const router = express.Router();
 
 router.get('/', (req: Request, res: Response): void => {

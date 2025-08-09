@@ -27,26 +27,13 @@ export const handleUserLogs = async (req: Request, res: Response, next: NextFunc
 };
 
 export const handleJobLogs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const { jobId } = req.params
+  const { jobId } = req.params;
   const { userId } = req.jwtUser;
 
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 10;
   const skip = (page - 1) * limit;
 
-  if (!jobId) {
-    res.status(400).json({
-      message: "field jobId is required"
-    })
-    return;
-  }
-
-  if (!ObjectId.isValid(jobId)) {
-    res.status(400).json({
-      message: "Invalid jobId"
-    });
-    return;
-  }
   try {
     const [logs, total] = await Promise.all([
       logsModels.find({ userId, jobId }).sort({ createdAt: -1 }).skip(skip).limit(limit),
@@ -69,20 +56,6 @@ export const handleFailedLogs = async (req: Request, res: Response, next: NextFu
   const { jobId } = req.params;
   const { userId } = req.jwtUser;
 
-  if (!jobId) {
-    res.status(400).json({
-      message: "field jobId is required"
-    })
-    return;
-  }
-
-  if (!ObjectId.isValid(jobId)) {
-    res.status(400).json({
-      message: "Invalid jobId"
-    });
-    return;
-  }
-
   try {
     const logs = await logsModels.find({
       jobId: jobId,
@@ -99,20 +72,6 @@ export const handleFailedLogs = async (req: Request, res: Response, next: NextFu
 export const handleGetLogById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { userId } = req.jwtUser;
   const { logId } = req.params;
-
-  if (!logId) {
-    res.status(400).json({
-      message: "field logId is required"
-    })
-    return;
-  }
-
-  if (!ObjectId.isValid(logId)) {
-    res.status(400).json({
-      message: "Invalid logId"
-    });
-    return;
-  }
 
   try {
 
