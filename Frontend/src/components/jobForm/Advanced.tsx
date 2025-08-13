@@ -37,7 +37,6 @@ export default function Advanced({ jobDetails, setJobDetails }: Props) {
               <option>OPTIONS</option>
               <option>PATCH</option>
               <option>TRACE</option>
-              <option>CONNECT</option>
             </select>
           </div>
 

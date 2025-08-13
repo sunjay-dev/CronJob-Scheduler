@@ -33,7 +33,7 @@
 
 @import "tailwindcss";
 
-img {
+img, button {
     user-select: none;
 }
 

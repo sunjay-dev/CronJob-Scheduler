@@ -11,7 +11,7 @@ export const jobSchema = z.object({
     timezone: z.string().min(1, { message: "Please provide a valid timezone" }),
     enabled: z.boolean({ message: "Enabled must be a boolean" }),
     method: z.string().toUpperCase().refine((val) =>
-        ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "CONNECT", "PATCH", "TRACE"].includes(val),
+        ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH", "TRACE"].includes(val),
         { message: "Please provide a valid method type" }
     ),
     cron: z.string().refine((val) => isValidCron(val, { seconds: true }), { message: "Please provide a valid cron expression" }),

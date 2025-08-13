@@ -6,7 +6,7 @@ import got from 'got';
 interface HttpRequestJobData {
   name: string;
   url: string;
-  method: "GET" | "POST";
+  method: "GET" | "POST" | "PUT" | "DELETE" | "OPTIONS" | "HEAD" | "PATCH" | "TRACE";
   headers?: Record<string, string>;
   userId: string;
   jobId?: string;
