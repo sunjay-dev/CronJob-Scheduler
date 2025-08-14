@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express"
 import userModel from "../models/user.models";
 import bcrypt from "bcrypt";
 import { signToken, verifyToken } from "../utils/jwt.utils";
-import sendEmail from "../utils/emailSend.util";
+import {queueForgotPasswordEmail} from "../utils/qstashEmail.util";
 
 export const handleUserLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
@@ -185,7 +185,7 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
 
         const url = `${process.env.CLIENT_URL}/reset-password/${token}`;
 
-        await sendEmail({ url, email, name: user.name });
+        await queueForgotPasswordEmail({ url, email, name: user.name });
 
         user.resetToken = token;
         user.resetTokenExpiry = new Date(Date.now() + 3600000);
