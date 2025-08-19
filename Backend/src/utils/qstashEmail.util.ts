@@ -1,10 +1,11 @@
 interface EmailProps {
+  name: string;
   email: string;
-  template: "FORGOT_PASSWORD" | "JOB_COOLDOWN";
+  template: "FORGOT_PASSWORD" | "JOB_FAILED";
   data?: Record<string, any>;
 }
 
-export const queueEmail = async ({ email, template, data }: EmailProps): Promise<void> => {
+export const queueEmail = async ({ name, email, template, data }: EmailProps): Promise<void> => {
   try {
     const response = await fetch(
       `https://qstash.upstash.io/v2/publish/${process.env.EMAIL_SERVICE_URL}`,
@@ -15,7 +16,7 @@ export const queueEmail = async ({ email, template, data }: EmailProps): Promise
           "Content-Type": "application/json",
           "Upstash-Forward-Authorization": `Bearer ${process.env.EMAIL_SERVICE_SECRET}`
         },
-        body: JSON.stringify({ email, template, data })
+        body: JSON.stringify({ name, email, template, data })
       }
     );
 

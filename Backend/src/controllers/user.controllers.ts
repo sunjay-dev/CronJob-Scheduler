@@ -185,7 +185,7 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
 
         const url = `${process.env.CLIENT_URL}/reset-password/${token}`;
 
-        await queueEmail({ data: {url, name: user.name}, email, template: "FORGOT_PASSWORD" });
+        await queueEmail({ data: {url},name: user.name, email, template: "FORGOT_PASSWORD" });
 
         user.resetToken = token;
         user.resetTokenExpiry = new Date(Date.now() + 3600000);

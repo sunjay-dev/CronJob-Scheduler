@@ -74,7 +74,7 @@ agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJob
 
         const user = await userModel.findById(userId);
         if(user)
-        await queueEmail({ data: {name: user.name,jobName: name, url, method, error: err.message, lastRunAt: new Date(now)}, email: user.email, template: "JOB_COOLDOWN" });
+        await queueEmail({ data: {jobName: name, url, method, error: err.message, lastRunAt: new Date(now)}, name: user.name, email: user.email, template: "JOB_FAILED" });
 
         job.attrs.data.cooldownUntil = now + 3 * 24 * 60 * 60 * 1000;
       }

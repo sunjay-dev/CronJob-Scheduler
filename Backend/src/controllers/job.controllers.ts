@@ -67,7 +67,6 @@ export const handleNewCronJobs = async (req: Request, res: Response, next: NextF
   }
 }
 
-
 export const handleJobEdit = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { jobId } = req.params;
   const { userId } = req.jwtUser;
@@ -115,6 +114,7 @@ export const handleJobEdit = async (req: Request, res: Response, next: NextFunct
     const job = jobs[0];
 
     job.attrs.data = {...payload, errorCount: 0 };
+    // delete job.attrs.data.cooldownUntil;
     job.attrs.repeatInterval = cron;
     job.attrs.repeatTimezone = timezone;
 
@@ -175,6 +175,8 @@ export const handleJobStatus = async (req: Request, res: Response, next: NextFun
 
     const job = jobs[0];
     status ? job.enable() : job.disable();
+    job.attrs.data.errorCount = 0;
+    // delete job.attrs.data.cooldownUntil;
     await job.save();
 
     res.status(200).json({ message: `Job ${status ? "enabled" : "disabled"}`, status });
