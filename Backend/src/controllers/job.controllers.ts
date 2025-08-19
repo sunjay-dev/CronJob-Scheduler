@@ -4,24 +4,24 @@ import { ObjectId } from 'mongodb';
 import logsModels from "../models/logs.models";
 
 
-function getHeaderObj(headers: any[]){
+function getHeaderObj(headers: any[]) {
 
   return headers.reduce((acc, { key, value }) => {
-      const trimmedKey = key?.trim();
-      const trimmedValue = value?.trim();
+    const trimmedKey = key?.trim();
+    const trimmedValue = value?.trim();
 
-      if (trimmedKey && trimmedValue) acc[trimmedKey] = trimmedValue;
-      return acc;
-    }, {} as Record<string, string>);
+    if (trimmedKey && trimmedValue) acc[trimmedKey] = trimmedValue;
+    return acc;
+  }, {} as Record<string, string>);
 }
 
 export const handleNewCronJobs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { name, url, method, headers, body, cron, timezone, enabled } = req.body;
   const { userId } = req.jwtUser;
 
-  const headersObj = Array.isArray(headers)? getHeaderObj(headers) :{};
+  const headersObj = Array.isArray(headers) ? getHeaderObj(headers) : {};
 
-  let payload = { name, url, method, headers: headersObj, userId } as any;
+  let payload = { name, url, method, headers: headersObj, userId, errorCount: 0 } as any;
 
   if (body && body.trim() !== "") {
     const allowedMethods = ['POST', 'PUT', 'PATCH'];
@@ -30,11 +30,6 @@ export const handleNewCronJobs = async (req: Request, res: Response, next: NextF
       res.status(400).json({
         message: `Method ${method} should not include a body.`,
       });
-      return;
-    }
-
-    if (body.length > 10000) {
-      res.status(413).json({ message: 'Body too large.' });
       return;
     }
 
@@ -79,7 +74,7 @@ export const handleJobEdit = async (req: Request, res: Response, next: NextFunct
 
   const { name, url, method, headers, body, cron, timezone, enabled } = req.body;
 
-  const headersObj = Array.isArray(headers)? getHeaderObj(headers) :{};
+  const headersObj = Array.isArray(headers) ? getHeaderObj(headers) : {};
 
   let payload = { name, url, method, headers: headersObj, userId } as any;
 
@@ -90,11 +85,6 @@ export const handleJobEdit = async (req: Request, res: Response, next: NextFunct
       res.status(400).json({
         message: `Method ${method} should not include a body.`,
       });
-      return;
-    }
-
-    if (body.length > 10000) {
-      res.status(413).json({ message: 'Body too large.' });
       return;
     }
 
@@ -124,7 +114,7 @@ export const handleJobEdit = async (req: Request, res: Response, next: NextFunct
 
     const job = jobs[0];
 
-    job.attrs.data = payload;
+    job.attrs.data = {...payload, errorCount: 0 };
     job.attrs.repeatInterval = cron;
     job.attrs.repeatTimezone = timezone;
 

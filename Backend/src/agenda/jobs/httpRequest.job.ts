@@ -1,7 +1,9 @@
 import agenda from "../agenda";
 import logsModel from "../../models/logs.models";
+import userModel from "../../models/user.models";
 import { Job } from "agenda";
 import got from 'got';
+import { queueEmail } from "../../utils/qstashEmail.util";
 
 interface HttpRequestJobData {
   name: string;
@@ -11,7 +13,11 @@ interface HttpRequestJobData {
   userId: string;
   jobId?: string;
   body: string;
+  errorCount: number
+  cooldownUntil?: number;
 }
+
+const MAX_ERRORS = 5;
 
 agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJobData>) => {
   const { _id, data } = job.attrs;
@@ -33,7 +39,7 @@ agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJob
       decompress: false,
       retry: 0
     });
-    
+
     const { dns, tcp, tls, request, firstByte, download, total } = response?.timings?.phases;
     await logsModel.create({
       name,
@@ -53,11 +59,30 @@ agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJob
         Total: total || 0,
       },
     });
-    
+
+    job.attrs.data.errorCount = 0;
+    await job.save();
+
   } catch (err: any) {
+    job.attrs.data.errorCount += 1;
+
+    if (job.attrs.data.errorCount >= MAX_ERRORS) {
+      job.attrs.disabled = true;
+
+      const now = Date.now();
+      if (!job.attrs.data.cooldownUntil || job.attrs.data.cooldownUntil < now) {
+
+        const user = await userModel.findById(userId);
+        if(user)
+        await queueEmail({ data: {name: user.name,jobName: name, url, method, error: err.message, lastRunAt: new Date(now)}, email: user.email, template: "JOB_COOLDOWN" });
+
+        job.attrs.data.cooldownUntil = now + 3 * 24 * 60 * 60 * 1000;
+      }
+    }
+
     const statusCode = err?.response?.statusCode || 0;
     const timings = err?.response?.timings?.phases || {};
-    
+
     try {
       await logsModel.create({
         name,
@@ -78,8 +103,8 @@ agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJob
           Total: timings.total || 0,
         }
       });
-    } catch (logErr) {
-      console.error("Failed to save log to DB:", logErr);
+    } catch (logError) {
+      console.error("Failed to save log to DB:", logError);
     }
   }
 });

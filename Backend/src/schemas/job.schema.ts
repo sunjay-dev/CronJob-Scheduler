@@ -29,7 +29,8 @@ export const jobSchema = z.object({
         { message: "Please provide a valid method type" }
     ),
     cron: z.string().refine((val) => isValidCron(val, { seconds: true }), { message: "Please provide a valid cron expression" }),
-    body: z.string({ message: "Body must be provided as string" }),
+    body: z.string({ message: "Body must be provided as string" })
+    .max(10000, { message: "Body cannot be longer than 10,000 characters" }),
     headers: z
         .array(
             z.object({
