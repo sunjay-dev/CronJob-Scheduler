@@ -1,6 +1,6 @@
 import { Resend } from 'resend';
 import type { EmailSchema } from '../schemas/email.schema';
-import {forgetPasswordTemplete, jobFailedTemplate} from '../emailTemplates';
+import {forgetPasswordTemplete, jobFailedTemplate, confirmEmailTemplate} from '../emailTemplates';
 
 export default async function sendEmail({ email, name, template, data }: EmailSchema): Promise<void> {
   const resend = new Resend(process.env.RESEND_EMAIL_API_KEY!);
@@ -11,7 +11,8 @@ export default async function sendEmail({ email, name, template, data }: EmailSc
     emailTemplate = forgetPasswordTemplete(name, data?.url);
     subject = `Password Reset Request ${new Date().toISOString().split('T')[1]}`
   }
-  else {
+  
+  else if (template === 'JOB_FAILED') {
     emailTemplate = jobFailedTemplate({
       name, jobName: data?.jobName ,
       url: data?.url,
@@ -19,8 +20,12 @@ export default async function sendEmail({ email, name, template, data }: EmailSc
       error: data?.error ,
       lastRunAt: data?.lastRunAt
     });
-
+    
     subject = `Job "${data?.jobName}" Disabled After Multiple Failures`
+  }
+  else {
+    emailTemplate  = confirmEmailTemplate(name, data?.url);
+    subject = `Welcome! Confirm Your Email to Get Started`;
   }
 
   try {

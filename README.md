@@ -13,7 +13,7 @@ A simple yet powerful cron job scheduler to automate recurring API requests (GET
 - 🧠 Built on **Agenda.js** for robust background processing
 - 📊 View job execution logs and status (success/failure)
 - ✨ Toggle jobs on/off without deleting them
-- 💻 Clean React + Tailwind dashboard
+- 💻 Clean React + Tailwind 
 - 🔐 JWT-based authentication
 
 ---
@@ -46,11 +46,21 @@ A simple yet powerful cron job scheduler to automate recurring API requests (GET
 git clone https://github.com/sunjay-dev/CronJob-Scheduler.git
 cd CronJob-Scheduler
 ````
-
-### 2. Setup Backend
+### 2. Setup email-service
 
 ```bash
-cd server
+cd email-service
+pnpm install
+cp .env.example .env
+# Update .env with your RESEND_EMAIL_API_KEY and SENDER_EMAIL
+
+pnpm run dev
+```
+
+### 3. Setup Backend
+
+```bash
+cd Backend
 pnpm install
 cp .env.example .env
 # Update .env with your MongoDB URI and JWT secret
@@ -61,29 +71,12 @@ pnpm run dev
 ### 3. Setup Frontend
 
 ```bash
-cd ../client
+cd Frontend
 pnpm install
+
+# update backend url
+
 pnpm run dev
-```
-
----
-
-## 🧪 Environment Variables
-
-Example `.env` file for backend:
-
-```env
-PORT=5000
-MONGO_URI=YOUR_MONGO_URI
-MONGO_DB_COLLECTION=agendaJobs
-JWT_SECRET=YOUR_JWT_SECRET
-CLIENT_URL=http://localhost:5173
-GOOGLE_CLIENT_ID=GOOGLE_CLIENT_ID
-GOOGLE_CLIENT_SECRET=GOOGLE_CLIENT_SECRET
-GOOGLE_CALLBACK_URL=http://localhost:3000/auth/google/callback
-EMAIL_SERVICE_URL=EMAIL_SERVICE_URL
-QSTASH_TOKEN=QSTASH_TOKEN
-EMAIL_SERVICE_SECRET=EMAIL_SERVICE_SECRET
 ```
 
 ---
@@ -92,9 +85,10 @@ EMAIL_SERVICE_SECRET=EMAIL_SERVICE_SECRET
 
 ```
 CronJob-Scheduler/
-├── Backend/     # Server (Express + Agenda.js)
-├── Frontend/    # Client (React + Tailwind)
-├── README.md       
+├── Backend/  # Server (Express + Agenda.js)
+├── Frontend/ # Client (React + Tailwind)
+├── email-service/  # email logic (Express + Resend)
+├── README.md
 ```
 
 ---
@@ -108,8 +102,9 @@ CronJob-Scheduler/
 * <del> User account settings <del>
 * <del> Google login config <del>
 * <del> Forget password <del>
-* [ ] Email notifications on failure
-* [ ] Retry on failure + backoff strategy
+* <del> Email notifications on failure <del>
+* <del> Retry on failure + backoff strategy <del>
+* Convert to Micro-service architecture
 
 ## 🤝 Contributing
 

@@ -68,7 +68,7 @@ export default function jobFailedTemplate({ name, jobName, method, url, lastRunA
               </p>
 
               <div style="text-align: center; margin-top: 30px;">
-                <a href="https://cronjon.site/" target="_blank" 
+                <a href="https://www.cronjon.site/jobs"
                    style="background-color: #8b5cf6; color: #ffffff; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-size: 16px;">
                    View Job in Dashboard
                 </a>
