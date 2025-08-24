@@ -22,7 +22,8 @@ passport.use(new GoogleStrategy(
             user = await userModels.create({
                 name: profile.displayName,
                 email: email,
-                authProvider: "google"
+                authProvider: "google",
+                verified: true
             })
         }
         done(null, user);

@@ -25,6 +25,13 @@ export const resetPasswordSchema = z.object({
     .min(6, { message: "Password must be at least 6 characters" }),
 });
 
+export const verifyUserSchema = z.object({
+  token: z.string({ message: "Reset token is required" })
+    .refine((val) => val.split(".").length === 3, {
+      message: "Invalid reset token format",
+    }),
+});
+
 export const changeUserDetailsSchema = z.object({
   name: z.string().trim().min(1, "Invalid name").optional(),
   timezone: z.string().trim().min(1, "Invalid timezone").optional(),

@@ -1,7 +1,7 @@
 interface EmailProps {
   name: string;
   email: string;
-  template: "FORGOT_PASSWORD" | "JOB_FAILED";
+  template: "FORGOT_PASSWORD" | "JOB_FAILED" | "EMAIL_VERIFY";
   data?: Record<string, any>;
 }
 

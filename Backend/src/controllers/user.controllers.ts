@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express"
 import userModel from "../models/user.models";
 import bcrypt from "bcrypt";
 import { signToken, verifyToken } from "../utils/jwt.utils";
-import {queueEmail} from "../utils/qstashEmail.util";
+import { queueEmail } from "../utils/qstashEmail.util";
 
 export const handleUserLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
@@ -14,6 +14,13 @@ export const handleUserLogin = async (req: Request, res: Response, next: NextFun
         if (!user) {
             res.status(401).json({
                 message: "either email or password is incorrect."
+            });
+            return;
+        }
+
+        if (!user.verified) {
+            res.status(401).json({
+                message: "Please verify your email to login."
             });
             return;
         }
@@ -32,7 +39,7 @@ export const handleUserLogin = async (req: Request, res: Response, next: NextFun
             return;
         }
 
-        const token = signToken({ userId: user.id, email: user.email }, "3d");
+        const token = signToken({ userId: user.id }, "3d");
         res.cookie('token', token, {
             httpOnly: true,
             secure: true,
@@ -50,7 +57,7 @@ export const handleUserLogin = async (req: Request, res: Response, next: NextFun
 
     } catch (error) {
         console.error("Error while user Login", error);
-        res.status(500).json({ message: "Error while user Login." });
+        res.status(500).json({ message: "Sign in failed. Please try again later." });
     }
 }
 
@@ -60,33 +67,98 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
     try {
         const user = await userModel.findOne({ email });
         if (user) {
+            if(user.authProvider !== "local"){
+                res.status(400).json({
+                    message: "This email is already registered with Google. Please continue using Google login."
+                })
+                return;
+            }
             res.status(400).json({
-                message: "Account already exists."
+                message: "An account with this email already exists."
             })
             return;
         }
 
-        const newUser = await userModel.create({ name: name.trim(), email, password, timezone, authProvider: "local" });
+        const token = signToken({ email }, "1d");
 
-        const token = signToken({ userId: newUser.id, email: newUser.email }, "3d");
+        await userModel.create({
+            name: name.trim(),
+            email, password,
+            verified: false,
+            timezone,
+            verifyToken: token,
+            verifyTokenExpiry: new Date(Date.now() + 86400000),
+            authProvider: "local"
+        });
 
-        res.cookie('token', token, {
+        const url = `${process.env.CLIENT_URL}/verify-email/${token}`;
+
+        await queueEmail({ data: { url }, name, email, template: "EMAIL_VERIFY" });
+
+        res.status(200).json({
+            message: "Account created successfully. Please check your email to verify."
+        });
+    } catch (error) {
+        console.error("Error while user register", error);
+        res.status(500).json({ message: "Registration failed. Please try again later." });
+    }
+}
+
+export const handleUserVerification = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const { token } = req.body;
+
+    try {
+        let decoded;
+        try {
+            decoded = verifyToken(token);
+        } catch (error) {
+            res.status(400).json({
+                message: "Invalid or expired token. Please request a new verification link."
+            });
+            return;
+        }
+
+        if (typeof decoded !== "object" || decoded === null || !("userId" in decoded)) {
+            res.status(400).json({
+                message: "verification failed. Please request a new verification link."
+            });
+            return;
+        }
+
+        const user = await userModel.findOne({
+            email: decoded.email,
+            verifyToken: token,
+            verifyTokenExpiry: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            res.status(400).json({
+                message: "The verification link is invalid or has expired. Please request a new one."
+            });
+            return;
+        }
+
+        user.verified = true;
+        user.verifyToken = undefined;
+        user.verifyTokenExpiry = undefined;
+        await user.save();
+
+        const cookieToken = signToken({ userId: user.id}, "3d");
+
+        res.cookie('token', cookieToken, {
             httpOnly: true,
             secure: true,
             sameSite: 'none',
             maxAge: 3 * 24 * 60 * 60 * 1000
         });
 
-        const { password: _, ...safeUser } = newUser.toObject();
-
         res.status(200).json({
-            message: "Signup successful",
-            user: safeUser,
-            token
+            message: "Your email has been successfully verified. You can now log in."
         });
+
     } catch (error) {
-        console.error("Error while user register", error);
-        res.status(500).json({ message: "Error while user register." });
+        console.error("Error while user verification", error);
+        res.status(500).json({ message: "Error while user verification." });
     }
 }
 
@@ -113,7 +185,7 @@ export const handleChangeUserDetails = async (req: Request, res: Response, next:
 
     const { userId } = req.jwtUser;
     const updateFields = req.body;
-    
+
     try {
         const user = await userModel.findByIdAndUpdate(
             userId,
@@ -138,7 +210,7 @@ export const handleGoogleCallBack = async (req: Request, res: Response, next: Ne
     }
 
     try {
-        const token = signToken({ userId: user._id!, email: user.email! });
+        const token = signToken({ userId: user._id! });
 
         res.cookie('token', token, {
             httpOnly: true,
@@ -185,7 +257,7 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
 
         const url = `${process.env.CLIENT_URL}/reset-password/${token}`;
 
-        await queueEmail({ data: {url},name: user.name, email, template: "FORGOT_PASSWORD" });
+        await queueEmail({ data: { url }, name: user.name, email, template: "FORGOT_PASSWORD" });
 
         user.resetToken = token;
         user.resetTokenExpiry = new Date(Date.now() + 3600000);
@@ -240,7 +312,7 @@ export const handleResetPassword = async (req: Request, res: Response, next: Nex
         // user.resetTokenExpiry = undefined;
         await user.save();
 
-        const cookieToken = signToken({ userId: user.id, email: user.email }, "3d");
+        const cookieToken = signToken({ userId: user.id }, "3d");
         res.cookie('token', cookieToken, {
             httpOnly: true,
             secure: true,

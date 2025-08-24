@@ -1,17 +1,12 @@
 import { useState } from "react";
-import { Link, useNavigate } from 'react-router-dom'
-import { useAppDispatch } from '../hooks';
-import { setAuth } from '../slices/authSlice';
-import type { User } from "../types";
+import { Link } from 'react-router-dom'
 import { GoogleAuth, Loader, Popup, PasswordInput } from "../components";
 import { RegisterSchema } from "../schemas/authSchemas";
 
 export default function Signup() {
-    const navigate = useNavigate();
     const [details, setDetails] = useState({ name: '', email: '', password: '' });
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
-    const dispatch = useAppDispatch();
 
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -48,22 +43,7 @@ export default function Signup() {
                 return data;
             })
             .then((data) => {
-                const userData: User = data.user;
-                dispatch(setAuth({
-                    user: {
-                        name: userData.name,
-                        email: userData.email,
-                        timezone: userData.timezone,
-                        mode: userData.mode,
-                        timeFormat24: userData.timeFormat24,
-                        emailNotifications: userData.emailNotifications,
-                        pushAlerts: userData.pushAlerts
-                    }
-                }));
-
-                setMessage({ type: 'success', text: 'Signup successful!' });
-
-                setTimeout(() => navigate('/jobs'), 300);
+                setMessage({ type: 'success', text: data.mesage || "Account created successfully. Please check your email to verify." });
             }).catch(err => {
                 console.error(err);
                 setMessage({ type: 'error', text: err.message || 'Signup failed' });

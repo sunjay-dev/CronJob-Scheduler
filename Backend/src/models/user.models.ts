@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from 'bcrypt';
+import { boolean } from "zod";
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -12,11 +13,20 @@ const userSchema = new mongoose.Schema({
         unique: true,
         index: true
     },
+    verified: {
+        type: boolean,
+        required: true,
+        default: false
+    },
     password: {
         type: String,
         required: false,
         select: false
     },
+    verifyToken: {
+        type: String
+    },
+    verifyTokenExpiry: { type: Date },
     authProvider: {
         type: String,
         enum: ['local', 'google'],
