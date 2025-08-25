@@ -10,4 +10,6 @@ import EditJob from './EditJob';
 import NotFoundPage from './NotFoundPage';
 import ForgotPassword from './ForgotPassword';
 import ResetPassword from './ResetPassword';
-export {Login, Signup, Dashboard, CreateJob, Jobs, EditJob,Logs, ForgotPassword,ResetPassword,NotFoundPage,JobLogs,Settings}
+import VerifyEmail from './verifyEmail'
+import EmailPending from './EmailPending';
+export {Login, Signup, Dashboard, CreateJob, EmailPending,Jobs, EditJob,Logs, VerifyEmail,ForgotPassword,ResetPassword,NotFoundPage,JobLogs,Settings}

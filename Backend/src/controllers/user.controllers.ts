@@ -3,6 +3,7 @@ import userModel from "../models/user.models";
 import bcrypt from "bcrypt";
 import { signToken, verifyToken } from "../utils/jwt.utils";
 import { queueEmail } from "../utils/qstashEmail.util";
+import crypto from "crypto";
 
 export const handleUserLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
@@ -79,7 +80,7 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
             return;
         }
 
-        const token = signToken({ email }, "1d");
+        const token = crypto.randomBytes(32).toString("hex");
 
         await userModel.create({
             name: name.trim(),
@@ -93,7 +94,7 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
 
         const url = `${process.env.CLIENT_URL}/verify-email/${token}`;
 
-        await queueEmail({ data: { url }, name, email, template: "EMAIL_VERIFY" });
+        // await queueEmail({ data: { url }, name, email, template: "EMAIL_VERIFY" });
 
         res.status(200).json({
             message: "Account created successfully. Please check your email to verify."
@@ -106,27 +107,8 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
 
 export const handleUserVerification = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { token } = req.body;
-
     try {
-        let decoded;
-        try {
-            decoded = verifyToken(token);
-        } catch (error) {
-            res.status(400).json({
-                message: "Invalid or expired token. Please request a new verification link."
-            });
-            return;
-        }
-
-        if (typeof decoded !== "object" || decoded === null || !("userId" in decoded)) {
-            res.status(400).json({
-                message: "verification failed. Please request a new verification link."
-            });
-            return;
-        }
-
         const user = await userModel.findOne({
-            email: decoded.email,
             verifyToken: token,
             verifyTokenExpiry: { $gt: Date.now() }
         });
@@ -153,7 +135,7 @@ export const handleUserVerification = async (req: Request, res: Response, next: 
         });
 
         res.status(200).json({
-            message: "Your email has been successfully verified. You can now log in."
+            message: "Your email has been successfully verified."
         });
 
     } catch (error) {

@@ -24,7 +24,8 @@ const userSchema = new mongoose.Schema({
         select: false
     },
     verifyToken: {
-        type: String
+        type: String,
+        index: true
     },
     verifyTokenExpiry: { type: Date },
     authProvider: {

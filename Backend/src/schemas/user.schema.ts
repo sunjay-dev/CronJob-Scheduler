@@ -26,10 +26,9 @@ export const resetPasswordSchema = z.object({
 });
 
 export const verifyUserSchema = z.object({
-  token: z.string({ message: "Reset token is required" })
-    .refine((val) => val.split(".").length === 3, {
-      message: "Invalid reset token format",
-    }),
+  token: z.string({ message: "Verification token is required" })
+    .min(64, { message: "Invalid verification token" })
+    .max(64, { message: "Invalid verification token" }),
 });
 
 export const changeUserDetailsSchema = z.object({
