@@ -1,9 +1,9 @@
 import express from "express";
 import passport from "passport";
 import { Request, Response } from "express";
-import { handleUserLogin, handleUserRegister, handleChangeUserDetails, handleForgotPassword, handleUserLogout, handleUserDetails, handleGoogleCallBack, handleResetPassword, handleUserVerification } from "../controllers/user.controllers";
+import { handleUserLogin, handleUserRegister, handleChangeUserDetails, handleForgotPassword, handleUserLogout, handleUserDetails, handleGoogleCallBack, handleResetPassword, handleUserVerification, handleOtpResend } from "../controllers/user.controllers";
 import { restrictUserLogin } from "../middlewares/auth.middlewares";
-import { changeUserDetailsSchema, forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema, verifyUserSchema  } from "../schemas/user.schema";
+import { changeUserDetailsSchema, forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema, verifyUserIdSchema, verifyUserSchema  } from "../schemas/user.schema";
 import { validate } from "../middlewares/validate.middlewares";
 const router = express.Router();
 
@@ -24,6 +24,7 @@ router.get('/details', restrictUserLogin, handleUserDetails);
 router.post('/login',  validate(loginSchema), handleUserLogin);
 router.post('/register',validate(registerSchema) , handleUserRegister);
 router.post('/verify-email', validate(verifyUserSchema),handleUserVerification);
+router.post('/resend-otp', validate(verifyUserIdSchema), handleOtpResend);
 router.post('/forgot-password', validate(forgotPasswordSchema),handleForgotPassword);
 router.post('/reset-password', validate(resetPasswordSchema), handleResetPassword);
 

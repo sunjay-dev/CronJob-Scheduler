@@ -1,4 +1,5 @@
 import { z } from "zod";
+import validator from "validator"
 
 export const loginSchema = z.object({
     email: z.email("Please enter a valid email"),
@@ -13,7 +14,18 @@ export const RegisterSchema = z.object({
 
 export const forgotPasswordSchema = z.object({
     email: z.email("Invalid email address")
-})
+});
+
+export const verifyUserSchema = z.object({
+  otp: z.string().regex(/^\d{6}$/, "OTP must be exactly 6 digits")
+});
+
+export const verifyUserIdSchema = z.object({
+  userId: z.string().refine(
+    (val) => validator.isMongoId(val),
+    { message: "Invalid userId" }
+  ),
+});
 
 export const resetPasswordSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),

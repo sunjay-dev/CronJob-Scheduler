@@ -1,4 +1,4 @@
-export default function confirmEmailTemplate(name: string, url: string) {
+export default function confirmEmailTemplate(name: string, otp: string) {
   return `
   <!DOCTYPE html>
 <html>
@@ -28,17 +28,17 @@ export default function confirmEmailTemplate(name: string, url: string) {
 
               <p style="font-size: 15px; color: #444444; margin-bottom: 25px;">
                 Welcome to <strong>CronJon Scheduler</strong> 🎉 <br/><br/>
-                To complete your registration, please confirm your email address by clicking the button below:
+                To complete your registration, please enter the following verification code in the app:
               </p>
 
               <div style="text-align: center; margin: 30px 0;">
-                <a href="${url}"
-                   style="background-color: #8b5cf6; color: #ffffff; text-decoration: none; padding: 12px 28px; border-radius: 8px; font-size: 16px; font-weight: bold; display: inline-block;">
-                   Verify Email
-                </a>
+                <div style="display: inline-block; background: #f3f4f6; padding: 16px 28px; border-radius: 8px; font-size: 28px; font-weight: bold; letter-spacing: 8px; color: #111111; border: 1px solid #e5e7eb;">
+                  ${otp}
+                </div>
               </div>
 
-              <p style="font-size: 14px; color: #666666; margin-top: 20px;">
+               <p style="font-size: 14px; color: #666666; margin-top: 20px;">
+                This code will expire in 10 minutes for your security. <br/>
                 If you did not sign up for an account, you can safely ignore this email.
               </p>
             </td>
@@ -58,6 +58,5 @@ export default function confirmEmailTemplate(name: string, url: string) {
   </table>
 </body>
 </html>
-
   `;
 }

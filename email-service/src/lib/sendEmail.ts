@@ -24,7 +24,7 @@ export default async function sendEmail({ email, name, template, data }: EmailSc
     subject = `Job "${data?.jobName}" Disabled After Multiple Failures`
   }
   else {
-    emailTemplate  = confirmEmailTemplate(name, data?.url);
+    emailTemplate  = confirmEmailTemplate(name, data?.otp);
     subject = `Welcome! Confirm Your Email to Get Started`;
   }
 

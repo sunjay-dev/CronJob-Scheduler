@@ -14,15 +14,15 @@ export default function Login() {
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     const result = loginSchema.safeParse(details);
     if (!result.success) {
       setMessage({ type: 'error', text: result.error.issues[0].message });
       return;
     }
-    
+
     setIsLoading(true);
-    
+
     fetch(`${import.meta.env.VITE_BACKEND_URL}/login`, {
       method: "POST",
       credentials: 'include',
@@ -34,12 +34,16 @@ export default function Login() {
       .then(async (res) => {
         const data = await res.json();
 
-        if (!res.ok)
-          throw new Error(data.message || "Something went wrong, Please try again later.");
+        if (!res.ok) {
+          if (res.status == 403) {
+            navigate(`/verify-email/${data.id}`);
+            return Promise.reject();
+          }
+          return Promise.reject(new Error(data.message || "Something went wrong. Please try again later."));
+        }
 
         return data;
-      })
-      .then(data => {
+      }).then(data => {
 
         dispatch(setAuth({
           user: {
@@ -55,16 +59,13 @@ export default function Login() {
         setMessage({ type: 'success', text: 'Login successful!' });
         setTimeout(() => navigate('/'), 300);
       }).catch(err => {
-        setMessage({ type: 'error', text: err.message || 'Login failed' });
-        console.error(err);
+        if (err) setMessage({ type: 'error', text: err.message || 'Login failed' });
       })
       .finally(() => {
         setDetails(pre => ({ ...pre, password: '' }));
         setIsLoading(false);
       });
   }
-
-
 
   return (
     <>

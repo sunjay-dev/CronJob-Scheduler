@@ -23,11 +23,15 @@ const userSchema = new mongoose.Schema({
         required: false,
         select: false
     },
-    verifyToken: {
+    otp: {
         type: String,
         index: true
     },
-    verifyTokenExpiry: { type: Date },
+    otpExpiry: { type: Date },
+    otpAttempts: {
+        count: { type: Number, default: 0 },
+        lastSent: { type: Date, default: null }
+    },
     authProvider: {
         type: String,
         enum: ['local', 'google'],

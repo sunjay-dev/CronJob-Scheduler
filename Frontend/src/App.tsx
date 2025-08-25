@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { Login, Signup, Dashboard, CreateJob, Jobs, ResetPassword, EditJob, Logs, JobLogs, Settings, NotFoundPage, ForgotPassword, VerifyEmail, EmailPending } from './pages';
+import { Login, Signup, Dashboard, CreateJob, Jobs, ResetPassword, EditJob, Logs, JobLogs, Settings, NotFoundPage, ForgotPassword, VerifyEmail } from './pages';
 import { Layout, ProtectedRoute, PublicRoute } from './components';
 
 export default function App() {
@@ -25,14 +25,12 @@ export default function App() {
             </PublicRoute>
           } />
 
-        <Route path="/verify-email/:token" element={
+        <Route path="/verify-email/:userId" element={
               <VerifyEmail />
           } />
+          
         <Route path="/reset-password/:token" element={
               <ResetPassword />
-          } />
-        <Route path="/verify-pending" element={
-              <EmailPending />
           } />
 
         <Route element={<ProtectedRoute />}>

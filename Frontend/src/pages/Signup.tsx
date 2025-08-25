@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { GoogleAuth, Loader, Popup, PasswordInput } from "../components";
 import { RegisterSchema } from "../schemas/authSchemas";
 
 export default function Signup() {
+    const navigate = useNavigate();
     const [details, setDetails] = useState({ name: '', email: '', password: '' });
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
@@ -42,8 +43,9 @@ export default function Signup() {
 
                 return data;
             })
-            .then((data) => {
-                setMessage({ type: 'success', text: data.mesage || "Account created successfully. Please check your email to verify." });
+            .then(data => {
+                setMessage({ type: 'success', text: data.message });
+                setTimeout(() => navigate(`/verify-email/${data.id}`), 1000);
             }).catch(err => {
                 console.error(err);
                 setMessage({ type: 'error', text: err.message || 'Signup failed' });

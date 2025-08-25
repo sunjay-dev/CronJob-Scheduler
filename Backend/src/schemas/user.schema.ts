@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ObjectId } from "mongodb";
 
 export const loginSchema = z.object({
   email: z.email("Invalid email address"),
@@ -26,9 +27,16 @@ export const resetPasswordSchema = z.object({
 });
 
 export const verifyUserSchema = z.object({
-  token: z.string({ message: "Verification token is required" })
-    .min(64, { message: "Invalid verification token" })
-    .max(64, { message: "Invalid verification token" }),
+  otp: z.string().regex(/^\d{6}$/, "OTP must be exactly 6 digits"),
+  userId: z.string().refine((val) => ObjectId.isValid(val), {
+    message: "Please provide a valid userId",
+  }),
+});
+
+export const verifyUserIdSchema = z.object({
+  userId: z.string().refine((val) => ObjectId.isValid(val), {
+    message: "Please provide a valid userId",
+  }),
 });
 
 export const changeUserDetailsSchema = z.object({

@@ -3,7 +3,6 @@ import userModel from "../models/user.models";
 import bcrypt from "bcrypt";
 import { signToken, verifyToken } from "../utils/jwt.utils";
 import { queueEmail } from "../utils/qstashEmail.util";
-import crypto from "crypto";
 
 export const handleUserLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
@@ -20,8 +19,9 @@ export const handleUserLogin = async (req: Request, res: Response, next: NextFun
         }
 
         if (!user.verified) {
-            res.status(401).json({
-                message: "Please verify your email to login."
+            res.status(403).json({
+                message: "Please verify your email to login.",
+                id: user._id
             });
             return;
         }
@@ -68,7 +68,7 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
     try {
         const user = await userModel.findOne({ email });
         if (user) {
-            if(user.authProvider !== "local"){
+            if (user.authProvider !== "local") {
                 res.status(400).json({
                     message: "This email is already registered with Google. Please continue using Google login."
                 })
@@ -80,24 +80,23 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
             return;
         }
 
-        const token = crypto.randomBytes(32).toString("hex");
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-        await userModel.create({
+        const newUser = await userModel.create({
             name: name.trim(),
             email, password,
             verified: false,
             timezone,
-            verifyToken: token,
-            verifyTokenExpiry: new Date(Date.now() + 86400000),
+            otp,
+            otpExpiry: new Date(Date.now() + 1000 * 60 * 10),
             authProvider: "local"
         });
 
-        const url = `${process.env.CLIENT_URL}/verify-email/${token}`;
-
-        // await queueEmail({ data: { url }, name, email, template: "EMAIL_VERIFY" });
+        await queueEmail({ data: { otp }, name, email, template: "EMAIL_VERIFY" });
 
         res.status(200).json({
-            message: "Account created successfully. Please check your email to verify."
+            message: "Account created successfully. Please check your email to verify.",
+            id: newUser._id
         });
     } catch (error) {
         console.error("Error while user register", error);
@@ -106,31 +105,41 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
 }
 
 export const handleUserVerification = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { token } = req.body;
+    const { otp, userId } = req.body;
+
     try {
-        const user = await userModel.findOne({
-            verifyToken: token,
-            verifyTokenExpiry: { $gt: Date.now() }
-        });
+        const user = await userModel.findById(userId);
 
         if (!user) {
-            res.status(400).json({
-                message: "The verification link is invalid or has expired. Please request a new one."
-            });
+            res.status(404).json({ message: "User not found." });
+            return;
+        }
+
+        if (user.verified) {
+            res.status(409).json({ message: "User is already verified. Please login to continue" });
+            return;
+        }
+
+        if (!user.otp || !user.otpExpiry || user.otpExpiry.getTime() < Date.now()) {
+            res.status(400).json({ message: "OTP has expired. Please request a new one." });
+            return;
+        }
+
+        if (user.otp !== otp) {
+            res.status(400).json({ message: "Invalid OTP. Please check and try again." });
             return;
         }
 
         user.verified = true;
-        user.verifyToken = undefined;
-        user.verifyTokenExpiry = undefined;
+        user.otp = undefined;
+        user.otpExpiry = undefined;
         await user.save();
 
-        const cookieToken = signToken({ userId: user.id}, "3d");
-
-        res.cookie('token', cookieToken, {
+        const cookieToken = signToken({ userId: user.id }, "3d");
+        res.cookie("token", cookieToken, {
             httpOnly: true,
             secure: true,
-            sameSite: 'none',
+            sameSite: "none",
             maxAge: 3 * 24 * 60 * 60 * 1000
         });
 
@@ -142,7 +151,70 @@ export const handleUserVerification = async (req: Request, res: Response, next: 
         console.error("Error while user verification", error);
         res.status(500).json({ message: "Error while user verification." });
     }
-}
+};
+
+export const handleOtpResend = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const { userId } = req.body;
+
+    try {
+        const user = await userModel.findById(userId);
+
+        if (!user) {
+            res.status(404).json({ message: "User not found." });
+            return;
+        }
+
+        if (user.verified) {
+            res.status(409).json({ message: "User is already verified. Please login to continue." });
+            return;
+        }
+
+        if (!user.otpAttempts) {
+            user.otpAttempts = { count: 0, lastSent: new Date(0) };
+        }
+
+        const now = Date.now();
+        let delay = 0;
+
+        switch (user.otpAttempts.count) {
+            case 0:
+                delay = 0;
+                break;
+            case 1:
+                delay = 5 * 60 * 1000;
+                break;
+            default:
+                delay = 60 * 60 * 60 * 1000;
+        }
+
+        if (user.otpAttempts.lastSent && (now - user.otpAttempts.lastSent.getTime()) < delay) {
+            const wait = Math.ceil((delay - (now - user.otpAttempts.lastSent.getTime())) / 1000);
+            res.status(429).json({
+                message: `Too many requests. Please wait before requesting again.`,
+                wait
+            });
+            return;
+        }
+
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        user.otp = otp;
+        user.otpExpiry = new Date(now + 10 * 60 * 1000);
+
+        user.otpAttempts.count += 1;
+        user.otpAttempts.lastSent = new Date(now);
+        await user.save();
+
+        await queueEmail({ data: { otp }, name: user.name, email: user.email, template: "EMAIL_VERIFY" });
+
+        res.status(200).json({
+            message: `A new OTP has been sent to your email.`,
+        });
+    } catch (error) {
+        console.error("Error while resending OTP", error);
+        res.status(500).json({ message: "Error while resending OTP." });
+    }
+};
+
 
 export const handleUserLogout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     res.clearCookie("token");
