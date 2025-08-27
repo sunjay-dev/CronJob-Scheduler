@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import bcrypt from 'bcrypt';
-import { boolean } from "zod";
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -14,7 +13,7 @@ const userSchema = new mongoose.Schema({
         index: true
     },
     verified: {
-        type: boolean,
+        type: Boolean,
         required: true,
         default: false
     },
@@ -29,6 +28,14 @@ const userSchema = new mongoose.Schema({
     },
     otpExpiry: { type: Date },
     otpAttempts: {
+        type: Number,
+        default: 0
+    },
+    otpLockedUntil: {
+        type: Date,
+        default: null
+    },
+    otpResendAttempts: {
         count: { type: Number, default: 0 },
         lastSent: { type: Date, default: null }
     },

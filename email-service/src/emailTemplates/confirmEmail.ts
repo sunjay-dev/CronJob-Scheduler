@@ -38,7 +38,7 @@ export default function confirmEmailTemplate(name: string, otp: string) {
               </div>
 
                <p style="font-size: 14px; color: #666666; margin-top: 20px;">
-                This code will expire in 10 minutes for your security. <br/>
+                This code will expire in 60 minutes for your security. <br/>
                 If you did not sign up for an account, you can safely ignore this email.
               </p>
             </td>

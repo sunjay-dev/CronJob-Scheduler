@@ -18,16 +18,16 @@ export const handleUserLogin = async (req: Request, res: Response, next: NextFun
             return;
         }
 
+        if (user.authProvider === "google" || !user.password) {
+            res.status(400).json({ message: 'Please try login using Google.' });
+            return;
+        }
+
         if (!user.verified) {
             res.status(403).json({
                 message: "Please verify your email to login.",
                 id: user._id
             });
-            return;
-        }
-
-        if (user.authProvider === "google" || !user.password) {
-            res.status(400).json({ message: 'Please try login using Google.' });
             return;
         }
 
@@ -84,11 +84,12 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
 
         const newUser = await userModel.create({
             name: name.trim(),
-            email, password,
+            email,
+            password,
             verified: false,
             timezone,
             otp,
-            otpExpiry: new Date(Date.now() + 1000 * 60 * 10),
+            otpExpiry: new Date(Date.now() + 1000 * 60 * 60),
             authProvider: "local"
         });
 
@@ -96,7 +97,8 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
 
         res.status(200).json({
             message: "Account created successfully. Please check your email to verify.",
-            id: newUser._id
+            id: newUser._id,
+            email
         });
     } catch (error) {
         console.error("Error while user register", error);
@@ -120,19 +122,55 @@ export const handleUserVerification = async (req: Request, res: Response, next: 
             return;
         }
 
+        // Check if locked
+        if (user.otpLockedUntil && user.otpLockedUntil > new Date()) {
+            const minutesLeft = Math.ceil((user.otpLockedUntil.getTime() - Date.now()) / 1000 / 60);
+            res.status(429).json({
+                message: `Too many attempts. Try again after ${minutesLeft} minute(s).`
+            });
+            return;
+        }
+
         if (!user.otp || !user.otpExpiry || user.otpExpiry.getTime() < Date.now()) {
             res.status(400).json({ message: "OTP has expired. Please request a new one." });
             return;
         }
 
         if (user.otp !== otp) {
-            res.status(400).json({ message: "Invalid OTP. Please check and try again." });
+            user.otpAttempts = (user.otpAttempts || 0) + 1;
+
+            if (user.otpAttempts >= 5) {
+                user.otpLockedUntil = new Date(Date.now() + 30 * 60 * 1000);
+                user.otpAttempts = 0;
+                await user.save();
+
+                res.status(429).json({
+                    message: "Too many failed attempts. You are locked for 15 minutes."
+                });
+                return;
+            }
+
+            await user.save();
+
+            if (user.otpAttempts >= 2) {
+                res.status(400).json({
+                    message: "Invalid OTP. You have only 3 try left!"
+                });
+                return;
+            }
+
+            res.status(400).json({
+                message: "Invalid OTP. Please check and try again."
+            });
             return;
         }
 
+        // ✅ OTP is correct
         user.verified = true;
         user.otp = undefined;
         user.otpExpiry = undefined;
+        user.otpAttempts = 0;
+        user.otpLockedUntil = new Date(0);
         await user.save();
 
         const cookieToken = signToken({ userId: user.id }, "3d");
@@ -169,16 +207,16 @@ export const handleOtpResend = async (req: Request, res: Response, next: NextFun
             return;
         }
 
-        if (!user.otpAttempts) {
-            user.otpAttempts = { count: 0, lastSent: new Date(0) };
+        if (!user.otpResendAttempts) {
+            user.otpResendAttempts = { count: 0, lastSent: new Date(0) };
         }
 
         const now = Date.now();
         let delay = 0;
 
-        switch (user.otpAttempts.count) {
+        switch (user.otpResendAttempts.count) {
             case 0:
-                delay = 0;
+                delay = 60 * 1000;
                 break;
             case 1:
                 delay = 5 * 60 * 1000;
@@ -187,8 +225,8 @@ export const handleOtpResend = async (req: Request, res: Response, next: NextFun
                 delay = 60 * 60 * 60 * 1000;
         }
 
-        if (user.otpAttempts.lastSent && (now - user.otpAttempts.lastSent.getTime()) < delay) {
-            const wait = Math.ceil((delay - (now - user.otpAttempts.lastSent.getTime())) / 1000);
+        if (user.otpResendAttempts.lastSent && (now - user.otpResendAttempts.lastSent.getTime()) < delay) {
+            const wait = Math.ceil((delay - (now - user.otpResendAttempts.lastSent.getTime())) / 1000);
             res.status(429).json({
                 message: `Too many requests. Please wait before requesting again.`,
                 wait
@@ -198,10 +236,10 @@ export const handleOtpResend = async (req: Request, res: Response, next: NextFun
 
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         user.otp = otp;
-        user.otpExpiry = new Date(now + 10 * 60 * 1000);
+        user.otpExpiry = new Date(now + 60 * 60 * 1000);
 
-        user.otpAttempts.count += 1;
-        user.otpAttempts.lastSent = new Date(now);
+        user.otpResendAttempts.count += 1;
+        user.otpResendAttempts.lastSent = new Date(now);
         await user.save();
 
         await queueEmail({ data: { otp }, name: user.name, email: user.email, template: "EMAIL_VERIFY" });
@@ -211,10 +249,9 @@ export const handleOtpResend = async (req: Request, res: Response, next: NextFun
         });
     } catch (error) {
         console.error("Error while resending OTP", error);
-        res.status(500).json({ message: "Error while resending OTP." });
+        res.status(500).json({ message: "Something went wrong, Please try again later." });
     }
 };
-
 
 export const handleUserLogout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     res.clearCookie("token");

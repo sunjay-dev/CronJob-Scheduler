@@ -56,6 +56,7 @@ export default function VerifyEmail() {
       }).catch(err => {
         setMessage({ type: "error", text: err.message || "Something went wrong. Please try again." });
       }).finally(() => {
+        setOtp("")
         setIsLoading(false);
       })
   };
@@ -102,6 +103,7 @@ export default function VerifyEmail() {
       .then(data => {
         console.log(data)
         setMessage({ type: "success", text: data.message });
+        setResendTimer(300);
       })
       .catch(err => {
         setMessage({ type: "error", text: err.message || "Something went wrong. Please try again." });
@@ -139,8 +141,9 @@ export default function VerifyEmail() {
                     const val = e.target.value;
                     if (val.length <= 6) setOtp(val);
                   }}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-center tracking-[0.5em] text-xl font-mono 
-             focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none 
+                  className="w-full border-b border-gray-300 px-3 py-2 text-center tracking-[0.5em] text-xl font-mono 
+             focus:outline-none focus:ring-0 focus:ring-offset-0 appearance-none 
+             
              [&::-webkit-outer-spin-button]:appearance-none 
              [&::-webkit-inner-spin-button]:appearance-none 
              [-moz-appearance:textfield]"
