@@ -1,7 +1,7 @@
 {
   "name": "email-queue",
   "version": "1.0.0",
-  "description": "",
+  "description": "email service for cronJob Scheduler",
   "main": "app.js",
   "scripts": {
     "build": "tsc",

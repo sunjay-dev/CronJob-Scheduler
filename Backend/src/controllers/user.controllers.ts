@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from "express"
 import userModel from "../models/user.models";
 import bcrypt from "bcrypt";
-import { signToken, verifyToken } from "../utils/jwt.utils";
+import crypto from 'crypto';
+import { signToken } from "../utils/jwt.utils";
 import { queueEmail } from "../utils/qstashEmail.util";
 
 export const handleUserLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -327,7 +328,7 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
 
         if (!user) {
             res.status(404).json({
-                message: "No User Found."
+                message: "No user found with this email address."
             });
             return
         }
@@ -344,14 +345,14 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
             return;
         }
 
-        const token = signToken({ userId: user._id }, "1h");
+        const token = crypto.randomBytes(32).toString("hex");
 
         const url = `${process.env.CLIENT_URL}/reset-password/${token}`;
 
         await queueEmail({ data: { url }, name: user.name, email, template: "FORGOT_PASSWORD" });
 
         user.resetToken = token;
-        user.resetTokenExpiry = new Date(Date.now() + 3600000);
+        user.resetTokenExpiry = new Date(Date.now() + 1000 * 60 * 60);
         await user.save();
 
         res.status(200).json({
@@ -366,27 +367,8 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
 
 export const handleResetPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { token, password } = req.body;
-
     try {
-        let decoded;
-        try {
-            decoded = verifyToken(token);
-        } catch (error) {
-            res.status(400).json({
-                message: "Invalid or expired token. Please request a new password reset."
-            });
-            return;
-        }
-
-        if (typeof decoded !== "object" || decoded === null || !("userId" in decoded)) {
-            res.status(400).json({
-                message: "Token verification failed. Please request a new password reset."
-            });
-            return;
-        }
-
         const user = await userModel.findOne({
-            _id: decoded.userId,
             resetToken: token,
             resetTokenExpiry: { $gt: Date.now() }
         });

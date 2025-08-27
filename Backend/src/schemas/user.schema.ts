@@ -17,10 +17,10 @@ export const forgotPasswordSchema = z.object({
 })
 
 export const resetPasswordSchema = z.object({
-  token: z.string({ message: "Reset token is required" })
-    .refine((val) => val.split(".").length === 3, {
-      message: "Invalid reset token format",
-    }),
+  token: z.string({ message: "Please also provide reset token" })
+    .min(64, { message: "The Reset token you provided is incorrect." })
+    .max(64, { message: "The Reset token you provided is incorrect." }),
+
   password: z
     .string({ message: "Password is required" })
     .min(6, { message: "Password must be at least 6 characters" }),

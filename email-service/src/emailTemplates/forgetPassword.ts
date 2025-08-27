@@ -1,27 +1,61 @@
-export default function forgetPasswordTemplete (name: string, url: string) {
+export default function resetPasswordTemplate(name: string, url: string) {
   return `
-  <html>
-  <head>
-      <style>
-          body { font-family: Arial, sans-serif; background-color: #f9fafb; padding: 20px; }
-          .container { max-width: 600px; margin: 0 auto; background-color: #fff; padding: 40px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-          h1 { color: #9810FA; margin-top: 0; }
-          p { color: #555; }
-          .reset-link a { font-size: 18px; font-weight: bold; color: #9810FA; text-decoration: none; }
-          .reset-link a:hover { text-decoration: underline; }
-      </style>
-  </head>
-  <body>
-      <div class="container">
-          <h1>Password Reset Request</h1>
-          <p>Hi ${name},</p>
-          <p>We received a request to reset your password. Click the link below to reset your password:</p>
-          <p class="reset-link"><a href="${url}">Reset Password</a></p>
-          <p>If you did not request a password reset, please ignore this email or contact support if you have questions.</p>
-          <p>Thank you,</p>
-          <p>Team CronJon schedular</p>
-      </div>
-  </body>
-  </html>
+  <!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Password Reset Request</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0;">
+  <table width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+      <td align="center" style="padding: 30px 15px;">
+        <table width="600" cellpadding="0" cellspacing="0" style="background: #ffffff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden;">
+          
+          <!-- Header -->
+          <tr>
+            <td align="center" style="background-color: #8b5cf6; padding: 20px;">
+              <h1 style="color: #ffffff; margin: 0; font-size: 24px;">Password Reset Request</h1>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding: 30px;">
+              <p style="font-size: 16px; color: #333333; margin-bottom: 20px;">
+                Hi <strong>${name}</strong>,
+              </p>
+
+              <p style="font-size: 15px; color: #444444; margin-bottom: 25px;">
+                We received a request to reset your password. Click the button below to set up a new password:
+              </p>
+
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${url}" style="display: inline-block; background: #8b5cf6; color: #ffffff; text-decoration: none; padding: 14px 28px; font-size: 16px; font-weight: bold; border-radius: 6px;">
+                  Reset Password
+                </a>
+              </div>
+
+              <p style="font-size: 14px; color: #666666; margin-top: 20px;">
+                This link will expire in 60 minutes. <br/>
+                If you did not request a password reset, you can safely ignore this email or contact support if you have questions.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td align="center" style="background: #f3f4f6; padding: 18px; font-size: 12px; color: #666666; line-height: 1.6;">
+              © 2025 CronJon Scheduler. All rights reserved. <br/>
+              You are receiving this email because you requested a password reset on CronJon Scheduler.
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
   `;
 }

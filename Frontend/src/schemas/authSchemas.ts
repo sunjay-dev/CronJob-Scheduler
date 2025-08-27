@@ -31,21 +31,11 @@ export const resetPasswordSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
   confirm: z.string().min(6, "Confirm password must be at least 6 characters"),
 }).refine(data => data.password === data.confirm, {
-  message: "Passwords do not match",
-  path: ["confirm"],
+  message: "Passwords do not match"
 });
 
-export const tokenSchema = z.string().refine((token) => {
-  if (!token) return false;
-  const parts = token.split(".");
-  if (parts.length !== 3) return false;
-
-  try {
-    const decoded = JSON.parse(atob(parts[1]));
-    return typeof decoded === "object" && decoded !== null;
-  } catch {
-    return false;
-  }
-}, {
-  message: "Invalid or tampered token",
-});
+export const tokenSchema = z.object({
+  token:  z.string({ message: "Please also provide reset token" })
+    .min(64, { message: "The Reset token you provided is incorrect." })
+    .max(64, { message: "The Reset token you provided is incorrect." }),
+})

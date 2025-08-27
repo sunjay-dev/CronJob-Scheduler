@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { Footer, Loader, Popup } from "../components";
 import { Eye, EyeOff } from "lucide-react";
 import { resetPasswordSchema, tokenSchema } from "../schemas/authSchemas";
@@ -19,7 +19,7 @@ export default function ResetPassword() {
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => {
-    const result = tokenSchema.safeParse(token);
+    const result = tokenSchema.safeParse({token});
     if (!result.success) {
       setMessage({ type: "error", text: result.error.issues[0].message });
       setTimeout(() => navigate("/"), 3000);
@@ -57,6 +57,7 @@ export default function ResetPassword() {
       setMessage({ type: "error", text: err.message || "Failed to reset password." });
     }).finally(() => {
       setIsLoading(false);
+      setDetails(pre => ({...pre, password: "", confirm: ""}))
     })
   };
 
@@ -65,7 +66,9 @@ export default function ResetPassword() {
       {isLoading && <Loader />}
       <div className="font-[Inter] selection:bg-purple-500 selection:text-white h-dvh w-dvw grid grid-cols-1 md:grid-cols-2 overflow-x-hidden">
         <div className="flex flex-col px-8 md:px-6 py-6">
+          <Link to="/login">
           <img src="/logo.webp" alt="logo" className="md:ml-2 h-10 w-10 mb-8" />
+          </Link>
 
           <div className="flex-grow flex flex-col justify-center items-center">
             <form onSubmit={handleSubmit} className="w-full max-w-sm">
