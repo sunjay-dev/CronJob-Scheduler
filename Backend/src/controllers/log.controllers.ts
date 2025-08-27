@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import logsModels from "../models/logs.models";
-import { ObjectId } from "mongodb";
+import mongoose from "mongoose";
 
 export const handleUserLogs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { userId } = req.jwtUser;
@@ -75,7 +75,7 @@ export const handleGetLogById = async (req: Request, res: Response, next: NextFu
 
   try {
 
-    const log = await logsModels.findOne({ _id: new ObjectId(logId), userId });
+    const log = await logsModels.findOne({ _id: new mongoose.Types.ObjectId(logId), userId });
 
     if (!log) {
       res.status(404).json({

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ObjectId } from "mongodb";
+import mongoose from "mongoose";
 
 export const loginSchema = z.object({
   email: z.email("Invalid email address"),
@@ -28,13 +28,13 @@ export const resetPasswordSchema = z.object({
 
 export const verifyUserSchema = z.object({
   otp: z.string().regex(/^\d{6}$/, "OTP must be exactly 6 digits"),
-  userId: z.string().refine((val) => ObjectId.isValid(val), {
+  userId: z.string().refine((val) => mongoose.Types.ObjectId.isValid(val), {
     message: "Please provide a valid userId",
   }),
 });
 
 export const verifyUserIdSchema = z.object({
-  userId: z.string().refine((val) => ObjectId.isValid(val), {
+  userId: z.string().refine((val) => mongoose.Types.ObjectId.isValid(val), {
     message: "Please provide a valid userId",
   }),
 });

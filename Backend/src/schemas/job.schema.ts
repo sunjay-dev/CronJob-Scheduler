@@ -1,16 +1,16 @@
 import { z } from "zod";
-import { ObjectId } from "mongodb";
 import { isValidCron } from "cron-validator";
 import validator from "validator";
+import mongoose from "mongoose";
 
 export const jobIdSchema = z.object({
-    jobId: z.string().refine((val) => ObjectId.isValid(val), {
+    jobId: z.string().refine((val) => mongoose.Types.ObjectId.isValid(val), {
         message: "Please provide a valid jobId",
     }),
 });
 
 export const jobStatusSchema = z.object({
-    jobId: z.string().refine((val) => ObjectId.isValid(val), {
+    jobId: z.string().refine((val) => mongoose.Types.ObjectId.isValid(val), {
         message: "Please provide a valid jobId",
     }),
     status: z.boolean("Please provide status")

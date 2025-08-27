@@ -1,13 +1,13 @@
 import { z } from "zod";
-import { ObjectId } from "mongodb";
+import mongoose from "mongoose";
 
 export const jobLogsParamsSchema = z.object({
-  jobId: z.string().refine((val) => ObjectId.isValid(val), {
+  jobId: z.string().refine((val) => mongoose.Types.ObjectId.isValid(val), {
     message: "Please provide a valid jobId",
   }),
 });
 export const LogIdSchema = z.object({
-  logId: z.string().refine((val) => ObjectId.isValid(val), {
+  logId: z.string().refine((val) => mongoose.Types.ObjectId.isValid(val), {
     message: "Please provide a valid logId",
   }),
 });

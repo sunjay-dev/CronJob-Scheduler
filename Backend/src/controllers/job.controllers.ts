@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import agenda from "../agenda/agenda";
-import { ObjectId } from 'mongodb';
 import logsModels from "../models/logs.models";
-
+import mongoose from "mongoose";
 
 function getHeaderObj(headers: any[]) {
 
@@ -102,7 +101,7 @@ export const handleJobEdit = async (req: Request, res: Response, next: NextFunct
   payload.body = body.trim();
 
   try {
-    const jobs = await agenda.jobs({ 'data.userId': userId, _id: new ObjectId(jobId) });
+    const jobs = await agenda.jobs({ 'data.userId': userId, _id: new mongoose.Types.ObjectId(jobId) });
 
     if (jobs.length === 0) {
       res.status(404).json({
@@ -151,7 +150,7 @@ export const handleUserJobById = async (req: Request, res: Response, next: NextF
   const { userId } = req.jwtUser;
 
   try {
-    const jobs = await agenda.jobs({ 'data.userId': userId, _id: new ObjectId(jobId) });
+    const jobs = await agenda.jobs({ 'data.userId': userId, _id: new mongoose.Types.ObjectId(jobId) });
     res.status(200).json(jobs);
   } catch (error) {
     console.error("Error while fetching user job by Id", error)
@@ -164,7 +163,7 @@ export const handleJobStatus = async (req: Request, res: Response, next: NextFun
   const { jobId, status } = req.body;
 
   try {
-    const jobs = await agenda.jobs({ 'data.userId': userId, _id: new ObjectId(jobId as string) });
+    const jobs = await agenda.jobs({ 'data.userId': userId, _id: new mongoose.Types.ObjectId(jobId as string) });
 
     if (jobs.length === 0) {
       res.status(404).json({
@@ -191,7 +190,7 @@ export const handleDeleteJob = async (req: Request, res: Response, next: NextFun
   const { userId } = req.jwtUser;
 
   try {
-    const result = await agenda.cancel({ _id: new ObjectId(jobId), 'data.userId': userId })
+    const result = await agenda.cancel({ _id: new mongoose.Types.ObjectId(jobId), 'data.userId': userId })
 
     if (result === 0) {
       res.status(400).json({
@@ -219,7 +218,7 @@ export const handleRunJobNow = async (req: Request, res: Response, next: NextFun
   const { jobId } = req.body;
 
   try {
-    const jobs = await agenda.jobs({ _id: new ObjectId(jobId as string), 'data.userId': userId });
+    const jobs = await agenda.jobs({ _id: new mongoose.Types.ObjectId(jobId as string), 'data.userId': userId });
 
     if (jobs.length === 0) {
       res.status(404).json({ message: "Job not found" });
