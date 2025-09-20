@@ -16,12 +16,12 @@ function getHeaderObj(headers: any[]) {
 }
 
 export const handleNewCronJobs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const { name, url, method, headers, body, cron, timezone, enabled } = req.body;
+  const { name, url, method, headers, body, cron, timezone, enabled, timeout } = req.body;
   const { userId } = req.jwtUser;
 
   const headersObj = Array.isArray(headers) ? getHeaderObj(headers) : {};
 
-  let payload = { name, url, method, headers: headersObj, userId, errorCount: 0 } as any;
+  let payload = { name, url, method, headers: headersObj, userId, errorCount: 0, timeout } as any;
 
   if (body && body.trim() !== "") {
     const allowedMethods = ['POST', 'PUT', 'PATCH'];
@@ -66,11 +66,11 @@ export const handleJobEdit = async (req: Request, res: Response, next: NextFunct
   const { jobId } = req.params;
   const { userId } = req.jwtUser;
 
-  const { name, url, method, headers, body, cron, timezone, enabled } = req.body;
+  const { name, url, method, headers, body, cron, timezone, enabled, timeout } = req.body;
 
   const headersObj = Array.isArray(headers) ? getHeaderObj(headers) : {};
 
-  let payload = { name, url, method, headers: headersObj, userId } as any;
+  let payload = { name, url, method, headers: headersObj, userId, timeout } as any;
 
   if (body && body.trim() !== "") {
     const allowedMethods = ['POST', 'PUT', 'PATCH'];

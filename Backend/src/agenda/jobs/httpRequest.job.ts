@@ -15,16 +15,17 @@ interface HttpRequestJobData {
   body: string;
   errorCount: number
   cooldownUntil?: number;
+  timeout: number;
 }
 
-const MAX_ERRORS = 5;
+const MAX_ERRORS = 10;
 
 agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJobData>) => {
   const { _id, data } = job.attrs;
-  const { name, url, method, headers, userId, body } = data;
+  const { name, url, method, headers, userId, body, timeout } = data;
 
   const jobId = data.jobId || _id.toString();
-
+  
   try {
     const response = await got(url, {
       method,
@@ -37,8 +38,13 @@ agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJob
       responseType: 'buffer',
       resolveBodyOnly: false,
       decompress: false,
-      retry: 0
+      retry: 0,
+      timeout: {
+        request: 1000 * timeout
+      },
     });
+
+    console.log(response);
 
     const { dns, tcp, tls, request, firstByte, download, total } = response?.timings?.phases;
     await logsModel.create({
@@ -47,7 +53,9 @@ agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJob
       userId,
       url,
       method,
+      timeout,
       status: "success",
+      response: response.statusMessage,
       statusCode: response.statusCode,
       responseTime: {
         DNS: dns || 0,
@@ -57,7 +65,7 @@ agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJob
         Wait: firstByte || 0,
         Receive: download || 0,
         Total: total || 0,
-      },
+      }
     });
 
     job.attrs.data.errorCount = 0;
@@ -73,8 +81,8 @@ agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJob
       if (!job.attrs.data.cooldownUntil || job.attrs.data.cooldownUntil < now) {
 
         const user = await userModel.findById(userId);
-        if(user)
-        await queueEmail({ data: {jobName: name, url, method, error: err.message, lastRunAt: new Date(now)}, name: user.name, email: user.email, template: "JOB_FAILED" });
+        if (user)
+          await queueEmail({ data: { jobName: name, url, method, error: err.message, lastRunAt: new Date(now) }, name: user.name, email: user.email, template: "JOB_FAILED" });
 
         job.attrs.data.cooldownUntil = now + 3 * 24 * 60 * 60 * 1000;
       }
@@ -90,6 +98,7 @@ agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJob
         userId,
         url,
         method,
+        timeout,
         status: "failed",
         statusCode,
         response: err.message || "Unknown error",

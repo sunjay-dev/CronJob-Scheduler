@@ -7,7 +7,7 @@ interface Props {
 }
 
 export default function Advanced({ jobDetails, setJobDetails }: Props) {
-  const { method, body, timezone } = jobDetails;
+  const { method, body, timezone, timeout } = jobDetails;
   const allowBody = ["POST", "PUT", "PATCH"].includes(method?.toUpperCase());
 
   useEffect(() => {
@@ -73,6 +73,18 @@ export default function Advanced({ jobDetails, setJobDetails }: Props) {
             <option value="America/New_York">America/New_York</option>
             <option value="America/Los_Angeles">America/Los_Angeles</option>
           </select>
+        </div>
+        <div className="flex flex-col space-y-2">
+          <label className="font-medium text-gray-700">Timeout (seconds)</label>
+          <input
+            type="number"
+            min={1}
+            max={30}
+            value={timeout}
+            onChange={e =>
+              setJobDetails(prev => ({ ...prev, timeout: Number(e.target.value) }))}
+            className="border-0 border-b-2 border-gray-400 px-3 py-2 focus:outline-none focus:border-purple-500 transition"
+          />
         </div>
       </div>
     </>

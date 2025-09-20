@@ -41,7 +41,7 @@ export default function Header({ sidebarOpen, setSidebarOpen }: Props) {
     <>
       <header className="fixed top-0 left-0 z-50 bg-white shadow-sm h-16 w-full px-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <button
+          <button title='Toggle Menu'
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="text-gray-700 hover:text-purple-600"
           >
@@ -55,7 +55,7 @@ export default function Header({ sidebarOpen, setSidebarOpen }: Props) {
 
         <div className="flex items-center gap-4 text-sm text-gray-700">
           <span className="hidden sm:inline">Hello, {user?.name}</span>
-          <button onClick={() => setConfirmLogout(true)} className="flex items-center gap-1 text-purple-600 hover:underline">
+          <button title='Logout' onClick={() => setConfirmLogout(true)} className="flex items-center gap-1 text-purple-600 hover:underline">
             <LogOut className="w-4 h-4" />
             <span>Logout</span>
           </button>

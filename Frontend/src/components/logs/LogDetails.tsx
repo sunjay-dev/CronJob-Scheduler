@@ -112,7 +112,7 @@ export default function LogDetails({ details, setOpenDetailsMenu }: Props) {
 
                 <div className="mb-3 space-y-1">
                     <p>STATUS:</p>
-                    <p className='capitalize font-medium'>{details.statusCode}  {details.status}</p>
+                    <p className='capitalize font-medium'>{details.statusCode}  {details.response || details.status}</p>
                 </div>
 
                 {chartData && (

@@ -22,7 +22,8 @@ export default function CreateJob() {
     headers: [],
     body: '',
     enabled: true,
-    timezone: user?.timezone || 'UTC'
+    timezone: user?.timezone || 'UTC',
+    timeout: 30
   });
 
   const navigate = useNavigate();

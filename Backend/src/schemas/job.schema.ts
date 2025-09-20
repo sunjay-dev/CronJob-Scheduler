@@ -31,6 +31,7 @@ export const jobSchema = z.object({
     cron: z.string().refine((val) => isValidCron(val, { seconds: true }), { message: "Please provide a valid cron expression" }),
     body: z.string({ message: "Body must be provided as string" })
     .max(10000, { message: "Body cannot be longer than 10,000 characters" }),
+    timeout: z.number().refine((val) => val >= 1 && val <= 30, { message: "Timout must be between 1-30 seconds"}),
     headers: z
         .array(
             z.object({

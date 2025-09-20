@@ -24,7 +24,7 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, lastRunA
     <div className="bg-white cursor-pointer border border-gray-300 rounded-lg p-4 transition grid grid-cols-1 md:grid-cols-[2.5fr_1.5fr_1.5fr_1fr_1fr_1fr_40px] items-center text-sm gap-4 relative">
       
       <div className="overflow-hidden">
-        <h2 className="font-semibold text-gray-800 truncate">{jobName}</h2>
+        <h2 title={jobName} className="font-semibold text-gray-800 truncate">{jobName}</h2>
         <p title={url} className="text-gray-500 lowercase truncate max-w-[250px] whitespace-nowrap overflow-hidden text-ellipsis">
           <span className="uppercase">{method}</span> • {url}
         </p>
@@ -36,7 +36,7 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, lastRunA
 
 
       {disabled ? (
-        <span className="flex items-center justify-center gap-1 text-gray-400 italic">
+        <span title='Job Paused' className="flex items-center justify-center gap-1 text-gray-400 italic">
           <PauseCircle className="w-4 h-4" />
           Paused
         </span>
@@ -54,14 +54,14 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, lastRunA
         )}
       </div>
 
-      <Link to={`/job/${_id}/edit`} className="flex hover:text-purple-500 justify-start md:justify-center">
+      <Link title='Edit Job' to={`/job/${_id}/edit`} className="flex hover:text-purple-500 justify-start md:justify-center">
         <button className="flex items-center gap-1 hover:underline">
           <Pencil className="w-4 h-4" />
           Edit
         </button>
       </Link>
 
-      <Link to={`/job/${_id}/logs`} className="flex justify-start hover:text-purple-500 md:justify-center items-center">
+      <Link title='View Job Logs' to={`/job/${_id}/logs`} className="flex justify-start hover:text-purple-500 md:justify-center items-center">
         <button className="flex items-center gap-1 hover:underline">
           <FileText className="w-4 h-4" />
           History
@@ -76,7 +76,7 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, lastRunA
         {open && (
           <div className="absolute right-0 z-20 mt-2 w-36 bg-white border border-gray-200 rounded shadow-md text-sm">
 
-            <button
+            <button title='Delete Job'
               className="w-full flex items-center gap-2 text-left px-4 py-2 hover:bg-gray-100"
               onClick={() => {
                 setOpen(false);
@@ -87,7 +87,7 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, lastRunA
               Delete
             </button>
 
-            <button
+            <button title='Enable Job'
               className={`w-full flex items-center gap-2 text-left px-4 py-2 ${!disabled ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'
                 }`}
               disabled={!disabled}
@@ -97,7 +97,7 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, lastRunA
               Enable
             </button>
 
-            <button className={`w-full flex items-center gap-2 text-left px-4 py-2 ${disabled ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'}`}
+            <button title='Disable Job' className={`w-full flex items-center gap-2 text-left px-4 py-2 ${disabled ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'}`}
               disabled={disabled}
               onClick={() => handleChangeStatus(_id, false)}
             >

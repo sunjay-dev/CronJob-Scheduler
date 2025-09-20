@@ -17,9 +17,9 @@ export default function LogCard({ log }: {log: UserLogInterface}) {
             {log.method}
           </span>
         </div>
-        <span className="truncate text-gray-700">{log.url}</span>
+        <span title={log.url} className="truncate text-gray-700">{log.url}</span>
 
-        <div className="flex items-center gap-2 text-gray-500">
+        <div title={new Date(log.createdAt).toLocaleString()} className="flex items-center gap-2 text-gray-500">
           <Clock className="w-4 h-4" />
           <span>{new Date(log.createdAt).toLocaleTimeString()}</span>
         </div>
@@ -38,7 +38,7 @@ export default function LogCard({ log }: {log: UserLogInterface}) {
           )}
         </div>
 
-        <button onClick={() => setOpenDetailsMenu(true)} className="flex gap-1 items-center justify-center border border-gray-300 hover:bg-gray-100 rounded p-1">
+        <button title='View Log Details' onClick={() => setOpenDetailsMenu(true)} className="flex gap-1 items-center justify-center border border-gray-300 hover:bg-gray-100 rounded p-1">
           <EllipsisVertical className="h-4 w-4" /> DETAILS
         </button>
       </div>

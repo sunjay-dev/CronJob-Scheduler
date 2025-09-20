@@ -23,7 +23,8 @@ export default function EditJob() {
         headers: [],
         body: '',
         enabled: true,
-        timezone: 'UTC'
+        timezone: 'UTC',
+        timeout: 30
     });
 
     const dispatch = useAppDispatch();
@@ -53,7 +54,7 @@ export default function EditJob() {
                     timezone: job.repeatTimezone,
                     cron: job.repeatInterval,
                     body: job.data.body,
-
+                    timeout: job.data.timeout,
                     headers: job.data?.headers && typeof job.data.headers === 'object'
                         ? Object.entries(job.data.headers).map(([key, value]) => ({ key, value: String(value) }))
                         : []

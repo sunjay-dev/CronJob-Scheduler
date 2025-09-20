@@ -6,7 +6,8 @@ export interface JobDetails {
   headers: {key: string, value: string }[],
   body: string,
   enabled: boolean,
-  timezone: string
+  timezone: string,
+  timeout: number
 }
 
 export interface JobInterface {
@@ -45,6 +46,7 @@ export interface UserLogInterface {
   status: "success" | "failed";
   jobId:string;
   name:string;
+  response?: string;
   statusCode?: string;
   responseTime: {
     DNS: number,
