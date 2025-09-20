@@ -2,18 +2,18 @@ import { z } from "zod";
 import validator from "validator"
 
 export const loginSchema = z.object({
-    email: z.email("Please enter a valid email"),
+    email: z.email("Please enter a valid email address"),
     password: z.string().min(1, "Password is required"),
 });
 
 export const RegisterSchema = z.object({
     name: z.string().trim().min(2, { message: "Name must be at least 2 characters" }),
-    email: z.email("Please enter a valid email"),
+    email: z.email("Please enter a valid email address"),
     password: z.string().min(1, "Password is required"),
 });
 
 export const forgotPasswordSchema = z.object({
-    email: z.email("Invalid email address")
+    email: z.email("Please enter a valid email address")
 });
 
 export const verifyUserSchema = z.object({
@@ -36,6 +36,6 @@ export const resetPasswordSchema = z.object({
 
 export const tokenSchema = z.object({
   token:  z.string({ message: "Please also provide reset token" })
-    .min(64, { message: "The Reset token you provided is incorrect." })
-    .max(64, { message: "The Reset token you provided is incorrect." }),
+    .min(64, { message: "Invalid reset password link." })
+    .max(64, { message: "Invalid reset password link." }),
 })

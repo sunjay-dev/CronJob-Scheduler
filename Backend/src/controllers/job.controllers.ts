@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import agenda from "../agenda/agenda";
 import logsModels from "../models/logs.models";
 import mongoose from "mongoose";
+import { BadRequestError, InternalServerError, NotFoundError } from "../utils/AppError";
 
 function getHeaderObj(headers: any[]) {
 
@@ -26,10 +27,7 @@ export const handleNewCronJobs = async (req: Request, res: Response, next: NextF
     const allowedMethods = ['POST', 'PUT', 'PATCH'];
 
     if (!allowedMethods.includes(method.toUpperCase())) {
-      res.status(400).json({
-        message: `Method ${method} should not include a body.`,
-      });
-      return;
+      return next(new BadRequestError(`Method ${method} should not include a body.`));
     }
 
     const contentType = headersObj['Content-Type'] || headersObj['content-type'];
@@ -38,8 +36,7 @@ export const handleNewCronJobs = async (req: Request, res: Response, next: NextF
       try {
         JSON.parse(body);
       } catch (error) {
-        res.status(400).json({ message: 'Invalid JSON in body.' });
-        return;
+        return next(new BadRequestError('Invalid JSON in body.'));
       }
     }
   }
@@ -61,8 +58,7 @@ export const handleNewCronJobs = async (req: Request, res: Response, next: NextF
 
     res.status(200).json({ message: "Job created successfully", job });
   } catch (error) {
-    console.error("Error while creating new job", error)
-    res.status(500).json({ message: "Error while creating new job" });
+    next(new InternalServerError("Error while creating new job"));
   }
 }
 
@@ -80,10 +76,7 @@ export const handleJobEdit = async (req: Request, res: Response, next: NextFunct
     const allowedMethods = ['POST', 'PUT', 'PATCH'];
 
     if (!allowedMethods.includes(method.toUpperCase())) {
-      res.status(400).json({
-        message: `Method ${method} should not include a body.`,
-      });
-      return;
+      return next(new BadRequestError(`Method ${method} should not include a body.`));
     }
 
     const contentType = headersObj['Content-Type'] || headersObj['content-type'];
@@ -92,8 +85,7 @@ export const handleJobEdit = async (req: Request, res: Response, next: NextFunct
       try {
         JSON.parse(body);
       } catch (error) {
-        res.status(400).json({ message: 'Invalid JSON in body.' });
-        return;
+        return next(new BadRequestError('Invalid JSON in body.'));
       }
     }
   }
@@ -104,10 +96,7 @@ export const handleJobEdit = async (req: Request, res: Response, next: NextFunct
     const jobs = await agenda.jobs({ 'data.userId': userId, _id: new mongoose.Types.ObjectId(jobId) });
 
     if (jobs.length === 0) {
-      res.status(404).json({
-        message: "No Job found"
-      });
-      return;
+      return next(new NotFoundError("No Job found"));
     }
 
     const job = jobs[0];
@@ -129,8 +118,7 @@ export const handleJobEdit = async (req: Request, res: Response, next: NextFunct
 
     res.status(200).json({ message: "Job updated successfully", job });
   } catch (error) {
-    console.error("Server error while editing job", error)
-    res.status(500).json({ message: "Server error while editing job" });
+    next(new InternalServerError("Server error while editing job"));
   }
 }
 
@@ -140,8 +128,7 @@ export const handleUserJobs = async (req: Request, res: Response, next: NextFunc
     const jobs = await agenda.jobs({ 'data.userId': userId });
     res.status(200).json(jobs);
   } catch (error) {
-    console.error("Error while fetching user jobs", error)
-    res.status(500).json({ message: "Error while fetching user jobs" });
+    next(new InternalServerError("Error while fetching user jobs"));
   }
 }
 
@@ -153,8 +140,7 @@ export const handleUserJobById = async (req: Request, res: Response, next: NextF
     const jobs = await agenda.jobs({ 'data.userId': userId, _id: new mongoose.Types.ObjectId(jobId) });
     res.status(200).json(jobs);
   } catch (error) {
-    console.error("Error while fetching user job by Id", error)
-    res.status(500).json({ message: "Error while fetching user job by Id" });
+    next(new InternalServerError("Error while fetching user job by Id"));
   }
 }
 
@@ -166,10 +152,7 @@ export const handleJobStatus = async (req: Request, res: Response, next: NextFun
     const jobs = await agenda.jobs({ 'data.userId': userId, _id: new mongoose.Types.ObjectId(jobId as string) });
 
     if (jobs.length === 0) {
-      res.status(404).json({
-        message: "No Job found"
-      });
-      return;
+      return next(new NotFoundError("No Job found"));
     }
 
     const job = jobs[0];
@@ -180,8 +163,7 @@ export const handleJobStatus = async (req: Request, res: Response, next: NextFun
 
     res.status(200).json({ message: `Job ${status ? "enabled" : "disabled"}`, status });
   } catch (error) {
-    console.error("Server error while updating job status", error)
-    res.status(500).json({ message: "Server error while updating job status" });
+    next(new InternalServerError("Server error while updating job status"));
   }
 }
 
@@ -193,10 +175,7 @@ export const handleDeleteJob = async (req: Request, res: Response, next: NextFun
     const result = await agenda.cancel({ _id: new mongoose.Types.ObjectId(jobId), 'data.userId': userId })
 
     if (result === 0) {
-      res.status(400).json({
-        message: "No Job found"
-      });
-      return;
+      return next(new NotFoundError("No Job found"));
     }
 
     await logsModels.deleteMany({ jobId });
@@ -208,8 +187,7 @@ export const handleDeleteJob = async (req: Request, res: Response, next: NextFun
     });
 
   } catch (error) {
-    console.error("Error while deleting job", error);
-    res.status(500).json({ message: "Error while deleting job" });
+    next(new InternalServerError("Error while deleting job"));
   }
 }
 
@@ -221,8 +199,7 @@ export const handleRunJobNow = async (req: Request, res: Response, next: NextFun
     const jobs = await agenda.jobs({ _id: new mongoose.Types.ObjectId(jobId as string), 'data.userId': userId });
 
     if (jobs.length === 0) {
-      res.status(404).json({ message: "Job not found" });
-      return;
+      return next(new NotFoundError("Job not found"));
     }
 
     const job = jobs[0];
@@ -236,7 +213,6 @@ export const handleRunJobNow = async (req: Request, res: Response, next: NextFun
     res.status(200).json({ message: "Job executed immediately" });
 
   } catch (error) {
-    console.error("Error while running job now", error);
-    res.status(500).json({ message: "Error while running job now" });
+    next(new InternalServerError("Error while running job now"));
   }
 }

@@ -37,6 +37,12 @@ A simple yet powerful cron job scheduler to automate recurring API requests (GET
 
 ---
 
+
+## 🏗️ Current Architecture
+
+<img src="https://raw.githubusercontent.com/sunjay-dev/CronJob-Scheduler/refs/heads/main/assets/architecture.webp" alt="CronJob architecture Image" width="100%" />
+
+
 ## 📦 Installation
 
 ### 1. Clone the repository

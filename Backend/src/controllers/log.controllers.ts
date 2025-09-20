@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import logsModels from "../models/logs.models";
 import mongoose from "mongoose";
+import { InternalServerError, NotFoundError } from "../utils/AppError";
 
 export const handleUserLogs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { userId } = req.jwtUser;
@@ -21,8 +22,7 @@ export const handleUserLogs = async (req: Request, res: Response, next: NextFunc
       totalPages: Math.ceil(total / limit)
     });
   } catch (error) {
-    console.error("Error while fetching user logs", error);
-    res.status(500).json({ message: "Error while fetching user logs" });
+    next(new InternalServerError("Error while fetching user logs"));
   }
 };
 
@@ -46,8 +46,7 @@ export const handleJobLogs = async (req: Request, res: Response, next: NextFunct
       totalPages: Math.ceil(total / limit)
     });
   } catch (error) {
-    console.error("Error while fetching user logs", error)
-    res.status(500).json({ message: "Error while fetching user logs" });
+    next(new InternalServerError("Error while fetching user logs"));
   }
 }
 
@@ -64,8 +63,7 @@ export const handleFailedLogs = async (req: Request, res: Response, next: NextFu
     });
     res.status(200).json(logs);
   } catch (error) {
-    console.error("Error while fetching failed logs", error);
-    res.status(500).json({ message: "Error while fetching failed logs" });
+    next(new InternalServerError("Error while fetching failed logs"));
   }
 }
 
@@ -74,21 +72,15 @@ export const handleGetLogById = async (req: Request, res: Response, next: NextFu
   const { logId } = req.params;
 
   try {
-
     const log = await logsModels.findOne({ _id: new mongoose.Types.ObjectId(logId), userId });
 
     if (!log) {
-      res.status(404).json({
-        message: "No Log found"
-      });
-      return;
+      return next(new NotFoundError("No Log found"));
     }
 
     res.status(200).json(log);
 
   } catch (error) {
-    console.error("Error while fetching log by Id", error)
-    res.status(500).json({ message: "Error while fetching log by Id" });
+    next(new InternalServerError("Error while fetching log by Id"));
   }
-
 }
