@@ -84,3 +84,43 @@ export const handleGetLogById = async (req: Request, res: Response, next: NextFu
     next(new InternalServerError("Error while fetching log by Id"));
   }
 }
+
+export const handleGetLast24hoursLog = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const { userId } = req.jwtUser;
+
+  try {
+    const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    const insights = await logsModels.aggregate([
+      { $match: { createdAt: { $gte: since }, userId } },
+      {
+        $group: {
+          _id: {
+            hour: {
+              $dateTrunc: { date: "$createdAt", unit: "hour" }
+            },
+            status: "$status"
+          },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $group: {
+          _id: "$_id.hour",
+          counts: {
+            $push: {
+              status: "$_id.status",
+              count: "$count"
+            }
+          }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+
+    res.status(200).json(insights);
+
+  } catch (error) {
+    next(new InternalServerError("Error while fetching log insights"));
+  }
+}

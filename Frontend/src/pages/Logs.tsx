@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { LogChart, LogCard, Pagination, Loader } from '../components';
-import type { UserLogInterface } from '../types'
+import type { InsightLog, UserLogInterface } from '../types'
 import { FileWarning } from 'lucide-react';
 
 export default function Logs() {
@@ -8,6 +8,7 @@ export default function Logs() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [logs, setLogs] = useState<UserLogInterface[]>([]);
+  const [logsInsights, setLogsInsights] = useState<InsightLog[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -45,14 +46,36 @@ export default function Logs() {
       if (intervalId)
         clearInterval(intervalId);
     };
-  }, [page])
+  }, [page]);
+
+  useEffect(() => {
+    const fetchInsights = () => {
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/logs/insights`, {
+        credentials: 'include',
+      })
+        .then(async (res) => {
+          const data = await res.json();
+
+          if (!res.ok)
+            throw new Error(data.message || "Something went wrong, Please try again later.");
+
+          return data;
+        })
+        .then(data => {
+          setLogsInsights(data);
+        }).catch(err => console.error(err));
+    }
+
+    fetchInsights();
+  }, []);
 
 
   return (
     <>
       <h1 className="text-3xl font-normal mb-6 text-purple-500">Logs</h1>
 
-      <LogChart logs={logs ?? []} />
+      <LogChart logs={logsInsights} />
+
       <div className="bg-white p-6 mb-6 rounded-xl shadow">
         <div className="grid grid-cols-[1fr_2fr_2fr_2fr_1fr] text-sm gap-4 items-center text-gray-500 font-medium px-4 mb-2">
           <span>Method</span>

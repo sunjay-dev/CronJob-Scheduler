@@ -1,79 +1,68 @@
+import { memo, useMemo } from 'react';
 import { Line } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  LineElement,
-  PointElement,
-  LinearScale,
-  Title,
-  Tooltip,
-  Legend,
-  CategoryScale,
-} from 'chart.js';
-import { useMemo } from 'react';
+import { Chart, LineElement, PointElement, LinearScale, Title, Tooltip, Legend, CategoryScale} from 'chart.js';
+import type { InsightLog } from '../../types';
 
-ChartJS.register(LineElement, PointElement, LinearScale, Title, Tooltip, Legend, CategoryScale);
+Chart.register(LineElement, PointElement, LinearScale, Title, Tooltip, Legend, CategoryScale);
 
-interface Log {
-  createdAt: string;
-  status: 'success' | 'failed';
-}
+function LogChart({ logs }: { logs: InsightLog[] }) {
 
-export default function LogChart({ logs }: {logs: Log[]}) {
-  const { labels, successData, failedData } = useMemo(() => {
-    const labels = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`);
+  const { labels, successData, failedData, yMax } = useMemo(() => {
+    const now = new Date();
+    const labels: string[] = [];
     const successData = Array(24).fill(0);
     const failedData = Array(24).fill(0);
 
-    logs.forEach(log => {
-      const hour = new Date(log.createdAt).getHours();
-      if (log.status === 'success') successData[hour]++;
-      else failedData[hour]++;
+    for (let i = 0; i < 24; i++) {
+      const date = new Date(now.getTime() - (23 - i) * 60 * 60 * 1000);
+      labels.push(`${date.getHours().toString().padStart(2, '0')}:00`);
+    }
+
+    logs.forEach(({ _id, counts }) => {
+      const logTime = new Date(_id).getTime();
+      const diffMs = logTime - (now.getTime() - 24 * 60 * 60 * 1000);
+      const diffHour = Math.floor(diffMs / (1000 * 60 * 60));
+
+      if (diffHour >= 0 && diffHour < 24) {
+        counts.forEach(({ status, count }) => {
+          if (status === 'success') successData[diffHour] = count;
+          if (status === 'failed') failedData[diffHour] = count;
+        });
+      }
     });
 
-    return { labels, successData, failedData };
+    const yMax = Math.ceil(Math.max(...successData, ...failedData) * 1.2);
+    return { labels, successData, failedData, yMax };
   }, [logs]);
 
-  const data = {
+  const data = useMemo(() => ({
     labels,
     datasets: [
       {
         label: 'Success',
         data: successData,
-        borderColor: '#10b981', // green-500
+        borderColor: '#10b981',
         backgroundColor: 'rgba(16,185,129,0.1)',
         tension: 0.4,
       },
       {
         label: 'Failed',
         data: failedData,
-        borderColor: '#ef4444', // red-500
+        borderColor: '#ef4444',
         backgroundColor: 'rgba(239,68,68,0.1)',
         tension: 0.4,
-      }
+      },
     ],
-  };
+  }), [labels, successData, failedData]);
 
-  const options = {
+  const options = useMemo(() => ({
     responsive: true,
     maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'top' as const,
-      },
-      title: {
-        display: false,
-      },
-    },
+    plugins: { legend: { position: 'top' as const } },
     scales: {
-      y: {
-        beginAtZero: true,
-        precision: 0,
-        ticks: {
-          stepSize: 1,
-        },
-      }
-    }
-  };
+      y: { beginAtZero: true, precision: 0, ticks: { stepSize: 1 }, suggestedMax: yMax },
+    },
+  }), [yMax]);
 
   return (
     <div className="bg-white p-6 rounded-xl shadow mb-6 w-full">
@@ -84,3 +73,5 @@ export default function LogChart({ logs }: {logs: Log[]}) {
     </div>
   );
 }
+
+export default memo(LogChart);

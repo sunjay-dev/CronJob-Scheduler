@@ -78,3 +78,11 @@ _id: string;
   handleDeleteJob: (id:string) => void;
   handleChangeStatus: (id:string, status: boolean) => void;
 }
+
+export interface InsightLog {
+  _id: number;
+  counts: {
+    status: 'success' | 'failed';
+    count: number;
+  }[];
+}

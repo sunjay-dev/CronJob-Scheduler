@@ -34,6 +34,7 @@ A simple yet powerful cron job scheduler to automate recurring API requests (GET
 ![Resend](https://img.shields.io/badge/Resend-000000.svg?style=for-the-badge&logo=resend&logoColor=fff)
 ![Zod](https://img.shields.io/badge/Zod-7C3AED.svg?style=for-the-badge&logo=zod&logoColor=white)
 ![Upstash](https://img.shields.io/badge/Qstash-10B981.svg?style=for-the-badge&logo=upstash&logoColor=white)
+![Pino](https://img.shields.io/badge/Pino-4B9E5F.svg?style=for-the-badge&logo=pino&logoColor=white)
 
 ---
 
