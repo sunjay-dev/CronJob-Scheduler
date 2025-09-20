@@ -101,7 +101,6 @@ export default function VerifyEmail() {
         return data;
       })
       .then(data => {
-        console.log(data)
         setMessage({ type: "success", text: data.message });
         setResendTimer(300);
       })
