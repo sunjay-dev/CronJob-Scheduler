@@ -7,7 +7,9 @@
     "start": "node ./dist/app.js",
     "watch": "tsc -w",
     "build": "tsc",
-    "dev": "concurrently \"tsc -w\" \"nodemon ./dist/app.js\""
+    "dev": "concurrently \"tsc -w\" \"nodemon ./dist/app.js\"",
+    "bun": "bun ./src/app.ts",
+    "bun watch": "bun --watch ./src/app.ts"
   },
   "keywords": [],
   "author": "",

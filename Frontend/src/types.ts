@@ -7,7 +7,8 @@ export interface JobDetails {
   body: string,
   enabled: boolean,
   timezone: string,
-  timeout: number
+  timeout: number,
+  email: boolean
 }
 
 export interface JobInterface {

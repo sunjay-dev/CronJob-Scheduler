@@ -152,7 +152,6 @@ export const handleOtpResend = async (req: Request, res: Response, next: NextFun
 
         if (!user.otpResendAttempts) {
             user.otpResendAttempts = { count: 0, lastSent: new Date(0) };
-
         }
 
         const now = Date.now();

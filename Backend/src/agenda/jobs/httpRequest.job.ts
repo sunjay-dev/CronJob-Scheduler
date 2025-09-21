@@ -16,13 +16,14 @@ interface HttpRequestJobData {
   errorCount: number
   cooldownUntil?: number;
   timeout: number;
+  email: boolean;
 }
 
-const MAX_ERRORS = 10;
+const MAX_FAILS_ALLOWED = Number(process.env.MAX_FAILS_ALLOWED) || 10;
 
 agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJobData>) => {
   const { _id, data } = job.attrs;
-  const { name, url, method, headers, userId, body, timeout } = data;
+  const { name, url, method, headers, userId, body, timeout, email } = data;
 
   const jobId = data.jobId || _id.toString();
   
@@ -43,8 +44,6 @@ agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJob
         request: 1000 * timeout
       },
     });
-
-    console.log(response);
 
     const { dns, tcp, tls, request, firstByte, download, total } = response?.timings?.phases;
     await logsModel.create({
@@ -74,14 +73,14 @@ agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJob
   } catch (err: any) {
     job.attrs.data.errorCount += 1;
 
-    if (job.attrs.data.errorCount >= MAX_ERRORS) {
+    if (job.attrs.data.errorCount >= MAX_FAILS_ALLOWED) {
       job.attrs.disabled = true;
 
       const now = Date.now();
       if (!job.attrs.data.cooldownUntil || job.attrs.data.cooldownUntil < now) {
 
         const user = await userModel.findById(userId);
-        if (user)
+        if (user && email)
           await queueEmail({ data: { jobName: name, url, method, error: err.message, lastRunAt: new Date(now) }, name: user.name, email: user.email, template: "JOB_FAILED" });
 
         job.attrs.data.cooldownUntil = now + 3 * 24 * 60 * 60 * 1000;

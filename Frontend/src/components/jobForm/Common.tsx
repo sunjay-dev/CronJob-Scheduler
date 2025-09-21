@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default function Common({ jobDetails, setJobDetails }: Props) {
-  const { name, url, cron, enabled } = jobDetails;
+  const { name, url, cron, enabled, email } = jobDetails;
 
   return (
     <>
@@ -39,7 +39,8 @@ export default function Common({ jobDetails, setJobDetails }: Props) {
           />
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          <div className='flex items-center gap-2'>
           <button
             type="button"
             onClick={() => setJobDetails(prev => ({ ...prev, enabled: !enabled }))}
@@ -50,6 +51,19 @@ export default function Common({ jobDetails, setJobDetails }: Props) {
             />
           </button>
           <label className="font-medium text-gray-700">Enable job</label>
+          </div>
+          <div className='flex items-center gap-2'>
+          <button
+            type="button"
+            onClick={() => setJobDetails(prev => ({ ...prev, email: !email }))}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${email ? 'bg-purple-600' : 'bg-gray-300'}`}
+          >
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${email ? 'translate-x-6' : 'translate-x-1'}`}
+            />
+          </button>
+          <label className="font-medium text-gray-700">Enable email</label>
+          </div>
         </div>
       </div>
 
