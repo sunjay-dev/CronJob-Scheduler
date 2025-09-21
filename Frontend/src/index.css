@@ -44,3 +44,7 @@ button {
 button:active {
     transform: scale(0.98);
 }
+
+html {
+  scroll-behavior: smooth;
+}

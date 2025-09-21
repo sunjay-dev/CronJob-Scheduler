@@ -1,14 +1,9 @@
 import { Calendar, CheckCircle, GitFork, Github, Play, Star } from 'lucide-react'
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom'
 
 export default function Hero() {
-  const navigate = useNavigate();
-
-  function navigateTo(route: string){
-    navigate(route);
-  }
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-purple-50 via-white to-purple-50">
+    <section className="relative sm:mt-0 mt-6  overflow-hidden bg-gradient-to-br from-purple-50 via-white to-purple-50">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-transparent"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
@@ -32,10 +27,10 @@ export default function Hero() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <button onClick={()=> navigateTo('/dashboard')} className="bg-purple-500 hover:bg-purple-600 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center space-x-2 hover:shadow-lg hover:shadow-purple-500/25">
+                <Link to="/dashboard" className="bg-purple-500 hover:bg-purple-600 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center space-x-2 hover:shadow-lg hover:shadow-purple-500/25">
                   <Play className="w-5 h-5" />
                   <span>Start Scheduling</span>
-                </button>
+                </Link>
 
                 <a
                   href="https://github.com/sunjay-dev/CronJob-Scheduler"

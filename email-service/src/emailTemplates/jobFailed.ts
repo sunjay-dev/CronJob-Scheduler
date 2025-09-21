@@ -79,8 +79,8 @@ export default function jobFailedTemplate({ name, jobName, method, url, lastRunA
           <!-- Footer -->
           <tr>
             <td align="center" style="background: #f3f4f6; padding: 15px; font-size: 12px; color: #666666;">
-              © ${lastRunAt? new Date(lastRunAt).getFullYear(): "2025"} cronJob schedular. All rights reserved.<br/>
-              You are receiving this email because you have a scheduled job on cronJob schedular.
+              © ${lastRunAt? new Date(lastRunAt).getFullYear(): "2025"} cronJob scheduler. All rights reserved.<br/>
+              You are receiving this email because you have a scheduled job on cronJob scheduler.
             </td>
           </tr>
         </table>

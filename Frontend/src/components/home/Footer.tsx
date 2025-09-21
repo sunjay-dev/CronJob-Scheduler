@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function Footer() {
   return (
     <footer className="bg-gray-900 text-white py-16">
@@ -19,7 +21,7 @@ export default function Footer() {
               <div className="space-y-2 text-gray-400">
                 <a href="#features" className="block hover:text-white transition-colors">Features</a>
                 <a href="#how-it-works" className="block hover:text-white transition-colors">How it Works</a>
-                <a href="https://github.com/sunjay-dev/CronJob-Scheduler" className="block hover:text-white transition-colors">Documentation</a>
+                <a href="https://github.com/sunjay-dev/CronJob-Scheduler#readme" className="block hover:text-white transition-colors">Documentation</a>
               </div>
             </div>
 
@@ -35,8 +37,8 @@ export default function Footer() {
             <div>
               <h4 className="font-semibold mb-4">Legal</h4>
               <div className="space-y-2 text-gray-400">
-                <a href="#" className="block hover:text-white transition-colors">Privacy</a>
-                <a href="#" className="block hover:text-white transition-colors">Terms</a>
+                <Link to="/privacy-policy" className="block hover:text-white transition-colors">Privacy</Link>
+                <Link to="/terms" className="block hover:text-white transition-colors">Terms</Link>
               </div>
             </div>
           </div>

@@ -12,4 +12,6 @@ import NotFoundPage from './NotFoundPage';
 import ForgotPassword from './ForgotPassword';
 import ResetPassword from './ResetPassword';
 import VerifyEmail from './verifyEmail';
-export { Home, Login, Signup, Dashboard, CreateJob, Jobs, EditJob, Logs, VerifyEmail, ForgotPassword, ResetPassword, NotFoundPage, JobLogs, Settings }
+import PrivacyPolicy from './PrivacyPolicy';
+import Terms from './Terms';
+export { Home, Login, Signup, Dashboard, CreateJob, Jobs, EditJob, Logs, VerifyEmail, ForgotPassword, ResetPassword, NotFoundPage, JobLogs, Settings, PrivacyPolicy, Terms }

@@ -3,7 +3,7 @@ import { HomeHeader, Hero, Features, Work, OpenSource, HomeFooter } from "../com
 export default function Home() {
   return (
     <div className="min-h-screen bg-white font-[Inter] selection:bg-purple-400 selection:text-white">
-      <HomeHeader />
+      <HomeHeader home={true} />
       <Hero />
       <Features />
       <Work />
