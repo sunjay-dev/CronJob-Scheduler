@@ -1,3 +1,4 @@
+import Home from './Home';
 import Login from './Login';
 import Signup from './Signup';
 import Dashboard from './Dashboard'
@@ -10,5 +11,5 @@ import EditJob from './EditJob';
 import NotFoundPage from './NotFoundPage';
 import ForgotPassword from './ForgotPassword';
 import ResetPassword from './ResetPassword';
-import VerifyEmail from './verifyEmail'
-export { Login, Signup, Dashboard, CreateJob, Jobs, EditJob, Logs, VerifyEmail, ForgotPassword, ResetPassword, NotFoundPage, JobLogs, Settings }
+import VerifyEmail from './verifyEmail';
+export { Home, Login, Signup, Dashboard, CreateJob, Jobs, EditJob, Logs, VerifyEmail, ForgotPassword, ResetPassword, NotFoundPage, JobLogs, Settings }

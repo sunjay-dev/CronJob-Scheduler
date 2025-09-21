@@ -22,7 +22,7 @@ export default function ResetPassword() {
     const result = tokenSchema.safeParse({token});
     if (!result.success) {
       setMessage({ type: "error", text: result.error.issues[0].message });
-      setTimeout(() => navigate("/"), 3000);
+      setTimeout(() => navigate("/dashboard"), 3000);
     }
   }, [navigate, token]);
 
@@ -52,7 +52,7 @@ export default function ResetPassword() {
     }).then(() => {
 
       setMessage({ type: "success", text: "Password reset successful. Redirecting to dashboard..." });
-      setTimeout(() => navigate("/"), 2000);
+      setTimeout(() => navigate("/dashboard"), 2000);
     }).catch(err => {
       setMessage({ type: "error", text: err.message || "Failed to reset password." });
     }).finally(() => {

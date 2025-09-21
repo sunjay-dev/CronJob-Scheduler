@@ -12,10 +12,10 @@ export default function NotFoundPage() {
         Sorry, the page you're looking for doesn't exist or was moved.
       </p>
       <Link
-        to="/"
+        to="/dashboard"
         className="px-4 py-2.5 rounded-md bg-[#ba68c8] text-white hover:bg-[#ba68c8]/90 transition"
       >
-        Go Back Home
+        Go Back to Dashboard
       </Link>
     </div>
   );

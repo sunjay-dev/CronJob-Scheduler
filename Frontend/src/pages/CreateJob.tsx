@@ -46,7 +46,7 @@ export default function CreateJob() {
       .then(data => {
         setMessage({ type: "success", text: data.message });
         dispatch(addJob(data.job));
-        navigate('/jobs');
+        navigate("/jobs");
       })
       .catch(err => {
         setMessage({ type: "error", text: err.message });

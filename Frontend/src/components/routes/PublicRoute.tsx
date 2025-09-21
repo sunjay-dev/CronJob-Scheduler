@@ -7,7 +7,7 @@ export default function PublicRoute({ children }: { children: JSX.Element }) {
   const checked = useSelector((state: RootState) => state.auth.checked);
     
   if (!checked) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   return children;

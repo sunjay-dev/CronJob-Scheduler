@@ -8,7 +8,7 @@ export default function Sidebar({ collapsed = false }) {
         }`}
     >
       <nav className={`flex flex-col mt-2 gap-6 text-sm text-gray-700 ${!collapsed && 'items-center'}`}>
-        <NavLink title="Dashboard" to="/" className={({ isActive }) =>
+        <NavLink title="Dashboard" to="/dashboard" className={({ isActive }) =>
           `flex items-center gap-3 transition hover:text-purple-600 ${isActive && 'text-purple-600'}`}>
           <LayoutDashboard className="w-5 h-5" />
           {collapsed && <span>Dashboard</span>}

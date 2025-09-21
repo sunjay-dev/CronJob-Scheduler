@@ -57,7 +57,7 @@ export default function Login() {
           }
         }));
         setMessage({ type: 'success', text: 'Login successful!' });
-        setTimeout(() => navigate('/'), 300);
+        setTimeout(() => navigate("/dashboard"), 300);
       }).catch(err => {
         if (err) setMessage({ type: 'error', text: err.message || 'Login failed' });
       })

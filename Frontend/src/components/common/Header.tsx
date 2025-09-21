@@ -33,7 +33,7 @@ export default function Header({ sidebarOpen, setSidebarOpen }: Props) {
       .then(() => {
         dispatch(logout());
         dispatch(clearJobs());
-        navigate('/login');
+        navigate("/login");
       }).catch(err => console.error(err))
 
   }
@@ -48,7 +48,7 @@ export default function Header({ sidebarOpen, setSidebarOpen }: Props) {
             <Menu className="w-6 h-6" />
           </button>
           <div className="flex items-center gap-2">
-            <img onClick={() => navigate('/')} src="/logo.webp" alt="Cron Job Logo" className="h-8 w-8 cursor-pointer" />
+            <img onClick={() => navigate("/dashboard")} src="/logo.webp" alt="Cron Job Logo" className="h-8 w-8 cursor-pointer" />
             <span className="text-xl font-semibold text-gray-800">Cron Job</span>
           </div>
         </div>

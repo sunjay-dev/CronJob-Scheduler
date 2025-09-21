@@ -5,3 +5,4 @@ export { Layout } from './layout';
 export { Preference } from './settings';
 export { LogCard, LogChart, LogDetails, StatCard } from './logs';
 export { ProtectedRoute, PublicRoute } from './routes';
+export { Work, Features, Footer as HomeFooter, Header as HomeHeader, Hero, OpenSource } from './home'

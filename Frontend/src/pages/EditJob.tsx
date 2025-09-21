@@ -64,7 +64,7 @@ export default function EditJob() {
 
             }).catch(err => {
                 console.error(err);
-                navigate('/jobs')
+                navigate("/jobs")
             })
             .finally(() => {
                 setIsLoading(false);
@@ -124,7 +124,7 @@ export default function EditJob() {
             .then(data => {
                 setMessage({ type: "success", text: data.message });
                 dispatch(updateJob(data.job));
-                navigate('/jobs');
+                navigate("/jobs");
             }).catch(err => {
                 setMessage({ type: "error", text: err.message });
             }).finally(() => {

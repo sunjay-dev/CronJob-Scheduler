@@ -15,7 +15,7 @@ export default function VerifyEmail() {
     const result = verifyUserIdSchema.safeParse({ userId });
     if (!result.success) {
       setMessage({ type: 'error', text: result.error.issues[0].message });
-      navigate('/login')
+      navigate("/login")
     }
   }, [navigate, userId]);
 
@@ -42,7 +42,7 @@ export default function VerifyEmail() {
 
         if (!res.ok) {
           if (res.status == 409) {
-            setTimeout(() => navigate('/login'), 2500);
+            setTimeout(() => navigate("/login"), 2500);
             return Promise.reject(new Error("User is already verified. Please login to continue"));
           }
           return Promise.reject(new Error(data.message || "Something went wrong, Please try again later."));
@@ -51,7 +51,7 @@ export default function VerifyEmail() {
         return data;
       }).then(data => {
         setMessage({ type: "success", text: data.message });
-        setTimeout(() => navigate('/jobs'), 1000);
+        setTimeout(() => navigate("/jobs"), 1000);
 
       }).catch(err => {
         setMessage({ type: "error", text: err.message || "Something went wrong. Please try again." });
@@ -92,7 +92,7 @@ export default function VerifyEmail() {
           }
 
           else if(res.status == 404){
-            setTimeout(()=> navigate('/login'), 2000)
+            setTimeout(()=> navigate("/login"), 2000)
             throw new Error(data.message || "User not found.")
           }          
 

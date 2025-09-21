@@ -34,7 +34,7 @@ export default function JobLogs() {
             setPage(data.page);
         }).catch(err => {
             console.error(err);
-            navigate('/jobs')
+            navigate("/jobs")
         }).finally(() => {
             setIsLoading(false);
         })

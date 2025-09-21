@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { Login, Signup, Dashboard, CreateJob, Jobs, ResetPassword, EditJob, Logs, JobLogs, Settings, NotFoundPage, ForgotPassword, VerifyEmail } from './pages';
+import { Home, Login, Signup, Dashboard, CreateJob, Jobs, ResetPassword, EditJob, Logs, JobLogs, Settings, NotFoundPage, ForgotPassword, VerifyEmail } from './pages';
 import { Layout, ProtectedRoute, PublicRoute } from './components';
 
 export default function App() {
@@ -7,35 +7,37 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={ 
-          <PublicRoute> 
-            <Login /> 
-            </PublicRoute> 
-          } />
-          
+        <Route path='/' element={<Home />} />
+        
+        <Route path="/login" element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        } />
+
         <Route path="/signup" element={
-            <PublicRoute>
-              <Signup />
-            </PublicRoute>
-          } />
+          <PublicRoute>
+            <Signup />
+          </PublicRoute>
+        } />
 
         <Route path="/forgot-password" element={
-            <PublicRoute>
-              <ForgotPassword />
-            </PublicRoute>
-          } />
+          <PublicRoute>
+            <ForgotPassword />
+          </PublicRoute>
+        } />
 
         <Route path="/verify-email/:userId" element={
-              <VerifyEmail />
-          } />
-          
+          <VerifyEmail />
+        } />
+
         <Route path="/reset-password/:token" element={
-              <ResetPassword />
-          } />
+          <ResetPassword />
+        } />
 
         <Route element={<ProtectedRoute />}>
           <Route element={<Layout />}>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/create" element={<CreateJob />} />
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/job/:jobId/logs" element={<JobLogs />} />
