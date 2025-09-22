@@ -3,7 +3,7 @@ import logsModel from "../../models/logs.models";
 import userModel from "../../models/user.models";
 import { Job } from "agenda";
 import got from 'got';
-import { queueEmail } from "../../utils/qstashEmail.util";
+import { queueEmail } from "../../utils/qstashEmail.utils";
 
 interface HttpRequestJobData {
   name: string;

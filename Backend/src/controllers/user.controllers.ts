@@ -3,8 +3,8 @@ import userModel from "../models/user.models";
 import bcrypt from "bcrypt";
 import crypto from 'crypto';
 import { signToken } from "../utils/jwt.utils";
-import { queueEmail } from "../utils/qstashEmail.util";
-import { AppError, BadRequestError, ForbiddenError, InternalServerError, NotFoundError, UnauthorizedError } from "../utils/AppError";
+import { queueEmail } from "../utils/qstashEmail.utils";
+import { AppError, BadRequestError, ForbiddenError, InternalServerError, NotFoundError, UnauthorizedError } from "../utils/appError.utils";
 
 export const handleUserLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const email = req.body.email.toLowerCase();

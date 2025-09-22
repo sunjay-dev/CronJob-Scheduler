@@ -67,8 +67,8 @@ export default function Hero() {
                   <div className="bg-gray-50 rounded-lg p-4">
                     <div className="flex items-center space-x-3 text-sm">
                       <Calendar className="w-4 h-4 text-purple-500" />
-                      <span className="font-mono text-gray-700">0 2 * * *</span>
-                      <span className="text-gray-500">Every day at 2 AM</span>
+                      <span className="font-mono sm:text-sm text-xs text-gray-700">0 2 * * *</span>
+                      <span className="text-gray-500 sm:text-sm text-xs">Every day at 2 AM</span>
                     </div>
                   </div>
 

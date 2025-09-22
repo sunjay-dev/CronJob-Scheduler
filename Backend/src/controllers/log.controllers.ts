@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import logsModels from "../models/logs.models";
 import mongoose from "mongoose";
-import { InternalServerError, NotFoundError } from "../utils/AppError";
+import { InternalServerError, NotFoundError } from "../utils/appError.utils";
 
 export const handleUserLogs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { userId } = req.jwtUser;

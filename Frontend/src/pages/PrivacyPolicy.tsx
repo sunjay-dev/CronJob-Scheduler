@@ -1,11 +1,25 @@
+import { useEffect } from "react";
 import { HomeFooter, HomeHeader } from "../components";
+import { Helmet } from "react-helmet-async";
 
 export default function PrivacyPolicy() {
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     return (
         <div className="bg-gray-50 text-gray-900 font-[Inter]">
+            <Helmet>
+                <title>Privacy Policy - CronJob Scheduler</title>
+                <meta
+                    name="description"
+                    content="Read the Privacy Policy for CronJob Scheduler, detailing how we collect, use, and protect your information."
+                />
+            </Helmet>
             <HomeHeader home={false} />
             <main className="max-w-4xl mx-auto mt-20 mb-10 px-4 py-12">
-                <section className="space-y-6">
+                <section className="space-y-5">
+                    <h1 className="font-bold text-4xl">Privacy Policy</h1>
                     <p><strong>Last updated:</strong> September 21, 2025</p>
 
                     <p>CronJob Scheduler ("we", "our", "us") respects your privacy. This Privacy Policy explains how we collect, use, and protect your information when you use our service.</p>

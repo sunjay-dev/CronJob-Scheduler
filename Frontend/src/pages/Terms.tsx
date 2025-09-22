@@ -1,12 +1,27 @@
+import { useEffect } from "react";
 import { HomeFooter, HomeHeader } from "../components";
+import { Helmet } from "react-helmet-async";
 
 export default function Terms() {
+  useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
+
   return (
     <div className="bg-gray-50 min-h-screen font-[Inter]">
+      <Helmet>
+        <title>Terms of Service - CronJob Schedular</title>
+        <meta
+          name="description"
+          content="Read the Terms of Service for CronJob Scheduler, including usage rules, account responsibilities, and governing law."
+        />
+        <link rel="canonical" href="https://www.cronjon.site/terms" />
+      </Helmet>
       <HomeHeader home={false} />
 
       <main className="max-w-4xl mt-20 mb-10 mx-auto px-4 py-12 space-y-10">
-        <section className="space-y-6">
+        <section className="space-y-5">
+          <h1 className="font-bold text-4xl">Terms</h1>
           <p><strong>Last updated:</strong> September 21, 2025</p>
           <p>
             Welcome to <strong>CronJob Scheduler</strong>! By accessing or using our service, you agree to be bound by these Terms of Service. If you do not agree, please do not use the Service.

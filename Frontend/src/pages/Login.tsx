@@ -4,6 +4,7 @@ import { useAppDispatch } from '../hooks';
 import { setAuth } from '../slices/authSlice';
 import { Loader, Popup, GoogleAuth, PasswordInput } from "../components";
 import { loginSchema } from '../schemas/authSchemas';
+import { Helmet } from "react-helmet-async";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -69,6 +70,13 @@ export default function Login() {
 
   return (
     <>
+    <Helmet>
+        <title>CronJob Scheduler</title>
+        <meta
+          name="description"
+          content="Login to CronJob Scheduler to create, manage, and monitor your cron jobs efficiently."
+        />
+      </Helmet>
       {isLoading && <Loader />}
       <div className="font-[Inter] selection:bg-purple-500 selection:text-white h-dvh w-dvw grid grid-cols-1 md:grid-cols-2 overflow-x-hidden">
         <div className="flex flex-col px-8 md:px-6 py-6">

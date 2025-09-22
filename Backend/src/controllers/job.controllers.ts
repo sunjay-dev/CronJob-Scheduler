@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import agenda from "../agenda/agenda";
 import logsModels from "../models/logs.models";
 import mongoose from "mongoose";
-import { BadRequestError, InternalServerError, NotFoundError } from "../utils/AppError";
+import { BadRequestError, InternalServerError, NotFoundError } from "../utils/appError.utils";
 
 function getHeaderObj(headers: any[]) {
 

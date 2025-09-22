@@ -46,41 +46,47 @@ A simple yet powerful cron job scheduler to automate recurring API requests (GET
 
 ## 📦 Installation
 
-### 1. Clone the repository
+> ⚠️ Before you start, make sure you have the following installed:
+> - [pnpm](https://pnpm.io/installation) (package manager used in this project)
+> - [TypeScript](https://www.typescriptlang.org/download) (`tsc` compiler)
 
+
+### 1. Clone the repository
 ```bash
 git clone https://github.com/sunjay-dev/CronJob-Scheduler.git
 cd CronJob-Scheduler
 ````
-### 2. Setup email-service
 
-```bash
-cd email-service
-pnpm install
-cp .env.example .env
-# Update .env with your RESEND_EMAIL_API_KEY and SENDER_EMAIL
-
-pnpm run dev
-```
-
-### 3. Setup Backend
+### 2. Setup Backend (Required)
 
 ```bash
 cd Backend
 pnpm install
 cp .env.example .env
-# Update .env with your MongoDB URI and JWT secret
+# Update .env with your MongoDB URI (Other fields are optional until you're testing them)
 
 pnpm run dev
 ```
 
-### 3. Setup Frontend
+### 3. Setup Frontend (Required)
 
 ```bash
 cd Frontend
 pnpm install
 
-# update backend url
+# Update VITE_BACKEND_URL in .env (defaults to http://localhost:3000)
+
+pnpm run dev
+```
+
+### 4. Setup Email Service (Optional)
+> ⚡ Only needed if you want to test/run email service.
+
+```bash
+cd email-service
+pnpm install
+cp .env.example .env
+# Update .env with your RESEND_EMAIL_API_KEY, SENDEREMAIL, and EMAIL_SERVICE_SECRET
 
 pnpm run dev
 ```
@@ -91,9 +97,9 @@ pnpm run dev
 
 ```
 CronJob-Scheduler/
-├── Backend/  # Server (Express + Agenda.js)
-├── Frontend/ # Client (React + Tailwind)
-├── email-service/  # email logic (Express + Resend)
+├── Backend/        # Server (Express + Agenda.js)
+├── Frontend/       # Client (React + Tailwind)
+├── email-service/  # Email microservice (Express + Resend)
 ├── README.md
 ```
 

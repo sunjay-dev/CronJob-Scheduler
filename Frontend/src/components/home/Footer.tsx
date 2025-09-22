@@ -19,9 +19,9 @@ export default function Footer() {
             <div>
               <h4 className="font-semibold mb-4">Product</h4>
               <div className="space-y-2 text-gray-400">
-                <a href="#features" className="block hover:text-white transition-colors">Features</a>
-                <a href="#how-it-works" className="block hover:text-white transition-colors">How it Works</a>
-                <a href="https://github.com/sunjay-dev/CronJob-Scheduler#readme" className="block hover:text-white transition-colors">Documentation</a>
+                <a href="/#features" className="block hover:text-white transition-colors">Features</a>
+                <a href="/#how-it-works" className="block hover:text-white transition-colors">How it Works</a>
+                <a target="_blank" href="https://github.com/sunjay-dev/CronJob-Scheduler#readme" className="block hover:text-white transition-colors">Documentation</a>
               </div>
             </div>
 
@@ -37,14 +37,14 @@ export default function Footer() {
             <div>
               <h4 className="font-semibold mb-4">Legal</h4>
               <div className="space-y-2 text-gray-400">
-                <Link to="/privacy-policy" className="block hover:text-white transition-colors">Privacy</Link>
+                <Link to="/privacy-policy" className="block hover:text-white transition-colors">Privacy Policy</Link>
                 <Link to="/terms" className="block hover:text-white transition-colors">Terms</Link>
               </div>
             </div>
           </div>
 
            <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-            <p>© 2025 CronJob Scheduler. Open source and free.</p>
+            <p>© 2025 CronJob Scheduler.</p>
           </div>
         </div>
       </footer>
