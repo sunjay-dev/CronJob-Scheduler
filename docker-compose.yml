@@ -19,6 +19,8 @@ services:
       - mongodb
     env_file:
       - ./Backend/.env
+    environment:
+      - MONGO_DB_URI=mongodb://mongodb:27017/cron-job
     ports:
       - "3000:3000"
     networks:
@@ -45,6 +47,18 @@ services:
       - ./email-service/.env
     ports:
       - "3001:3001"
+    networks:
+      - app-network
+  
+  job-runner:
+    build: ./job-runner
+    container_name: job-runner
+    depends_on:
+      - mongodb
+    env_file:
+      - ./job-runner/.env
+    environment:
+      - MONGO_DB_URI=mongodb://mongodb:27017/cron-job
     networks:
       - app-network
 
