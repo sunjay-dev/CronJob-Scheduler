@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const joblogsSchema = new mongoose.Schema({
     jobId: {
@@ -51,4 +51,4 @@ const joblogsSchema = new mongoose.Schema({
 
 joblogsSchema.index({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 31 * 3 });
 
-module.exports = mongoose.model("JobLog", joblogsSchema);
+export default mongoose.model("JobLog", joblogsSchema);

@@ -1,11 +1,11 @@
-const Agenda = require('agenda');
+import { Agenda } from "agenda";
 
 const agenda = new Agenda({
   db: {
     address: process.env.MONGO_DB_URI!,
     collection: process.env.MONGO_DB_COLLECTION!
   },
-  processEvery: "5 second"
+  processEvery: "5 seconds"
 });
 
-module.exports = agenda;
+export default agenda;

@@ -1,7 +1,9 @@
-require("dotenv").config();
+import "dotenv/config";
+import connectDB from './config/db.config.js';
+connectDB();
 
-const agenda = require("./agenda/agenda");
-require("./agenda/jobs");
+import agenda from "./agenda/agenda.js";
+import "./agenda/jobs/httpRequest.job.js";
 
 async function startAgenda() {
   await agenda.start();

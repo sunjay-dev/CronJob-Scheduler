@@ -1,9 +1,9 @@
-const agenda = require("../agenda");
-const logsModel = require("../../models/logs.models");
-const userModel = require("../../models/user.models");
-const got = require('got');
-const { queueEmail } = require("../../utils/qstashEmail.utils");
+import agenda from "../agenda.js";
+import logsModel from "../../models/logs.models.js";
+import userModel from "../../models/user.models.js";
+import { queueEmail } from "../../utils/qstashEmail.utils.js";
 
+import got from 'got';
 import type { Job } from "agenda";
 
 interface HttpRequestJobData {
@@ -27,7 +27,7 @@ agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJob
   const { name, url, method, headers, userId, body, timeout, email } = data;
 
   const jobId = data.jobId || _id.toString();
-  
+
   try {
     const response = await got(url, {
       method,
@@ -40,11 +40,12 @@ agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJob
       responseType: 'buffer',
       resolveBodyOnly: false,
       decompress: false,
-      retry: 0,
+      retry: { limit: 0 },
       timeout: {
         request: 1000 * timeout
       },
     });
+
 
     const { dns, tcp, tls, request, firstByte, download, total } = response?.timings?.phases;
     await logsModel.create({

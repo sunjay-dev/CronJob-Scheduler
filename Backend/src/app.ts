@@ -27,17 +27,11 @@ app.use('/api/jobs', jobRouter);
 app.use(errorHandler);
 
 import connectDB from './config/db.config'
-import agenda from './agenda/agenda';
-import './agenda';
 
 const port = process.env.PORT || 3000;
 
 async function start() {
   await connectDB();
-  await agenda.start();
-
-  await agenda.every("1 day", "clean-now-jobs");
-
   app.listen(port, () => console.log('Server running on Port', port));
 }
 

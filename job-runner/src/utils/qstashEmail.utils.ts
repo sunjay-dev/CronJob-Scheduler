@@ -5,7 +5,7 @@ interface EmailProps {
   data?: Record<string, any>;
 }
 
-module.exports.queueEmail = async ({ name, email, template, data }: EmailProps): Promise<void> => {
+export const queueEmail = async ({ name, email, template, data }: EmailProps): Promise<void> => {
 
   if (process.env.ENABLE_EMAIL_SERVICE !== "true") {
     console.log("Email sent:", { name, email, template, data });
