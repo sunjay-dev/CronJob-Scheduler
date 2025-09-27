@@ -38,11 +38,18 @@ export default function Logs() {
 
     fetchLogs();
 
+    let TimeOutId: ReturnType<typeof setTimeout>;
     if (page === 1) {
-      intervalId = setInterval(fetchLogs, 1000 * 60);
+      const now = new Date().getSeconds();
+      const delay = (60 - now) * 1000 + 5000;
+      TimeOutId = setTimeout(()=> {
+        fetchLogs();
+        intervalId = setInterval(fetchLogs, 60_000);
+      }, delay);
     }
 
     return () => {
+      clearTimeout(TimeOutId);
       if (intervalId)
         clearInterval(intervalId);
     };

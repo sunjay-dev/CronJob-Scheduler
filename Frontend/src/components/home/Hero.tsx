@@ -17,7 +17,7 @@ export default function Hero() {
                 <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
                   Automate Your
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-purple-700 block">
-                    Cron Jobs
+                    Cron Jobs!
                   </span>
                 </h1>
 

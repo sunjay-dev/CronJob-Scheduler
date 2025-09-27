@@ -8,7 +8,11 @@ import { validate } from "../middlewares/validate.middlewares";
 const router = express.Router();
 
 router.get('/', (req: Request, res: Response): void => {
-    res.status(200).send("Hello, I'm running")
+    res.status(200).send(`Hello from my server!`);
+});
+
+router.get("/health", (req: Request, res: Response): void => {
+  res.status(200).send("OK");
 });
 
 router.get('/auth/google',

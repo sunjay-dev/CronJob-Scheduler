@@ -15,6 +15,7 @@ services:
   backend:
     build: ./Backend
     container_name: backend
+    image: sunjay195/backend:latest
     depends_on:
       - mongodb
     env_file:
@@ -29,6 +30,7 @@ services:
   frontend:
     build: ./Frontend
     container_name: frontend
+    image: sunjay195/frontend:latest
     depends_on:
       - backend
     env_file:
@@ -41,6 +43,7 @@ services:
   email-service:
     build: ./email-service
     container_name: email-service
+    image: sunjay195/email-service:latest
     depends_on:
       - backend
     env_file:
@@ -53,6 +56,7 @@ services:
   job-runner:
     build: ./job-runner
     container_name: job-runner
+    image: sunjay195/job-runner:latest
     depends_on:
       - mongodb
     env_file:
