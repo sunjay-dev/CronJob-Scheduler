@@ -5,6 +5,7 @@ import crypto from 'crypto';
 import { signToken } from "../utils/jwt.utils";
 import { queueEmail } from "../utils/qstashEmail.utils";
 import { AppError, BadRequestError, ForbiddenError, InternalServerError, NotFoundError, UnauthorizedError } from "../utils/appError.utils";
+import redis from "../config/redis.config";
 
 export const handleUserLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const email = req.body.email.toLowerCase();
@@ -245,16 +246,18 @@ export const handleGoogleCallBack = async (req: Request, res: Response, next: Ne
 
 export const handleForgotPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { email } = req.body;
+
     try {
+        const redisOtp = await redis.get(`otp:${email}`);
+        if (redisOtp) {
+            return next(new AppError("You can request a reset link only once per hour.", 429));
+        }
+
         const user = await userModel.findOne({ email });
 
         if (!user) return next(new NotFoundError("No user found with this email address."));
-
+        
         if (user.authProvider === "google") return next(new ForbiddenError("This account is connected with Google. Please sign in using Google."));
-
-        if (user.resetTokenExpiry && user.resetTokenExpiry.getTime() > Date.now()) {
-            return next(new AppError("You can request a reset link only once per hour.", 429));
-        }
 
         const token = crypto.randomBytes(32).toString("hex");
 
@@ -262,9 +265,8 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
 
         await queueEmail({ data: { url }, name: user.name, email, template: "FORGOT_PASSWORD" });
 
-        user.resetToken = token;
-        user.resetTokenExpiry = new Date(Date.now() + 1000 * 60 * 60);
-        await user.save();
+        await redis.set(`otp:${email}`, token, 'EX', 60 * 60, 'NX');
+        await redis.set(`otptoken:${token}`, email, 'EX', 60 * 60);
 
         res.status(200).json({
             message: "Email has been successfully sent to reset password"
@@ -276,19 +278,19 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
 
 export const handleResetPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { token, password } = req.body;
+    
     try {
-        const user = await userModel.findOne({
-            resetToken: token,
-            resetTokenExpiry: { $gt: Date.now() }
-        });
+        const email = await redis.get(`otptoken:${token}`);
 
-        if (!user) return next(new BadRequestError("The reset link is invalid or has expired. Please request a new one."));
+        if (!email) return next(new BadRequestError("The reset link is invalid or has expired. Please request a new one."));
+        
+        const hashedPassword = await bcrypt.hash(password, 7);
+        const user = await userModel.findOneAndUpdate({ email }, { password: hashedPassword }, { new: true });
 
-        user.password = password;
-        user.resetToken = undefined;
-        // user.resetTokenExpiry = undefined;
-        await user.save();
+        if (!user) return next(new NotFoundError("User not found."));
 
+        await redis.del(`otptoken:${token}`);
+        
         const cookieToken = signToken({ userId: user.id }, "3d");
 
         res.cookie('token', cookieToken, {

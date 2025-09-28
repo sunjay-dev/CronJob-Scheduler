@@ -29,10 +29,11 @@ app.use(errorHandler);
 import connectDB from './config/db.config'
 
 const port = process.env.PORT || 3000;
+import logger from './utils/logger.utils';
 
 async function start() {
   await connectDB();
-  app.listen(port, () => console.log('Server running on Port', port));
+  app.listen(port, () => logger.info(`Server running on Port ${port}`));
 }
 
 start();

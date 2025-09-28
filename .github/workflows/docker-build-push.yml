@@ -43,7 +43,7 @@ jobs:
         run: |
           cd Backend
           docker buildx build \
-            --platform linux/amd64,linux/arm64 \
+            --platform linux/arm64 \
             -t sunjay195/cron-job-backend:latest \
             --push .
 
@@ -67,6 +67,6 @@ jobs:
         run: |
           cd job-runner
           docker buildx build \
-            --platform linux/amd64,linux/arm64 \
+            --platform linux/arm64 \
             -t sunjay195/cron-job-runner:latest \
             --push .

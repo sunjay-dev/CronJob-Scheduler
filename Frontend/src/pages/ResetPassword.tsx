@@ -43,14 +43,17 @@ export default function ResetPassword() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token, password: details.password }),
     }).then(async (res) => {
-
       const data = await res.json();
+
       if (!res.ok) {
+        if(res.status === 400) {
+          setTimeout(() => navigate("/dashboard"), 6000);
+          return Promise.reject();
+        }
         throw new Error(data.message || "Something went wrong.");
       }
       return data;
     }).then(() => {
-
       setMessage({ type: "success", text: "Password reset successful. Redirecting to dashboard..." });
       setTimeout(() => navigate("/dashboard"), 2000);
     }).catch(err => {
