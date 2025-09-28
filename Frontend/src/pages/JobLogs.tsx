@@ -28,16 +28,16 @@ export default function JobLogs() {
             return data;
         }).then(data => {
 
-            setJobName(data?.logs[0]?.name)
+            setJobName(data?.logs[0]?.name);
             setLogs(data.logs);
             setTotalPages(data.totalPages);
             setPage(data.page);
         }).catch(err => {
             console.error(err);
-            navigate("/jobs")
+            navigate("/jobs");
         }).finally(() => {
             setIsLoading(false);
-        })
+        });
 
     }, [jobId, navigate, page]);
 

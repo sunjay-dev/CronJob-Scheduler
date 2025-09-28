@@ -8,7 +8,7 @@ import { AppError, BadRequestError, ForbiddenError, InternalServerError, NotFoun
 import redis from "../config/redis.config";
 
 export const handleUserLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const email = req.body.email.toLowerCase();
+    const email = req.body.email.trim().toLowerCase();
     const password = req.body.password;
 
     try {
@@ -44,8 +44,10 @@ export const handleUserLogin = async (req: Request, res: Response, next: NextFun
 }
 
 export const handleUserRegister = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { name, email, password, timezone = 'UTC' } = req.body;
-
+    const { name, timezone = 'UTC' } = req.body;
+    const password = req.body.password.trim();
+    const email = req.body.email.trim().toLowerCase();
+    
     try {
         const user = await userModel.findOne({ email });
 
@@ -57,7 +59,7 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
         const newUser = await userModel.create({
-            name: name.trim(),
+            name,
             email,
             password,
             verified: false,
@@ -140,7 +142,7 @@ export const handleUserVerification = async (req: Request, res: Response, next: 
     } catch (error) {
         next(new InternalServerError("Error while verifying user email."));
     }
-};
+}
 
 export const handleOtpResend = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { userId } = req.body;
@@ -185,7 +187,7 @@ export const handleOtpResend = async (req: Request, res: Response, next: NextFun
     } catch (error) {
         next(new InternalServerError("Error while resending OTP. Please try again later."));
     }
-};
+}
 
 export const handleUserLogout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     res.clearCookie("token");
@@ -221,7 +223,7 @@ export const handleChangeUserDetails = async (req: Request, res: Response, next:
     } catch (error) {
         next(new InternalServerError("Error while updating user details"));
     }
-};
+}
 
 export const handleGoogleCallBack = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const user = req.user;
@@ -277,7 +279,8 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
 }
 
 export const handleResetPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { token, password } = req.body;
+    const { token } = req.body;
+    const { password } = req.body.trim();
     
     try {
         const email = await redis.get(`otptoken:${token}`);
@@ -306,4 +309,4 @@ export const handleResetPassword = async (req: Request, res: Response, next: Nex
     } catch (error) {
         next(new InternalServerError("Something went wrong. Please try again later."));
     }
-};
+}

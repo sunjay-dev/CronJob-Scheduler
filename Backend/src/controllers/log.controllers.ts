@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import logsModels from "../models/logs.models";
 import mongoose from "mongoose";
 import { InternalServerError, NotFoundError } from "../utils/appError.utils";
+import redis from "../config/redis.config";
 
 export const handleUserLogs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { userId } = req.jwtUser;
@@ -24,7 +25,7 @@ export const handleUserLogs = async (req: Request, res: Response, next: NextFunc
   } catch (error) {
     next(new InternalServerError("Error while fetching user logs"));
   }
-};
+}
 
 export const handleJobLogs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { jobId } = req.params;
@@ -89,6 +90,12 @@ export const handleGetLast24hoursLog = async (req: Request, res: Response, next:
   const { userId } = req.jwtUser;
 
   try {
+    const cached = await redis.get(`logsInsights_${userId}`);
+    if (cached) {
+      res.status(200).json(JSON.parse(cached));
+      return;
+    }
+
     const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
     const insights = await logsModels.aggregate([
@@ -117,7 +124,7 @@ export const handleGetLast24hoursLog = async (req: Request, res: Response, next:
       },
       { $sort: { _id: 1 } }
     ]);
-
+    await redis.set(`logsInsights_${userId}`, JSON.stringify(insights), "EX", 60);
     res.status(200).json(insights);
 
   } catch (error) {
