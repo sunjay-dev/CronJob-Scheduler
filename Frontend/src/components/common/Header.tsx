@@ -34,7 +34,7 @@ export default function Header({ sidebarOpen, setSidebarOpen }: Props) {
         dispatch(logout());
         dispatch(clearJobs());
         navigate("/login");
-      }).catch(err => console.error(err))
+      }).catch(err => console.error(err));
 
   }
   return (

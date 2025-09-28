@@ -2,7 +2,7 @@ import express from "express";
 import passport from "passport";
 import { Request, Response } from "express";
 import { handleUserLogin, handleUserRegister, handleChangeUserDetails, handleForgotPassword, handleUserLogout, handleUserDetails, handleGoogleCallBack, handleResetPassword, handleUserVerification, handleOtpResend } from "../controllers/user.controllers";
-import { restrictUserLogin } from "../middlewares/auth.middlewares";
+import { restrictUserLogin, softRestrictUserLogin } from "../middlewares/auth.middlewares";
 import { changeUserDetailsSchema, forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema, verifyUserIdSchema, verifyUserSchema  } from "../schemas/user.schema";
 import { validate } from "../middlewares/validate.middlewares";
 const router = express.Router();
@@ -23,7 +23,7 @@ router.get('/auth/google/callback',
   passport.authenticate('google', { session: false }), handleGoogleCallBack);
 
 router.get('/logout', handleUserLogout);
-router.get('/details', restrictUserLogin, handleUserDetails);
+router.get('/details', softRestrictUserLogin, handleUserDetails);
 
 router.post('/login',  validate(loginSchema), handleUserLogin);
 router.post('/register',validate(registerSchema) , handleUserRegister);

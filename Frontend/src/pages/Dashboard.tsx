@@ -17,6 +17,7 @@ export default function Dashboard() {
     disabled: 0,
     logs: 0
   });
+  const user = useAppSelector(state => state.auth.user);
   const jobs = useAppSelector(state => state.jobs.jobs);
   const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState(true);
@@ -35,6 +36,7 @@ export default function Dashboard() {
 
   useEffect(() => {
 
+    if (!user) return;
     if (jobs.length !== 0) return;
 
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/jobs`, {
@@ -52,9 +54,10 @@ export default function Dashboard() {
 
         dispatch(setJobs(data));
       }).catch(err => console.error(err));
-  }, [dispatch, jobs.length])
+  }, [dispatch, jobs.length, user])
 
   useEffect(() => {
+    if (!user) return;
     let intervalId: ReturnType<typeof setInterval> | undefined;
 
     const fetchLogs = () => {
@@ -96,7 +99,7 @@ export default function Dashboard() {
       if (intervalId)
         clearInterval(intervalId);
     };
-  }, [page]);
+  }, [page, user]);
 
   return (
     <>

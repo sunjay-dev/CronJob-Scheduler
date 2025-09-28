@@ -237,7 +237,7 @@ export const handleGoogleCallBack = async (req: Request, res: Response, next: Ne
             maxAge: 24 * 60 * 60 * 1000
         });
 
-        res.redirect(`${process.env.CLIENT_URL}/`);
+        res.redirect(`${process.env.CLIENT_URL}/dashboard`);
     } catch (error) {
         next(new InternalServerError("Error while creating account with Google."));
     }

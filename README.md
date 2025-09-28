@@ -15,6 +15,7 @@ A simple yet powerful cron job scheduler to automate recurring API requests (GET
 - ✨ Toggle jobs on/off without deleting them
 - 💻 Clean React + Tailwind 
 - 🔐 JWT-based authentication
+- ⚡ Dedicated **Job Runner** for background execution
 
 ---
 
@@ -35,6 +36,7 @@ A simple yet powerful cron job scheduler to automate recurring API requests (GET
 ![Zod](https://img.shields.io/badge/Zod-7C3AED.svg?style=for-the-badge&logo=zod&logoColor=white)
 ![Upstash](https://img.shields.io/badge/Qstash-10B981.svg?style=for-the-badge&logo=upstash&logoColor=white)
 ![Pino](https://img.shields.io/badge/Pino-4B9E5F.svg?style=for-the-badge&logo=pino&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED.svg?style=for-the-badge&logo=docker&logoColor=white)
 
 ---
 
@@ -79,6 +81,17 @@ pnpm install
 pnpm run dev
 ```
 
+### 4. Setup Job Runner 
+> ⚡ Required for actual scheduling
+
+```bash
+cd job-runner
+pnpm install
+cp .env.example .env
+# Make sure the MongoDB URI matches the backend
+pnpm run dev
+```
+
 ### 4. Setup Email Service (Optional)
 > ⚡ Only needed if you want to test/run email service.
 
@@ -99,6 +112,7 @@ pnpm run dev
 CronJob-Scheduler/
 ├── Backend/        # Server (Express + Agenda.js)
 ├── Frontend/       # Client (React + Tailwind)
+├── job-runner/     # Background worker (Agenda.js)
 ├── email-service/  # Email microservice (Express + Resend)
 ├── README.md
 ```

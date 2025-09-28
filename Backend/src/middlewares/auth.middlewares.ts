@@ -41,3 +41,42 @@ export function restrictUserLogin(req: Request, res: Response, next: NextFunctio
     return;
   }
 }
+export function softRestrictUserLogin(req: Request, res: Response, next: NextFunction): void {
+  let token = req.cookies?.token;
+
+  if (!token && typeof req.headers.authorization === "string") {
+    const authHeader = req.headers.authorization;
+    if (authHeader.startsWith("Bearer ")) {
+      token = authHeader.split(" ")[1];
+    }
+  }
+
+  if (!token) {
+    res.status(200).json({
+      authorized: false,
+      message: "Please login again or create a new account."
+    });
+    return;
+  }
+
+  try {
+    const verifiedUser = verifyToken(token);
+   if (!verifiedUser) {
+      res.status(200).json({
+        authorized: false,
+        message: "Invalid or expired token"
+      });
+      return;
+    }
+
+    req.jwtUser = verifiedUser;
+    next();
+  } catch (err) {
+    console.error("Auth error:", err);
+    res.status(200).json({
+      authorized: false,
+      message: "Authentication failed"
+    });
+    return;
+  }
+}

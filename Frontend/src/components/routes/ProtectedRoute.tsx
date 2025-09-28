@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import { logout, setAuth } from '../../slices/authSlice';
 import { useAppDispatch } from '../../hooks';
-import type { User } from '../../types';
 import { Loader } from '../common';
 import { clearJobs } from '../../slices/jobSlice';
 
@@ -17,21 +16,18 @@ export default function Layout() {
       credentials: 'include',
     })
       .then(async (res) => {
-
-        if (res.status === 401) {
-          dispatch(logout());
-          dispatch(clearJobs());
-          setAuthorized(false);
-          return null;
-        }
-
         const data = await res.json();
         if (!res.ok)
           throw new Error(data.message || "Something went wrong, Please try again later.");
         return data
       })
-      .then((data: User | null) => {
-        if (!data) return;
+      .then(data => {
+        if (data.authorized === false) {
+          dispatch(logout());
+          dispatch(clearJobs());
+          setAuthorized(false);
+          return null;
+        }
 
         setAuthorized(true);
 
