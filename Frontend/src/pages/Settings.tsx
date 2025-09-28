@@ -4,12 +4,14 @@ import { useAppDispatch, useAppSelector } from '../hooks';
 import { setAuth } from '../slices/authSlice';
 import type { User } from '../types';
 import { ConfirmMenu, Preference } from '../components';
+import { useConfirmExit } from '../hooks/useConfirmExit';
 
 export default function SettingsPage() {
   const user = useAppSelector(state => state.auth.user);
   const [isEditingName, setIsEditingName] = useState(false);
   const dispatch = useAppDispatch();
-  const [confirmUpdate, setConfirmUpdate] = useState(false)
+  const [confirmUpdate, setConfirmUpdate] = useState(false);
+  const [initialDetails, setInitialDetails] = useState<User | null>(null);
   const [details, setDetails] = useState<User>({
     name: '',
     email: '',
@@ -23,8 +25,7 @@ export default function SettingsPage() {
   useEffect(() => {
     if (!user)
       return
-
-    setDetails({
+    const value = {
       name: user.name,
       email: user.email,
       timezone: user.timezone,
@@ -32,8 +33,13 @@ export default function SettingsPage() {
       pushAlerts: user.pushAlerts,
       mode: user.mode,
       timeFormat24: user.timeFormat24
-    })
+    }
+    setDetails(value);
+    setInitialDetails(value);
   }, [user]);
+
+  const isDirty = JSON.stringify(details) !== JSON.stringify(initialDetails);
+  useConfirmExit(isDirty);
 
   const handleSaveChanges = () => {
 

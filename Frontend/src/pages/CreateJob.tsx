@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '../hooks';
 import { addJob } from '../slices/jobSlice';
 import type { JobDetails } from '../types';
 import { jobSchema } from '../schemas/jobSchemas';
+import { useConfirmExit } from '../hooks/useConfirmExit';
 
 export default function CreateJob() {
   const [tab, setTab] = useState<'common' | 'advanced'>('common');
@@ -14,7 +15,8 @@ export default function CreateJob() {
   const user = useAppSelector(state => state.auth.user);
   const dispatch = useAppDispatch();
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
-  const [jobDetails, setJobDetails] = useState<JobDetails>({
+
+  const initialJobDetails: JobDetails = {
     name: '',
     url: 'https://',
     method: 'GET',
@@ -25,7 +27,14 @@ export default function CreateJob() {
     timezone: user?.timezone || 'UTC',
     timeout: 30,
     email: true
-  });
+  };
+
+  const [jobDetails, setJobDetails] = useState<JobDetails>(initialJobDetails);
+
+  const isFilled = JSON.stringify(jobDetails) !== JSON.stringify(initialJobDetails);
+  useConfirmExit(isFilled);
+
+  
 
   const navigate = useNavigate();
 

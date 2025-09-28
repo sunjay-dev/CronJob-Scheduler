@@ -6,15 +6,18 @@ import type { JobDetails } from '../types'
 import { useAppDispatch } from '../hooks';
 import { updateJob } from '../slices/jobSlice';
 import { jobSchema } from '../schemas/jobSchemas';
+import { useConfirmExit } from '../hooks/useConfirmExit';
 
 export default function EditJob() {
     const { jobId } = useParams();
+    const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [tab, setTab] = useState<'common' | 'advanced'>('common');
     const [confirmEdit, setConfirmEdit] = useState(false);
     const [confirmAddJsonHeader, setConfirmAddJsonHeader] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [initialJobDetails, setInitialJobDetails] = useState<JobDetails | null>(null);
     const [jobDetails, setJobDetails] = useState<JobDetails>({
         name: '',
         url: 'https://',
@@ -28,7 +31,8 @@ export default function EditJob() {
         email: true
     });
 
-    const dispatch = useAppDispatch();
+    const isFilled = JSON.stringify(jobDetails) !== JSON.stringify(initialJobDetails);
+    useConfirmExit(isFilled);
 
     useEffect(() => {
         setIsLoading(true)
@@ -46,8 +50,7 @@ export default function EditJob() {
             .then(res => {
                 if (!Array.isArray(res) || res.length === 0) return;
                 const job = res[0];
-
-                setJobDetails({
+                const details = {
                     name: job.data.name,
                     method: job.data.method,
                     url: job.data.url,
@@ -60,8 +63,9 @@ export default function EditJob() {
                     headers: job.data?.headers && typeof job.data.headers === 'object'
                         ? Object.entries(job.data.headers).map(([key, value]) => ({ key, value: String(value) }))
                         : []
-                })
-
+                };
+                setJobDetails(details)
+                setInitialJobDetails(details);
             }).catch(err => {
                 console.error(err);
                 navigate("/jobs")
