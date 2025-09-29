@@ -32,7 +32,7 @@ export default function EditJob() {
     });
 
     const isFilled = JSON.stringify(jobDetails) !== JSON.stringify(initialJobDetails);
-    useConfirmExit(isFilled);
+    useConfirmExit(isFilled, !isLoading);
 
     useEffect(() => {
         setIsLoading(true)

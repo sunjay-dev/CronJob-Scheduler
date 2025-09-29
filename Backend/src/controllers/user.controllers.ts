@@ -280,7 +280,7 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
 
 export const handleResetPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { token } = req.body;
-    const { password } = req.body.trim();
+    const password = req.body.password.trim();
     
     try {
         const email = await redis.get(`otptoken:${token}`);

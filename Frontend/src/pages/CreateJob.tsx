@@ -32,9 +32,7 @@ export default function CreateJob() {
   const [jobDetails, setJobDetails] = useState<JobDetails>(initialJobDetails);
 
   const isFilled = JSON.stringify(jobDetails) !== JSON.stringify(initialJobDetails);
-  useConfirmExit(isFilled);
-
-  
+  useConfirmExit(isFilled, !isLoading);
 
   const navigate = useNavigate();
 

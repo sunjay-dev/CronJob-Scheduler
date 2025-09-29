@@ -70,6 +70,9 @@ export interface User {
   pushAlerts: boolean;
 }
 
+
+export type UserWithoutEmail = Omit<User, 'email'>;
+
 export interface JobCardProps {
 _id: string;
   jobName: string;

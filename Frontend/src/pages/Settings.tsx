@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { Pencil, Save } from "lucide-react";
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { setAuth } from '../slices/authSlice';
-import type { User } from '../types';
-import { ConfirmMenu, Preference } from '../components';
+import type { User, UserWithoutEmail } from '../types';
+import { ConfirmMenu, Loader, Preference } from '../components';
 import { useConfirmExit } from '../hooks/useConfirmExit';
 
 export default function SettingsPage() {
@@ -11,10 +11,11 @@ export default function SettingsPage() {
   const [isEditingName, setIsEditingName] = useState(false);
   const dispatch = useAppDispatch();
   const [confirmUpdate, setConfirmUpdate] = useState(false);
-  const [initialDetails, setInitialDetails] = useState<User | null>(null);
-  const [details, setDetails] = useState<User>({
+  const [initialDetails, setInitialDetails] = useState<UserWithoutEmail | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [details, setDetails] = useState<UserWithoutEmail>({
     name: '',
-    email: '',
     timezone: 'UTC',
     emailNotifications: true,
     pushAlerts: true,
@@ -23,25 +24,25 @@ export default function SettingsPage() {
   });
 
   useEffect(() => {
-    if (!user)
-      return
+    if (!user) return;
     const value = {
       name: user.name,
-      email: user.email,
       timezone: user.timezone,
       emailNotifications: user.emailNotifications,
       pushAlerts: user.pushAlerts,
       mode: user.mode,
       timeFormat24: user.timeFormat24
-    }
+    };
     setDetails(value);
     setInitialDetails(value);
   }, [user]);
 
   const isDirty = JSON.stringify(details) !== JSON.stringify(initialDetails);
-  useConfirmExit(isDirty);
+  useConfirmExit(isDirty, !isLoading);
 
   const handleSaveChanges = () => {
+    setIsLoading(true);
+    if (!user) return;
 
     fetch(`${import.meta.env.VITE_BACKEND_URL}/`, {
       method: "PUT",
@@ -61,6 +62,8 @@ export default function SettingsPage() {
       .then(data => {
         const userDetails: User = data.user;
         setDetails(userDetails);
+        setInitialDetails(userDetails);
+        setIsEditingName(false);
         dispatch(setAuth({
           user: {
             name: userDetails.name,
@@ -71,9 +74,10 @@ export default function SettingsPage() {
             emailNotifications: userDetails.emailNotifications,
             pushAlerts: userDetails.pushAlerts
           }
-        }))
+        }));
       })
       .catch(err => console.error(err))
+      .finally(() => setIsLoading(false));
   }
 
   if (!user) return <div>Loading user info...</div>;
@@ -81,6 +85,7 @@ export default function SettingsPage() {
 
   return (
     <>
+      {isLoading && <Loader />}
       <h1 className="text-3xl text-purple-600 mb-6">Settings</h1>
 
       <form onSubmit={e => {
@@ -89,43 +94,43 @@ export default function SettingsPage() {
       }} className="space-y-10 bg-white p-6 rounded-xl shadow">
 
         <div className='border border-gray-200 rounded-lg px-4 py-6 space-y-6'>
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Profile</h2>
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">Profile</h2>
 
-            <div className="space-y-4">
-              <div>
-                <label className="block mb-1 font-medium text-gray-700">Full Name</label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={details.name}
-                    onChange={e => setDetails({ ...details, name: e.target.value })}
-                    readOnly={!isEditingName}
-                    className={`flex-1 rounded-md px-3 py-2 border transition
-      ${isEditingName
-                        ? 'bg-white border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500'
-                        : 'bg-gray-100 text-gray-500 cursor-not-allowed border-gray-200'
-                      }`}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setIsEditingName(!isEditingName)}
-                    className="px-3 py-2.5 bg-gray-100 border border-gray-300 rounded hover:text-purple-600 transition"
-                    title={isEditingName ? "Lock" : "Edit Name"}
-                  >
-                    {isEditingName ? <Save className="w-4 h-4" /> : <Pencil className="w-4 h-4" />}
-                  </button>
-                </div>
-                </div>
-                <div>
-                <label className="block mb-1 font-medium text-gray-700">Email</label>
+          <div className="space-y-4">
+            <div>
+              <label className="block mb-1 font-medium text-gray-700">Full Name</label>
+              <div className="flex items-center gap-2">
                 <input
-                  type="email"
-                  value={details.email}
-                  readOnly
-                  className="w-full mt-1 bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-500 cursor-not-allowed"
+                  type="text"
+                  value={details.name}
+                  onChange={e => setDetails({ ...details, name: e.target.value })}
+                  readOnly={!isEditingName}
+                  className={`flex-1 rounded-md px-3 py-2 border transition
+      ${isEditingName
+                      ? 'bg-white border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500'
+                      : 'bg-gray-100 text-gray-500 cursor-not-allowed border-gray-200'
+                    }`}
                 />
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsEditingName(!isEditingName)}
+                  className="px-3 py-2.5 bg-gray-100 border border-gray-300 rounded hover:text-purple-600 transition"
+                  title={isEditingName ? "Lock" : "Edit Name"}
+                >
+                  {isEditingName ? <Save className="w-4 h-4" /> : <Pencil className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
+            <div>
+              <label className="block mb-1 font-medium text-gray-700">Email</label>
+              <input
+                type="email"
+                value={user.email}
+                readOnly
+                className="w-full mt-1 bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-500 cursor-not-allowed"
+              />
+            </div>
+          </div>
 
         </div>
 

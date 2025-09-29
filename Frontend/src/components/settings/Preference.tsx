@@ -1,8 +1,8 @@
-import type { User } from '../../types'
+import type { UserWithoutEmail } from '../../types'
 
 interface Props {
-  details:User;
-  setDetails: React.Dispatch<React.SetStateAction<User>>
+  details: UserWithoutEmail;
+  setDetails: React.Dispatch<React.SetStateAction<UserWithoutEmail>>
 }
 export default function Preference({ details, setDetails }: Props) {
 
