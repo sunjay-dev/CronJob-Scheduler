@@ -47,7 +47,8 @@ export default function ResetPassword() {
 
       if (!res.ok) {
         if(res.status === 400) {
-          setTimeout(() => navigate("/dashboard"), 6000);
+          setMessage({ type: "error", text: data.message || "Invalid or expired token. Redirecting to login..." });
+          setTimeout(() => navigate("/login"), 4500);
           return Promise.reject();
         }
         throw new Error(data.message || "Something went wrong.");

@@ -102,7 +102,7 @@ export default function VerifyEmail() {
       })
       .then(data => {
         setMessage({ type: "success", text: data.message });
-        setResendTimer(300);
+        setResendTimer(data.wait || 60);
       })
       .catch(err => {
         setMessage({ type: "error", text: err.message || "Something went wrong. Please try again." });

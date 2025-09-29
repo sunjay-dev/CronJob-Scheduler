@@ -47,7 +47,7 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
     const { name, timezone = 'UTC' } = req.body;
     const password = req.body.password.trim();
     const email = req.body.email.trim().toLowerCase();
-    
+
     try {
         const user = await userModel.findOne({ email });
 
@@ -62,14 +62,13 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
             name,
             email,
             password,
-            verified: false,
-            timezone,
-            otp,
-            otpExpiry: new Date(Date.now() + 1000 * 60 * 60),
-            authProvider: "local"
+            timezone
         });
 
-        await queueEmail({ data: { otp }, name, email, template: "EMAIL_VERIFY" });
+        await Promise.all([
+            queueEmail({ data: { otp }, name, email, template: "EMAIL_VERIFY" }),
+            redis.set(`otp:${newUser._id}`, otp, 'EX', 60 * 60)
+        ]);
 
         res.status(200).json({
             message: "Account created successfully. Please check your email to verify.",
@@ -86,46 +85,50 @@ export const handleUserVerification = async (req: Request, res: Response, next: 
     const { otp, userId } = req.body;
 
     try {
+        const otpLockedUntil = await redis.ttl(`otpLockedUntil:${userId}`);
+
+        if (otpLockedUntil > 0) {
+            const minutesLeft = Math.ceil((otpLockedUntil / 60));
+            return next(new AppError(`Too many attempts. Try again after ${minutesLeft} minute(s).`, 429));
+        }
+
+        const [cachedOtp, otpAttemptsStr] = await redis.mget(`otp:${userId}`, `otpAttempts:${userId}`);
+
+        if (cachedOtp && otp !== cachedOtp) {
+            let otpAttempts = parseInt(otpAttemptsStr || "0") + 1;
+
+            if (otpAttempts >= 5) {
+                await redis.multi()
+                    .set(`otpLockedUntil:${userId}`, "true", 'EX', 15 * 60)
+                    .del(`otpAttempts:${userId}`)
+                    .exec();
+                return next(new AppError(`Too many failed attempts. Try again after 15 minutes`, 429));
+            }
+
+            await redis.set(`otpAttempts:${userId}`, otpAttempts, 'EX', 15 * 60);
+
+            if (otpAttempts >= 2) {
+                return next(new BadRequestError(`Invalid OTP. You have only ${5 - otpAttempts} try left!`));
+            }
+
+            return next(new BadRequestError("Invalid OTP. Please check and try again."));
+        }
+
         const user = await userModel.findById(userId);
 
         if (!user) return next(new NotFoundError("User not found."));
 
         if (user.verified) return next(new AppError("User is already verified. Please login to continue", 409));
 
-        if (user.otpLockedUntil && user.otpLockedUntil > new Date()) {
-            const minutesLeft = Math.ceil((user.otpLockedUntil.getTime() - Date.now()) / 1000 / 60);
-            return next(new AppError(`Too many attempts. Try again after ${minutesLeft} minute(s).`, 429));
-        }
-
-        if (!user.otp || !user.otpExpiry || user.otpExpiry.getTime() < Date.now()) {
-            return next(new BadRequestError("OTP has expired. Please request a new one."));
-        }
-
-        if (user.otp !== otp) {
-            user.otpAttempts = (user.otpAttempts || 0) + 1;
-
-            if (user.otpAttempts >= 5) {
-                user.otpLockedUntil = new Date(Date.now() + 30 * 60 * 1000);
-                user.otpAttempts = 0;
-                await user.save();
-                return next(new AppError(`Too many failed attempts. You are locked for 15 minutes.`, 429));
-            }
-
-            await user.save();
-
-            if (user.otpAttempts >= 2) {
-                return next(new BadRequestError("Invalid OTP. You have only 3 try left!"));
-            }
-
-            return next(new BadRequestError("Invalid OTP. Please check and try again."));
+        if (!cachedOtp) {
+            return next(new BadRequestError("The OTP has expired. Please request a new one."));
         }
 
         user.verified = true;
-        user.otp = undefined;
-        user.otpExpiry = undefined;
-        user.otpAttempts = 0;
-        user.otpLockedUntil = new Date(0);
-        await user.save();
+        await Promise.all([
+            user.save(),
+            redis.del(`otp:${userId}`, `otpAttempts:${userId}`, `otpResendAttempts:${userId}`, `otpResendLock:${userId}`)
+        ]);
 
         const cookieToken = signToken({ userId: user.id }, "3d");
 
@@ -146,43 +149,46 @@ export const handleUserVerification = async (req: Request, res: Response, next: 
 
 export const handleOtpResend = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { userId } = req.body;
+    let delay = 60;
+
     try {
+        const [otpResendAttemptsStr, otpResendLock] = await Promise.all([
+            redis.get(`otpResendAttempts:${userId}`),
+            redis.ttl(`otpResendLock:${userId}`)
+        ]);
+
+        const otpResendAttempts = parseInt(otpResendAttemptsStr ?? "0");
+
+        switch (otpResendAttempts) {
+            case 0: break;
+            case 1: delay = 5 * 60; break;
+            default: delay = 60 * 60;
+        }
+
+        if (otpResendLock > 0) {
+            return next(new AppError(`Too many requests. Please wait before requesting again.`, 429, { wait: otpResendLock }));
+        }
+
         const user = await userModel.findById(userId);
 
         if (!user) return next(new NotFoundError("User not found."));
 
         if (user.verified) return next(new AppError("User is already verified. Please login to continue.", 409));
 
-        if (!user.otpResendAttempts) {
-            user.otpResendAttempts = { count: 0, lastSent: new Date(0) };
-        }
-
-        const now = Date.now();
-
-        let delay = 0;
-
-        switch (user.otpResendAttempts.count) {
-            case 0: delay = 60 * 1000; break;
-            case 1: delay = 5 * 60 * 1000; break;
-            default: delay = 60 * 60 * 60 * 1000;
-        }
-
-        if (user.otpResendAttempts.lastSent && (now - user.otpResendAttempts.lastSent.getTime()) < delay) {
-            const wait = Math.ceil((delay - (now - user.otpResendAttempts.lastSent.getTime())) / 1000);
-            return next(new AppError(`Too many requests. Please wait before requesting again.`, 429, { wait }));
-        }
-
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        user.otp = otp;
-        user.otpExpiry = new Date(now + 60 * 60 * 1000);
-        user.otpResendAttempts.count += 1;
-        user.otpResendAttempts.lastSent = new Date(now);
-        await user.save();
 
-        await queueEmail({ data: { otp }, name: user.name, email: user.email, template: "EMAIL_VERIFY" });
+        await Promise.all([
+            redis.multi()
+                .set(`otp:${user._id}`, otp, 'EX', 60 * 60)
+                .set(`otpResendAttempts:${userId}`, otpResendAttempts + 1, 'EX', 24 * 60 * 60)
+                .set(`otpResendLock:${userId}`, "true", 'EX', delay)
+                .exec(),
+            queueEmail({ data: { otp }, name: user.name, email: user.email, template: "EMAIL_VERIFY" })
+        ]);
 
         res.status(200).json({
             message: `A new OTP has been sent to your email.`,
+            wait: delay
         });
     } catch (error) {
         next(new InternalServerError("Error while resending OTP. Please try again later."));
@@ -258,7 +264,7 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
         const user = await userModel.findOne({ email });
 
         if (!user) return next(new NotFoundError("No user found with this email address."));
-        
+
         if (user.authProvider === "google") return next(new ForbiddenError("This account is connected with Google. Please sign in using Google."));
 
         const token = crypto.randomBytes(32).toString("hex");
@@ -281,19 +287,23 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
 export const handleResetPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { token } = req.body;
     const password = req.body.password.trim();
-    
+
     try {
         const email = await redis.get(`otptoken:${token}`);
 
-        if (!email) return next(new BadRequestError("The reset link is invalid or has expired. Please request a new one."));
-        
+        if (!email) {
+            if (req.cookies?.token) {
+                res.clearCookie("token");
+            }
+            return next(new BadRequestError("The reset link is invalid or has expired. Please request a new one."));
+        }
         const hashedPassword = await bcrypt.hash(password, 7);
         const user = await userModel.findOneAndUpdate({ email }, { password: hashedPassword }, { new: true });
 
         if (!user) return next(new NotFoundError("User not found."));
 
         await redis.del(`otptoken:${token}`);
-        
+
         const cookieToken = signToken({ userId: user.id }, "3d");
 
         res.cookie('token', cookieToken, {

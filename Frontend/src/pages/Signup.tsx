@@ -45,7 +45,7 @@ export default function Signup() {
             })
             .then(data => {
                 setMessage({ type: 'success', text: data.message });
-                setTimeout(() => navigate(`/verify-email/${data.id}`), 1000);
+                setTimeout(() => navigate(`/verify-email/${data.id}`), 800);
             }).catch(err => {
                 console.error(err);
                 setMessage({ type: 'error', text: err.message || 'Signup failed' });

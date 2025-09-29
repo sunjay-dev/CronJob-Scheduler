@@ -11,9 +11,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
-        index: true,
-        lowercase: true,
-        trim: true
+        index: true
     },
     verified: {
         type: Boolean,
@@ -24,23 +22,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: false,
         select: false
-    },
-    otp: {
-        type: String,
-        index: true
-    },
-    otpExpiry: { type: Date },
-    otpAttempts: {
-        type: Number,
-        default: 0
-    },
-    otpLockedUntil: {
-        type: Date,
-        default: null
-    },
-    otpResendAttempts: {
-        count: { type: Number, default: 0 },
-        lastSent: { type: Date, default: null }
     },
     authProvider: {
         type: String,
