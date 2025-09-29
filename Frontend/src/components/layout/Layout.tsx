@@ -10,7 +10,7 @@ export default function Layout() {
       <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       <Sidebar collapsed={sidebarOpen} />
 
-      <div className={`mt-16 p-12 transition-all duration-300 ${sidebarOpen ? 'ml-56' : 'ml-16'}`}>
+      <div className={`mt-16 p-6 md:p-12 transition-all duration-300 ${sidebarOpen ? 'md:ml-56' : 'md:ml-16'}`}>
         <Outlet />
         <Footer />
       </div>

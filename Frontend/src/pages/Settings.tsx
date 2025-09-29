@@ -86,12 +86,12 @@ export default function SettingsPage() {
   return (
     <>
       {isLoading && <Loader />}
-      <h1 className="text-3xl text-purple-600 mb-6">Settings</h1>
+      <h1 className="text-3xl font-semibold text-purple-600 mb-6">Settings</h1>
 
       <form onSubmit={e => {
         e.preventDefault();
         setConfirmUpdate(true);
-      }} className="space-y-10 bg-white p-6 rounded-xl shadow">
+      }} className="space-y-10 bg-white p-6 md:pb-6 pb-10 rounded-xl shadow">
 
         <div className='border border-gray-200 rounded-lg px-4 py-6 space-y-6'>
           <h2 className="text-lg font-semibold text-gray-800 mb-4">Profile</h2>
@@ -187,10 +187,10 @@ export default function SettingsPage() {
           </select>
         </div>
 
-        <div className="text-right">
+        <div className=" w-full md:text-right md:w">
           <button
             type="submit"
-            className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-2 rounded-md"
+            className="bg-purple-600 hover:bg-purple-700 text-white  font-semibold w-full px-6 py-2 rounded-md"
           >
             Save Changes
           </button>
