@@ -101,6 +101,19 @@ export default function Dashboard() {
     };
   }, [page, user]);
 
+
+  useEffect(() => { 
+    const params = new URLSearchParams(window.location.search);
+    const loginMethod = params.get('loginMethod');
+
+    if (loginMethod) {
+      localStorage.setItem('lastLoginMethod', loginMethod);
+      params.delete('loginMethod');
+      const newUrl = `${window.location.pathname} ${params.toString()}`;
+      window.history.replaceState({}, document.title, newUrl);
+    }
+  },[]);
+
   return (
     <>
       <h1 className="text-3xl text-purple-600 mb-6">Dashboard</h1>

@@ -113,7 +113,7 @@ export default function Signup() {
                                     Sign up
                                 </button>
 
-                                {<GoogleAuth text="Sign up with Google" />}
+                                {<GoogleAuth lastUsed={false} text="Sign up with Google" />}
 
                                 <p className="text-center text-sm text-gray-600">
                                     Already have an account? {' '}
