@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Pencil, Save } from "lucide-react";
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { setAuth } from '../slices/authSlice';
 import type { User, UserWithoutEmail } from '../types';
@@ -8,7 +7,6 @@ import { useConfirmExit } from '../hooks/useConfirmExit';
 
 export default function SettingsPage() {
   const user = useAppSelector(state => state.auth.user);
-  const [isEditingName, setIsEditingName] = useState(false);
   const dispatch = useAppDispatch();
   const [confirmUpdate, setConfirmUpdate] = useState(false);
   const [initialDetails, setInitialDetails] = useState<UserWithoutEmail | null>(null);
@@ -63,7 +61,6 @@ export default function SettingsPage() {
         const userDetails: User = data.user;
         setDetails(userDetails);
         setInitialDetails(userDetails);
-        setIsEditingName(false);
         dispatch(setAuth({
           user: {
             name: userDetails.name,
@@ -99,27 +96,12 @@ export default function SettingsPage() {
           <div className="space-y-4">
             <div>
               <label className="block mb-1 font-medium text-gray-700">Full Name</label>
-              <div className="flex items-center gap-2">
                 <input
                   type="text"
                   value={details.name}
                   onChange={e => setDetails({ ...details, name: e.target.value })}
-                  readOnly={!isEditingName}
-                  className={`flex-1 rounded-md px-3 py-2 border transition
-      ${isEditingName
-                      ? 'bg-white border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500'
-                      : 'bg-gray-100 text-gray-500 cursor-not-allowed border-gray-200'
-                    }`}
+                  className="w-full mt-1 rounded-md px-3 py-2 border transition bg-white border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
-                <button
-                  type="button"
-                  onClick={() => setIsEditingName(!isEditingName)}
-                  className="px-3 py-2.5 bg-gray-100 border border-gray-300 rounded hover:text-purple-600 transition"
-                  title={isEditingName ? "Lock" : "Edit Name"}
-                >
-                  {isEditingName ? <Save className="w-4 h-4" /> : <Pencil className="w-4 h-4" />}
-                </button>
-              </div>
             </div>
             <div>
               <label className="block mb-1 font-medium text-gray-700">Email</label>
@@ -171,7 +153,7 @@ export default function SettingsPage() {
           </div>
         </div>
         <div className='border border-gray-200 rounded-lg px-4 py-6 space-y-6 flex flex-col'>
-          <label className="text-lg font-semibold text-gray-800 mb-4">Timezone</label>
+          <label className="text-lg font-semibold text-gray-800 mb-4">Default Timezone</label>
           <select
             className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
             value={details.timezone}

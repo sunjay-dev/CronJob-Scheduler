@@ -18,8 +18,7 @@ export const jobSchema = z.object({
     cron: z.string().refine((val) => isValidCron(val, { seconds: true }), { message: "Please provide a valid cron expression" }),
     body: z.string({ message: "Body must be provided as string" }),
     email: z.boolean({ message: "toggle email must be a boolean" }),
-    headers: z
-        .array(
+    headers: z.array(
             z.object({
                 key: z.string({ message: "Header key must be a string" }),
                 value: z.string({ message: "Header value must be a string" }),

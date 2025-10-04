@@ -91,13 +91,13 @@ export default function ResetPassword() {
                     <input
                       type={details.showPassword ? "text" : "password"}
                       id="password"
+                      required
                       value={details.password}
                       placeholder="Enter password"
                       onChange={(e) =>
                         setDetails((prev) => ({ ...prev, password: e.target.value }))
                       }
                       className="w-full border border-gray-300 rounded-md px-3 py-1.5 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
-                      required
                     />
                     <button
                       type="button"
@@ -118,13 +118,13 @@ export default function ResetPassword() {
                     <input
                       type={details.showConfirm ? "text" : "password"}
                       id="confirm"
+                      required
                       placeholder="Re-enter your password"
                       value={details.confirm}
                       onChange={(e) =>
                         setDetails((prev) => ({ ...prev, confirm: e.target.value }))
                       }
                       className="w-full border border-gray-300 rounded-md px-3 py-1.5 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
-                      required
                     />
                     <button
                       type="button"

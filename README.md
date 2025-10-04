@@ -37,6 +37,7 @@ A simple yet powerful cron job scheduler to automate recurring API requests (GET
 ![Upstash](https://img.shields.io/badge/Qstash-10B981.svg?style=for-the-badge&logo=upstash&logoColor=white)
 ![Pino](https://img.shields.io/badge/Pino-4B9E5F.svg?style=for-the-badge&logo=pino&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED.svg?style=for-the-badge&logo=docker&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-%23DC382D.svg?style=for-the-badge&logo=redis&logoColor=white)
 
 ---
 
@@ -124,7 +125,7 @@ CronJob-Scheduler/
 * <del> Create/Update/Delete jobs</del>
 * <del> Job toggle (enable/disable)</del>
 * <del> Execution logs viewer</del>
-* <del> Support for PUT/DELETE requests</del>
+* <del> Support for All http requests methods</del>
 * <del> User account settings <del>
 * <del> Google login config <del>
 * <del> Forget password <del>

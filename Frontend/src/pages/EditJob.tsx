@@ -7,6 +7,8 @@ import { useAppDispatch } from '../hooks';
 import { updateJob } from '../slices/jobSlice';
 import { jobSchema } from '../schemas/jobSchemas';
 import { useConfirmExit } from '../hooks/useConfirmExit';
+import { useForm, type FieldErrors } from 'react-hook-form';
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function EditJob() {
     const { jobId } = useParams();
@@ -16,26 +18,36 @@ export default function EditJob() {
     const [confirmEdit, setConfirmEdit] = useState(false);
     const [confirmAddJsonHeader, setConfirmAddJsonHeader] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [initialJobDetails, setInitialJobDetails] = useState<JobDetails | null>(null);
-    const [jobDetails, setJobDetails] = useState<JobDetails>({
-        name: '',
-        url: 'https://',
-        method: 'GET',
-        cron: '*/5 * * * *',
-        headers: [],
-        body: '',
-        enabled: true,
-        timezone: 'UTC',
-        timeout: 30,
-        email: true
-    });
 
-    const isFilled = JSON.stringify(jobDetails) !== JSON.stringify(initialJobDetails);
-    useConfirmExit(isFilled, !isLoading);
+    const { register, handleSubmit, control, watch, setValue, reset, getValues, formState: { isDirty, isSubmitting, isSubmitted, errors } } = useForm<JobDetails>(
+        {
+            resolver: zodResolver(jobSchema),
+            defaultValues: {
+                name: '',
+                url: 'https://',
+                method: 'GET',
+                cron: '*/5 * * * *',
+                headers: [],
+                body: '',
+                enabled: true,
+                timezone: 'UTC',
+                timeout: 30,
+                email: true
+            }
+        }
+    );
+
+    const onError = (errors: FieldErrors<JobDetails>) => {
+        if (errors.name || errors.url) setTab('common');
+        if (Object.keys(errors).length > 0)
+            setMessage({ type: 'error', text: Object.values(errors)[0]?.message as string || 'Please fix the errors in the form.' });
+        else
+            setMessage(null);
+    }
+
+    useConfirmExit(isDirty, !isSubmitted && !isSubmitted);
 
     useEffect(() => {
-        setIsLoading(true)
 
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/jobs/${jobId}`, {
             credentials: "include",
@@ -50,7 +62,7 @@ export default function EditJob() {
             .then(res => {
                 if (!Array.isArray(res) || res.length === 0) return;
                 const job = res[0];
-                const details = {
+                reset({
                     name: job.data.name,
                     method: job.data.method,
                     url: job.data.url,
@@ -63,35 +75,23 @@ export default function EditJob() {
                     headers: job.data?.headers && typeof job.data.headers === 'object'
                         ? Object.entries(job.data.headers).map(([key, value]) => ({ key, value: String(value) }))
                         : []
-                };
-                setJobDetails(details)
-                setInitialJobDetails(details);
+                }, { keepDirty: false });
             }).catch(err => {
                 console.error(err);
                 navigate("/jobs")
-            })
-            .finally(() => {
-                setIsLoading(false);
             });
 
-    }, [jobId, navigate])
+    }, [jobId, navigate, reset])
 
 
-    const handleJobEdit = (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleJobEdit = (job: JobDetails) => {
 
-        const result = jobSchema.safeParse(jobDetails);
-        if (!result.success) {
-            setMessage({ type: 'error', text: result.error.issues[0].message });
-            return;
-        }
-
-        const allowBody = ["POST", "PUT", "PATCH"].includes(jobDetails.method?.toUpperCase());
-        if (allowBody && jobDetails.body.trim()) {
+        const allowBody = ["POST", "PUT", "PATCH"].includes(job.method?.toUpperCase());
+        if (allowBody && job.body.trim()) {
             try {
-                const parsed = JSON.parse(jobDetails.body);
+                const parsed = JSON.parse(job.body);
                 if (typeof parsed === "object" && parsed !== null) {
-                    const hasJsonHeader = jobDetails.headers.some(
+                    const hasJsonHeader = job.headers?.some(
                         h => h.key?.toLowerCase() === "content-type" && h.value?.toLowerCase() === "application/json"
                     );
                     if (!hasJsonHeader) {
@@ -108,15 +108,13 @@ export default function EditJob() {
     };
 
     const submitEditJob = () => {
-
-        setIsLoading(true);
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/jobs/${jobId}`, {
             method: 'PUT',
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(jobDetails),
+            body: JSON.stringify(getValues()),
         }).then(async (res) => {
             const data = await res.json();
 
@@ -133,13 +131,12 @@ export default function EditJob() {
                 setMessage({ type: "error", text: err.message });
             }).finally(() => {
                 setTimeout(() => setMessage(null), 8000);
-                setIsLoading(false);
-            })
+            });
     };
 
     return (
         <>
-            {isLoading && <Loader />}
+            {isSubmitting && <Loader />}
             <h1 className="text-3xl text-purple-600 mb-6">Edit Cron Job</h1>
 
             <div className="flex gap-8 mb-4">
@@ -172,19 +169,19 @@ export default function EditJob() {
                 </button>
             </div>
 
-            <form onSubmit={handleJobEdit} className="bg-white p-6 rounded-xl shadow mb-4">
+            <form onSubmit={handleSubmit(handleJobEdit, onError)} className="bg-white p-6 rounded-xl shadow mb-4">
                 {message && (<div className='w-full'>
                     <Popup type={message.type} message={message.text} />
                 </div>)}
-                <fieldset disabled={isLoading} className='space-y-5'>
+                <fieldset disabled={isSubmitting} className='space-y-5'>
                     {tab === 'common' ? (
-                        <Common jobDetails={jobDetails} setJobDetails={setJobDetails} />
+                        <Common register={register} control={control} watch={watch} errors={errors} />
                     ) : (
-                        <Advanced jobDetails={jobDetails} setJobDetails={setJobDetails} />
+                        <Advanced register={register} control={control} watch={watch} setValue={setValue} />
                     )}
 
                     <button
-                        disabled={isLoading}
+                        disabled={isSubmitting}
                         type="submit"
                         className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 rounded-md transition"
                     >
@@ -214,10 +211,11 @@ export default function EditJob() {
                     confirmText="Yes, Add"
                     confirmColor="bg-purple-500 hover:bg-purple-700 text-white"
                     onConfirm={() => {
-                        setJobDetails(prev => ({
-                            ...prev,
-                            headers: [...prev.headers, { key: "Content-Type", value: "application/json" }]
-                        }));
+
+                        setValue("headers", [
+                            ...(watch("headers") || []),
+                            { key: "Content-Type", value: "application/json" }
+                        ]);
                         setConfirmAddJsonHeader(false);
                         setConfirmEdit(true);
                     }}
