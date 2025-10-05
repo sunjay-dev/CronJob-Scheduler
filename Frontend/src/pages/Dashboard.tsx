@@ -103,7 +103,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <h1 className="text-3xl text-purple-600 mb-6">Dashboard</h1>
+      <h1 className="text-3xl font-semibold text-purple-600 mb-6">Dashboard</h1>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <StatCard title="Total Jobs" value={analytics.total} />
@@ -112,7 +112,7 @@ export default function Dashboard() {
         <StatCard title="Total Logs" value={analytics.logs} />
       </div>
 
-      <div className="flex justify-end gap-4 mb-6">
+      <div className="flex justify-center md:justify-end gap-4 mb-6">
         <Link to="/jobs" className="flex items-center gap-2 px-4 py-2 border border-purple-600 text-purple-600 rounded hover:bg-purple-50">
           <List className="w-5 h-5" />
           View All Jobs

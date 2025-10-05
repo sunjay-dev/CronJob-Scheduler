@@ -79,7 +79,7 @@ export default function Logs() {
 
   return (
     <>
-      <h1 className="text-3xl font-normal mb-6 text-purple-500">Logs</h1>
+      <h1 className="text-3xl font-semibold mb-6 text-purple-500">Logs</h1>
 
       <LogChart logs={logsInsights} />
 

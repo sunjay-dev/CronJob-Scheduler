@@ -84,7 +84,7 @@ export default function Jobs() {
     <>
       {isLoading && <Loader />}
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-3xl font-normal text-purple-500">Cron jobs</h1>
+        <h1 className="text-3xl font-semibold text-purple-500">Cron jobs</h1>
         <Link to="/create" className="py-2 px-4 bg-purple-500 text-white flex items-center gap-1.5 rounded-sm active:scale-[0.98]">
           <PlusCircle className='w-5 h-5' />
           Create Job

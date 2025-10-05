@@ -140,7 +140,7 @@ export default function EditJob() {
     return (
         <>
             {isLoading && <Loader />}
-            <h1 className="text-3xl text-purple-600 mb-6">Edit Cron Job</h1>
+            <h1 className="text-3xl font-semibold text-purple-600 mb-6">Edit Cron Job</h1>
 
             <div className="flex gap-8 mb-4">
                 <button
