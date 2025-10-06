@@ -1,18 +1,19 @@
 import Cron from 'react-js-cron';
 import 'react-js-cron/dist/styles.css';
-import { Copy } from 'lucide-react';
+import { Copy, HelpCircle } from 'lucide-react';
 import type { JobDetails } from '../../types'
-import type { UseFormRegister, Control, UseFormWatch, ErrorOption } from 'react-hook-form';
+import type { UseFormRegister, Control, UseFormWatch, FieldErrors } from 'react-hook-form';
 import { Controller } from "react-hook-form";
 
 interface Props {
   register: UseFormRegister<JobDetails>;
   control: Control<JobDetails>;
   watch: UseFormWatch<JobDetails>;
-  errors: any;
+  errors: FieldErrors<JobDetails>;
+  emailNotifications: boolean | undefined;
 }
 
-export default function Common({ register, control, watch, errors }: Props) {
+export default function Common({ register, control, watch, errors, emailNotifications }: Props) {
 
   return (
     <>
@@ -28,8 +29,8 @@ export default function Common({ register, control, watch, errors }: Props) {
             className="border-0 border-b-2 border-gray-400 px-3 py-2 focus:outline-none focus:border-purple-500 transition"
           />
           {errors.name && (
-          <p className="text-red-500 text-sm">{errors.name.message}</p>
-        )}
+            <p className="text-red-500 text-sm">{errors.name.message}</p>
+          )}
         </div>
 
         <div className="flex flex-col space-y-1">
@@ -43,43 +44,85 @@ export default function Common({ register, control, watch, errors }: Props) {
             className="border-0 border-b-2 border-gray-400 px-3 py-2 focus:outline-none focus:border-purple-500 transition"
           />
           {errors.url && (
-          <p className="text-red-500 text-sm">{errors.url.message}</p>
-        )}
+            <p className="text-red-500 text-sm">{errors.url.message}</p>
+          )}
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className='flex items-center gap-2'>
-            <Controller name='enabled' control={control} 
-            render={({field}) => (
-            <button
-              type="button"
-              onClick={() => field.onChange(!field.value)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${field.value ? 'bg-purple-600' : 'bg-gray-300'}`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${field.value ? 'translate-x-6' : 'translate-x-1'}`}
-              />
-            </button>
-            )}
-            />
-            <label className="font-medium text-gray-700">Enable job</label>
-          </div>
-          <div className='flex items-center gap-2'>
-            <Controller name="email"
+        {/* Toggles */}
+
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Controller
+              name="enabled"
               control={control}
               render={({ field }) => (
-                <button
-                  type="button"
-                  onClick={() => field.onChange(!field.value)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${field.value ? 'bg-purple-600' : 'bg-gray-300'}`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${field.value ? 'translate-x-6' : 'translate-x-1'}`}
+                <div className="relative inline-flex items-center">
+                  <input
+                    id="switch-job-enabled"
+                    type="checkbox"
+                    checked={field.value}
+                    onChange={(e) => field.onChange(e.target.checked)}
+                    className="peer appearance-none w-11 h-4.5 rounded-full bg-gray-200 border border-gray-300 
+                           checked:bg-gradient-to-r checked:from-purple-600 checked:to-purple-800 
+                           transition-all duration-300 cursor-pointer"
                   />
-                </button>
+                  <label
+                    htmlFor="switch-job-enabled"
+                    className="absolute -top-0.01 left-0 h-5.5 w-5.5 bg-white rounded-full shadow-md border border-gray-300 
+                           transform transition-all duration-300 peer-checked:translate-x-5.5 
+                           peer-checked:border-purple-700 peer-active:scale-90 cursor-pointer"
+                  ></label>
+                </div>
               )}
             />
-            <label className="font-medium text-gray-700">Enable email</label>
+            <label htmlFor="switch-job-enabled" className="font-medium text-gray-700">
+              Enable job
+            </label>
+          </div>
+
+          {/* Enable Email */}
+          <div className="flex items-center gap-2">
+            <Controller
+              name="email"
+              control={control}
+              render={({ field }) => (
+                <div className="relative inline-flex items-center">
+                  <input
+                    id="switch-email-enabled"
+                    type="checkbox"
+                    checked={field.value}
+                    disabled={!emailNotifications}
+                    onChange={(e) => field.onChange(e.target.checked)}
+                    className="peer appearance-none w-11 h-4.5 rounded-full bg-gray-200 border border-gray-300 
+                           checked:bg-gradient-to-r checked:from-purple-600 checked:to-purple-800 
+                           transition-all duration-300 cursor-pointer"
+                  />
+                  <label
+                    htmlFor="switch-email-enabled"
+                    className="absolute -top-0.01 left-0 h-5.5 w-5.5 bg-white rounded-full shadow-md border border-gray-300 
+                           transform transition-all duration-300 peer-checked:translate-x-5.5 
+                           peer-checked:border-purple-700 peer-active:scale-90 cursor-pointer"
+                  ></label>
+                </div>
+              )}
+            />
+            <label htmlFor="switch-email-enabled" className="font-medium text-gray-700">
+              Enable email
+            </label>
+
+            {!emailNotifications && (
+              <div className="relative group">
+                <HelpCircle
+                  size={18}
+                  className="text-gray-500 cursor-pointer hover:text-purple-600"
+                />
+                <div className="absolute left-1/2 -translate-x-1/2 top-full mt-1 w-48 text-xs text-white bg-gray-800 
+                            rounded-lg px-2 py-1 opacity-0 group-hover:opacity-100 transition-all 
+                            pointer-events-none z-10 text-center">
+                  Email notifications are disabled in your settings.
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -126,4 +169,3 @@ export default function Common({ register, control, watch, errors }: Props) {
     </>
   );
 }
-

@@ -41,3 +41,9 @@ export class InternalServerError extends AppError {
         super(message, 500, details);
     }
 }
+
+export class TooManyRequestsError extends AppError {
+    constructor(message = "Too Many Requests, please try again later.", details?: Record<string, any>) {
+        super(message, 429, details);
+    }
+}

@@ -17,7 +17,7 @@ export default function CreateJob() {
   const user = useAppSelector(state => state.auth.user);
   const dispatch = useAppDispatch();
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
-
+  
   const { register, handleSubmit, control, watch, setValue, formState: { isDirty, isSubmitting, isSubmitted, errors } } = useForm<JobDetails>(
     {
       resolver: zodResolver(jobSchema),
@@ -31,7 +31,7 @@ export default function CreateJob() {
         enabled: true,
         timezone: user?.timezone || 'UTC',
         timeout: 30,
-        email: true
+        email: user?.emailNotifications
       }
     }
   );
@@ -129,7 +129,7 @@ export default function CreateJob() {
 
         <fieldset disabled={isSubmitting} className='space-y-5'>
           {tab === 'common'
-            ? <Common register={register} control={control} watch={watch} errors={errors} />
+            ? <Common register={register} control={control} watch={watch} errors={errors} emailNotifications={user?.emailNotifications} />
             : <Advanced register={register} control={control} setValue={setValue} watch={watch} />
           }
 

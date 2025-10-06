@@ -3,7 +3,7 @@ import { Clock, Settings } from 'lucide-react';
 import { Common, Advanced, ConfirmMenu, Loader, Popup } from '../components';
 import { useParams, useNavigate } from 'react-router-dom';
 import type { JobDetails } from '../types'
-import { useAppDispatch } from '../hooks';
+import { useAppDispatch, useAppSelector } from '../hooks';
 import { updateJob } from '../slices/jobSlice';
 import { jobSchema } from '../schemas/jobSchemas';
 import { useConfirmExit } from '../hooks/useConfirmExit';
@@ -15,6 +15,7 @@ export default function EditJob() {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [tab, setTab] = useState<'common' | 'advanced'>('common');
+    const user = useAppSelector(state => state.auth.user);
     const [confirmEdit, setConfirmEdit] = useState(false);
     const [confirmAddJsonHeader, setConfirmAddJsonHeader] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
@@ -70,7 +71,7 @@ export default function EditJob() {
                     timezone: job.repeatTimezone,
                     cron: job.repeatInterval,
                     body: job.data.body,
-                    email: job.data.email,
+                    email: user?.emailNotifications,
                     timeout: job.data.timeout,
                     headers: job.data?.headers && typeof job.data.headers === 'object'
                         ? Object.entries(job.data.headers).map(([key, value]) => ({ key, value: String(value) }))
@@ -81,7 +82,7 @@ export default function EditJob() {
                 navigate("/jobs")
             });
 
-    }, [jobId, navigate, reset])
+    }, [jobId, navigate, reset, user?.emailNotifications])
 
 
     const handleJobEdit = (job: JobDetails) => {
@@ -175,7 +176,7 @@ export default function EditJob() {
                 </div>)}
                 <fieldset disabled={isSubmitting} className='space-y-5'>
                     {tab === 'common' ? (
-                        <Common register={register} control={control} watch={watch} errors={errors} />
+                        <Common register={register} control={control} watch={watch} errors={errors} emailNotifications={user?.emailNotifications} />
                     ) : (
                         <Advanced register={register} control={control} watch={watch} setValue={setValue} />
                     )}

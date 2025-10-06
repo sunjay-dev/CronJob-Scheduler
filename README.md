@@ -38,6 +38,7 @@ A simple yet powerful cron job scheduler to automate recurring API requests (GET
 ![Pino](https://img.shields.io/badge/Pino-4B9E5F.svg?style=for-the-badge&logo=pino&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED.svg?style=for-the-badge&logo=docker&logoColor=white)
 ![Redis](https://img.shields.io/badge/Redis-%23DC382D.svg?style=for-the-badge&logo=redis&logoColor=white)
+![React Hook Form](https://img.shields.io/badge/React%20Hook%20Form-%23EC5990.svg?style=for-the-badge&logo=reacthookform&logoColor=white)
 
 ---
 
