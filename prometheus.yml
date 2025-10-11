@@ -8,3 +8,11 @@ scrape_configs:
     authorization:
       type: Bearer
       credentials: "PROMETHEUS_SECRET"
+  
+  - job_name: Job Runner
+    static_configs:
+      - targets: ["192.168.18.9:3002"]
+    authorization:
+      type: Bearer
+      credentials: "PROMETHEUS_SECRET"
+  

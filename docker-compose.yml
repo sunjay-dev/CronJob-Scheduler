@@ -73,6 +73,8 @@ services:
       - ./job-runner/.env
     environment:
       - MONGO_DB_URI=mongodb://mongodb:27017/cron-job
+    ports:
+    - "3002:3002"
     networks:
       - app-network
   
