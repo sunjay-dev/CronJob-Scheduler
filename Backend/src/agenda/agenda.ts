@@ -7,4 +7,4 @@ const agenda = new Agenda({
   }
 });
 
-export default agenda
+export default agenda;

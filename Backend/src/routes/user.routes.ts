@@ -2,9 +2,10 @@ import express from "express";
 import passport from "passport";
 import { Request, Response } from "express";
 import { handleUserLogin, handleUserRegister, handleChangeUserDetails, handleForgotPassword, handleUserLogout, handleUserDetails, handleGoogleCallBack, handleResetPassword, handleUserVerification, handleOtpResend } from "../controllers/user.controllers";
-import { restrictUserLogin, softRestrictUserLogin } from "../middlewares/auth.middlewares";
+import { restrictUserLogin, softRestrictUserLogin, prometheusAuth } from "../middlewares/auth.middlewares";
 import { changeUserDetailsSchema, forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema, verifyUserIdSchema, verifyUserSchema  } from "../schemas/user.schema";
 import { validate } from "../middlewares/validate.middlewares";
+import client from "prom-client";
 const router = express.Router();
 
 router.get('/', (req: Request, res: Response): void => {
@@ -13,6 +14,11 @@ router.get('/', (req: Request, res: Response): void => {
 
 router.get("/health", (req: Request, res: Response): void => {
   res.status(200).send("OK");
+});
+
+router.get('/metrics', prometheusAuth, async (req: Request, res: Response) => {
+  res.set('Content-Type', client.register.contentType);
+  res.end(await client.register.metrics());
 });
 
 router.get('/auth/google',
@@ -33,6 +39,5 @@ router.post('/forgot-password', validate(forgotPasswordSchema),handleForgotPassw
 router.post('/reset-password', validate(resetPasswordSchema), handleResetPassword);
 
 router.put('/', restrictUserLogin, validate(changeUserDetailsSchema),handleChangeUserDetails);
-
 
 export default router;
