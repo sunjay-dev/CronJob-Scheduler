@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     VitePWA({
       devOptions: {
-        enabled: true
+        enabled: false
       },
       registerType: "autoUpdate",
       includeAssets: [

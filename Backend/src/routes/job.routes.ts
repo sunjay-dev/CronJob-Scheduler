@@ -1,5 +1,5 @@
-import express from 'express';
-const router =  express.Router();
+import { Router } from 'express';
+const router =  Router();
 
 import {handleNewCronJobs, handleUserJobs, handleUserJobById, handleRunJobNow, handleJobStatus, handleJobEdit,handleDeleteJob} from '../controllers/job.controllers'
 import { restrictUserLogin } from '../middlewares/auth.middlewares';

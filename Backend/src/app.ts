@@ -4,7 +4,6 @@ import cookieParser from "cookie-parser";
 import cors from 'cors';
 import passport from "./config/passport.config";
 import errorHandler from './middlewares/errorHandler.middlewares';
-import client from 'prom-client';
 
 const app = express();
 
@@ -12,8 +11,6 @@ app.use(cors({
   origin: process.env.CLIENT_URL!,
   credentials: true,
 }));
-
-client.collectDefaultMetrics({ register: client.register });
 
 app.use(passport.initialize());
 app.use(express.json());

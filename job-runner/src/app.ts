@@ -1,10 +1,8 @@
 import "dotenv/config";
 import connectDB from './config/db.config.js';
 import http from "http";
-import client from "prom-client";
+import register from "./config/prometheus.config.js";
 
-const register = new client.Registry();
-client.collectDefaultMetrics({ register });
 connectDB();
 
 import agenda from "./agenda/agenda.js";
@@ -18,7 +16,13 @@ async function startAgenda() {
 startAgenda();
 
 http.createServer(async (req, res) => {
-  if (req.url === "/metrics") {
+
+  if (req.url === "/health") {
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "text/plain");
+    res.end("OK");
+  }
+  else if (req.url === "/metrics") {
 
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -32,7 +36,7 @@ http.createServer(async (req, res) => {
     if (token !== process.env.PROMETHEUS_SECRET) {
       res.statusCode = 403;
       res.setHeader("Content-Type", "application/json");
-      res.end(JSON.stringify({ message: "Missing or invalid Authorization header" }));
+      res.end(JSON.stringify({ message: "Invalid Authorization token" }));
       return;
     }
     res.setHeader("Content-Type", register.contentType);

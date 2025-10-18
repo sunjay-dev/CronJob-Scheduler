@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 import sendEmail from "../lib/sendEmail";
 
 export const handleHomeRoute = (req: Request, res: Response, next: NextFunction): void => {

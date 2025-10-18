@@ -113,7 +113,6 @@ export default function SettingsPage() {
               />
             </div>
           </div>
-
         </div>
 
         <Preference details={details} setDetails={setDetails} />

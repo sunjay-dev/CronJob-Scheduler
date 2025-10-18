@@ -1,15 +1,14 @@
-import express from "express";
+import { type Request, type Response, Router } from 'express';
 import passport from "passport";
-import { Request, Response } from "express";
 import { handleUserLogin, handleUserRegister, handleChangeUserDetails, handleForgotPassword, handleUserLogout, handleUserDetails, handleGoogleCallBack, handleResetPassword, handleUserVerification, handleOtpResend } from "../controllers/user.controllers";
 import { restrictUserLogin, softRestrictUserLogin, prometheusAuth } from "../middlewares/auth.middlewares";
-import { changeUserDetailsSchema, forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema, verifyUserIdSchema, verifyUserSchema  } from "../schemas/user.schema";
+import { changeUserDetailsSchema, forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema, verifyUserIdSchema, verifyUserSchema } from "../schemas/user.schema";
 import { validate } from "../middlewares/validate.middlewares";
-import client from "prom-client";
-const router = express.Router();
+import register from '../config/prometheus.config';
+const router = Router();
 
 router.get('/', (req: Request, res: Response): void => {
-    res.status(200).send(`Hello from my server!`);
+  res.status(200).send(`Hello from my server!`);
 });
 
 router.get("/health", (req: Request, res: Response): void => {
@@ -17,8 +16,8 @@ router.get("/health", (req: Request, res: Response): void => {
 });
 
 router.get('/metrics', prometheusAuth, async (req: Request, res: Response) => {
-  res.set('Content-Type', client.register.contentType);
-  res.end(await client.register.metrics());
+  res.set('Content-Type', register.contentType);
+  res.end(await register.metrics());
 });
 
 router.get('/auth/google',
@@ -31,13 +30,13 @@ router.get('/auth/google/callback',
 router.get('/logout', handleUserLogout);
 router.get('/details', softRestrictUserLogin, handleUserDetails);
 
-router.post('/login',  validate(loginSchema), handleUserLogin);
-router.post('/register',validate(registerSchema) , handleUserRegister);
-router.post('/verify-email', validate(verifyUserSchema),handleUserVerification);
+router.post('/login', validate(loginSchema), handleUserLogin);
+router.post('/register', validate(registerSchema), handleUserRegister);
+router.post('/verify-email', validate(verifyUserSchema), handleUserVerification);
 router.post('/resend-otp', validate(verifyUserIdSchema), handleOtpResend);
-router.post('/forgot-password', validate(forgotPasswordSchema),handleForgotPassword);
+router.post('/forgot-password', validate(forgotPasswordSchema), handleForgotPassword);
 router.post('/reset-password', validate(resetPasswordSchema), handleResetPassword);
 
-router.put('/', restrictUserLogin, validate(changeUserDetailsSchema),handleChangeUserDetails);
+router.put('/', restrictUserLogin, validate(changeUserDetailsSchema), handleChangeUserDetails);
 
 export default router;

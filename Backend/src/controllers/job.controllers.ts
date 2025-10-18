@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 import agenda from "../agenda/agenda";
 import logsModels from "../models/logs.models";
 import mongoose from "mongoose";
