@@ -41,7 +41,7 @@ export default function VerifyEmail() {
         const data = await res.json();
 
         if (!res.ok) {
-          if (res.status == 409) {
+          if (res.status === 409) {
             setTimeout(() => navigate("/login"), 2500);
             return Promise.reject(new Error("User is already verified. Please login to continue"));
           }
