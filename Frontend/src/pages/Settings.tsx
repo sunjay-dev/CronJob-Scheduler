@@ -88,7 +88,7 @@ export default function SettingsPage() {
       <form onSubmit={e => {
         e.preventDefault();
         setConfirmUpdate(true);
-      }} className="space-y-10 bg-white p-6 rounded-xl shadow">
+      }} className="space-y-10 bg-white p-6 rounded-xl shadow mb-4">
 
         <div className='border border-gray-200 rounded-lg px-4 py-6 space-y-6'>
           <h2 className="text-lg font-semibold text-gray-800 mb-4">Profile</h2>

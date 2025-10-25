@@ -15,10 +15,11 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 interface Props {
     details: UserLogInterface;
-    setOpenDetailsMenu: React.Dispatch<React.SetStateAction<boolean>>
+    setOpenDetailsMenu: React.Dispatch<React.SetStateAction<boolean>>;
+    timeFormat24?: boolean
 }
 
-export default function LogDetails({ details, setOpenDetailsMenu }: Props) {
+export default function LogDetails({ details, setOpenDetailsMenu, timeFormat24 }: Props) {
 
     const closeDetails = () => setOpenDetailsMenu(false);
 
@@ -103,7 +104,15 @@ export default function LogDetails({ details, setOpenDetailsMenu }: Props) {
     return (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
             <div className="bg-white max-w-4xl w-full px-6 py-5 rounded-sm relative tracking-wide">
-                <h2 className="text-lg font-semibold mb-6">Execution Details ({new Date(details.createdAt).toLocaleString()})</h2>
+                <h2 className="text-lg font-semibold mb-6">Execution Details ({new Date(details.createdAt).toLocaleTimeString('en-US', {
+                    hour12: !timeFormat24,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    year: 'numeric',
+                    month: 'short',
+                    day: '2-digit',
+                })})</h2>
 
                 <div className="mb-3 space-y-1">
                     <p>FETCHED URL:</p>

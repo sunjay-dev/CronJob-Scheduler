@@ -10,6 +10,7 @@ export default function Jobs() {
   const jobs = useAppSelector(state => state.jobs.jobs);
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
+  const user = useAppSelector(state => state.auth.user);
 
   useEffect(() => {
     if (jobs.length !== 0)
@@ -121,6 +122,7 @@ export default function Jobs() {
                 disabled={job.disabled ?? false}
                 handleChangeStatus={handleChangeStatus}
                 handleDeleteJob={handleDeleteJob}
+                timeFormat24={user?.timeFormat24}
               />
             ))}
           </div>

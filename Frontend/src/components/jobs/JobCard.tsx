@@ -4,10 +4,31 @@ import { useState, useRef, useEffect } from 'react';
 import { ConfirmMenu } from '../common';
 import type { JobCardProps } from '../../types';
 
-export default function JobCard({ _id, jobName, method, url, nextRunAt, lastRunAt, disabled = false, handleDeleteJob, handleChangeStatus }: JobCardProps) {
+export default function JobCard({ _id, jobName, method, url, nextRunAt, lastRunAt, disabled = false, handleDeleteJob, handleChangeStatus, timeFormat24 }: JobCardProps) {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  console.log(timeFormat24)
+
+  const formattedTime_NextRunAt = new Date(nextRunAt).toLocaleTimeString('en-US', {
+    hour12: !timeFormat24,
+    year: 'numeric',
+    month: 'short',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  });
+
+  const formattedTime_LastRunAt = new Date(lastRunAt).toLocaleTimeString('en-US', {
+    hour12: !timeFormat24,
+    year: 'numeric',
+    month: 'short',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  });
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -22,7 +43,7 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, lastRunA
 
   return (
     <div className="bg-white cursor-pointer border border-gray-300 rounded-lg p-4 transition grid grid-cols-1 md:grid-cols-[2.5fr_1.5fr_1.5fr_1fr_1fr_1fr_40px] items-center text-sm gap-4 relative">
-      
+
       <div className="overflow-hidden">
         <h2 title={jobName} className="font-semibold text-gray-800 truncate">{jobName}</h2>
         <p title={url} className="text-gray-500 lowercase truncate max-w-[250px] whitespace-nowrap overflow-hidden text-ellipsis">
@@ -30,8 +51,8 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, lastRunA
         </p>
       </div>
 
-      {lastRunAt ? (<div title={new Date(lastRunAt).toLocaleString()} className="text-gray-700 truncate">
-        {new Date(lastRunAt).toLocaleString()}
+      {lastRunAt ? (<div title={formattedTime_LastRunAt} className="text-gray-700 truncate">
+        {formattedTime_LastRunAt}
       </div>) : <span className='text-center'>-</span>}
 
 
@@ -41,8 +62,8 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, lastRunA
           Paused
         </span>
       ) : (
-        <div title={new Date(nextRunAt).toLocaleString()} className="text-gray-700 truncate">
-          {new Date(nextRunAt).toLocaleString()}
+        <div title={formattedTime_NextRunAt} className="text-gray-700 truncate">
+          {formattedTime_NextRunAt}
         </div>
       )}
 

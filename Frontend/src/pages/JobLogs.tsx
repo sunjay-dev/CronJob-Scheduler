@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import type { UserLogInterface } from '../types';
 import { LogCard, Pagination, Loader } from '../components';
 import { FileWarning } from 'lucide-react';
+import { useAppSelector } from '../hooks';
 
 export default function JobLogs() {
     const [jobName, setJobName] = useState('')
@@ -13,7 +14,7 @@ export default function JobLogs() {
     const [logs, setLogs] = useState<UserLogInterface[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
-    
+    const user = useAppSelector(state => state.auth.user);
     useEffect(() => {
         setIsLoading(true);
 
@@ -65,6 +66,7 @@ export default function JobLogs() {
                                     <LogCard
                                         key={log._id}
                                         log={log}
+                                        timeFormat24={user?.timeFormat24}
                                     />
                                 ))}
                             </div>

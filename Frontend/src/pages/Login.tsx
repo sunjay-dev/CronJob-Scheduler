@@ -137,7 +137,7 @@ export default function Login() {
 
                 <p className="text-center text-sm text-gray-600">
                   Don’t have an account?{' '}
-                  <Link to="/Signup" className="text-purple-700 hover:underline">Sign up</Link>
+                  <Link to="/signup" className="text-purple-700 hover:underline">Sign up</Link>
                 </p>
               </fieldset>
             </form>

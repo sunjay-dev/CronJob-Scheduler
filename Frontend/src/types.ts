@@ -83,6 +83,7 @@ _id: string;
   disabled?: boolean;
   handleDeleteJob: (id:string) => void;
   handleChangeStatus: (id:string, status: boolean) => void;
+  timeFormat24?: boolean
 }
 
 export interface InsightLog {

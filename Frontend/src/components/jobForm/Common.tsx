@@ -70,7 +70,7 @@ export default function Common({ register, control, watch, errors, emailNotifica
                     htmlFor="switch-job-enabled"
                     className="absolute -top-0.01 left-0 h-5.5 w-5.5 bg-white rounded-full shadow-md border border-gray-300 
                            transform transition-all duration-300 peer-checked:translate-x-5.5 
-                           peer-checked:border-purple-700 peer-active:scale-90 cursor-pointer"
+                           peer-active:scale-90 cursor-pointer"
                   ></label>
                 </div>
               )}
@@ -101,7 +101,7 @@ export default function Common({ register, control, watch, errors, emailNotifica
                     htmlFor="switch-email-enabled"
                     className="absolute -top-0.01 left-0 h-5.5 w-5.5 bg-white rounded-full shadow-md border border-gray-300 
                            transform transition-all duration-300 peer-checked:translate-x-5.5 
-                           peer-checked:border-purple-700 peer-active:scale-90 cursor-pointer"
+                           peer-active:scale-90 cursor-pointer"
                   ></label>
                 </div>
               )}

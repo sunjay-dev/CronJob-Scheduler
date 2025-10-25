@@ -163,6 +163,7 @@ export default function Dashboard() {
                 <LogCard
                   key={log._id}
                   log={log}
+                  timeFormat24={user?.timeFormat24}
                 />
               ))}
             </div>
