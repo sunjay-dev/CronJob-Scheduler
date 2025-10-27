@@ -1,53 +1,58 @@
 import { lazy, Suspense } from "react";
-import { createBrowserRouter } from "react-router-dom";
-import { Home, Login, Signup, Dashboard, CreateJob, Jobs, EditJob, Logs, JobLogs, Settings, NotFoundPage, ForgotPassword } from "./pages";
+import { createBrowserRouter, Outlet } from "react-router-dom";
+import { Dashboard, CreateJob, Jobs, EditJob, Logs, JobLogs, Settings } from "./pages";
 import { Layout, ProtectedRoute, PublicRoute, Loader } from "./components";
 
+const Home = lazy(() => import("./pages/Home"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const Terms = lazy(() => import("./pages/Terms"));
 const VerifyEmail = lazy(() => import("./pages/VerifyUserEmail"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
+const Login = lazy(() => import("./pages/Login"));
+const Signup = lazy(() => import("./pages/Signup"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 
 export const router = createBrowserRouter([
-  { path: "/", element: <Home /> },
-
   {
-    path: "/privacy-policy",
     element: (
       <Suspense fallback={<Loader />}>
-        <PrivacyPolicy />
+        <Outlet />
+      </Suspense>
+    ),
+    children: [
+      { path: "/", element: <Home /> },
+      { path: "/privacy-policy", element: <PrivacyPolicy /> },
+      { path: "/terms", element: <Terms /> },
+      { path: "/verify-email/:userId", element: <VerifyEmail /> },
+      { path: "/reset-password/:token", element: <ResetPassword /> },
+      { path: "*", element: <NotFoundPage /> },
+    ],
+  },
+  {
+    path: "/login",
+    element: (
+      <Suspense fallback={<Loader />}>
+        <PublicRoute><Login /></PublicRoute>
       </Suspense>
     ),
   },
   {
-    path: "/terms",
+    path: "/signup",
     element: (
       <Suspense fallback={<Loader />}>
-        <Terms />
-      </Suspense>
-    ),
-  },
-  { path: "/login", element: <PublicRoute><Login /></PublicRoute> },
-  { path: "/signup", element: <PublicRoute><Signup /></PublicRoute> },
-  { path: "/forgot-password", element: <PublicRoute><ForgotPassword /></PublicRoute> },
-
-  {
-    path: "/verify-email/:userId",
-    element: (
-      <Suspense fallback={<Loader />}>
-        <VerifyEmail />
+        <PublicRoute><Signup /></PublicRoute>
       </Suspense>
     ),
   },
   {
-    path: "/reset-password/:token",
+    path: "/forgot-password",
     element: (
       <Suspense fallback={<Loader />}>
-        <ResetPassword />
+        <PublicRoute><ForgotPassword /></PublicRoute>
       </Suspense>
     ),
   },
-
   {
     element: <ProtectedRoute />,
     children: [
@@ -65,6 +70,4 @@ export const router = createBrowserRouter([
       },
     ],
   },
-
-  { path: "*", element: <NotFoundPage /> },
 ]);

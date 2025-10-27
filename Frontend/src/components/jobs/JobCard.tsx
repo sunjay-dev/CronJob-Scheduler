@@ -8,7 +8,6 @@ export default function JobCard({ _id, jobName, method, url, nextRunAt, lastRunA
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  console.log(timeFormat24)
 
   const formattedTime_NextRunAt = new Date(nextRunAt).toLocaleTimeString('en-US', {
     hour12: !timeFormat24,
