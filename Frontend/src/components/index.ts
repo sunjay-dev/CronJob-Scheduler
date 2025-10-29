@@ -1,4 +1,4 @@
-export { ConfirmMenu, Footer, Header, Loader, Pagination, Popup, Sidebar, PasswordInput,GoogleAuth } from './common';
+export { ConfirmMenu, Footer, Header, Loader, Pagination, Popup, Sidebar, PasswordInput,GoogleAuth, ToggleSwitch } from './common';
 export { Advanced, Common, Headers } from './jobForm';
 export { JobCard } from './jobs';
 export { Layout } from './layout';

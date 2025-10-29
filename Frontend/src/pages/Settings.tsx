@@ -7,6 +7,7 @@ import { useConfirmExit } from '../hooks/useConfirmExit';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { settingsSchema } from '../schemas/authSchemas';
+import { ToggleSwitch } from '../components';
 
 export default function SettingsPage() {
   const user = useAppSelector(state => state.auth.user);
@@ -110,41 +111,12 @@ export default function SettingsPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className=" text-gray-700">Email Notifications</span>
-              <Controller name="emailNotifications"
-                control={control}
-                render={({ field }) => (
-                  <button
-                    type="button"
-                    onClick={() => field.onChange(!field.value)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${field.value ? 'bg-purple-600' : 'bg-gray-300'
-                      }`}
-                  >
-                    <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${field.value ? 'translate-x-6' : 'translate-x-1'
-                        }`}
-                    />
-                  </button>
-                )} />
+              <ToggleSwitch control={control} name="emailNotifications" />
             </div>
 
             <div className="flex items-center justify-between">
               <span className=" text-gray-700">Push Alerts</span>
-
-              <Controller name="pushAlerts"
-                control={control}
-                render={({ field }) => (
-                  <button
-                    type="button"
-                    onClick={() => field.onChange(!field.value)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${field.value ? 'bg-purple-600' : 'bg-gray-300'
-                      }`}
-                  >
-                    <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${field.value ? 'translate-x-6' : 'translate-x-1'
-                        }`}
-                    />
-                  </button>
-                )} />
+                  <ToggleSwitch control={control} name="pushAlerts" />
             </div>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { Copy, HelpCircle } from 'lucide-react';
 import type { JobDetails } from '../../types'
 import type { UseFormRegister, Control, UseFormWatch, FieldErrors } from 'react-hook-form';
 import { Controller } from "react-hook-form";
+import { ToggleSwitch } from '../common';
 
 interface Props {
   register: UseFormRegister<JobDetails>;
@@ -52,29 +53,7 @@ export default function Common({ register, control, watch, errors, emailNotifica
 
         <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2">
-            <Controller
-              name="enabled"
-              control={control}
-              render={({ field }) => (
-                <div className="relative inline-flex items-center">
-                  <input
-                    id="switch-job-enabled"
-                    type="checkbox"
-                    checked={field.value}
-                    onChange={(e) => field.onChange(e.target.checked)}
-                    className="peer appearance-none w-11 h-4.5 rounded-full bg-gray-200 border border-gray-300 
-                           checked:bg-gradient-to-r checked:from-purple-600 checked:to-purple-800 
-                           transition-all duration-300 cursor-pointer"
-                  />
-                  <label
-                    htmlFor="switch-job-enabled"
-                    className="absolute -top-0.01 left-0 h-5.5 w-5.5 bg-white rounded-full shadow-md border border-gray-300 
-                           transform transition-all duration-300 peer-checked:translate-x-5.5 
-                           peer-active:scale-90 cursor-pointer"
-                  ></label>
-                </div>
-              )}
-            />
+            <ToggleSwitch control={control} name="enabled" />
             <label htmlFor="switch-job-enabled" className="font-medium text-gray-700">
               Enable job
             </label>
@@ -82,30 +61,7 @@ export default function Common({ register, control, watch, errors, emailNotifica
 
           {/* Enable Email */}
           <div className="flex items-center gap-2">
-            <Controller
-              name="email"
-              control={control}
-              render={({ field }) => (
-                <div className="relative inline-flex items-center">
-                  <input
-                    id="switch-email-enabled"
-                    type="checkbox"
-                    checked={field.value}
-                    disabled={!emailNotifications}
-                    onChange={(e) => field.onChange(e.target.checked)}
-                    className="peer appearance-none w-11 h-4.5 rounded-full bg-gray-200 border border-gray-300 
-                           checked:bg-gradient-to-r checked:from-purple-600 checked:to-purple-800 
-                           transition-all duration-300 cursor-pointer"
-                  />
-                  <label
-                    htmlFor="switch-email-enabled"
-                    className="absolute -top-0.01 left-0 h-5.5 w-5.5 bg-white rounded-full shadow-md border border-gray-300 
-                           transform transition-all duration-300 peer-checked:translate-x-5.5 
-                           peer-active:scale-90 cursor-pointer"
-                  ></label>
-                </div>
-              )}
-            />
+            <ToggleSwitch control={control} name="email" disabled={!emailNotifications} />
             <label htmlFor="switch-email-enabled" className="font-medium text-gray-700">
               Enable email
             </label>

@@ -1,5 +1,6 @@
 import { Controller, type Control } from 'react-hook-form';
 import type { UserWithoutEmail } from '../../types'
+import { ToggleSwitch } from '../common';
 
 interface Props {
   control: Control<UserWithoutEmail>;
@@ -16,37 +17,29 @@ export default function Preference({ control }: Props) {
           <Controller name="mode"
             control={control}
             render={({ field }) => (
-              <button
-                type="button"
-                onClick={() => field.onChange(field.value === "day" ? "dark" : "day")}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${field.value === 'dark' ? 'bg-purple-600' : 'bg-gray-300'
-                  }`}
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${field.value === 'dark' ? 'translate-x-6' : 'translate-x-1'
-                    }`}
+              <div className="relative inline-flex items-center">
+                <input
+                  id={`switch-theme-mode`}
+                  type="checkbox"
+                  checked={field.value === "dark"}
+                  onChange={() => field.onChange(field.value === "dark"? "day": "dark")}
+                  className="peer appearance-none w-11 h-4.5 rounded-full bg-gray-200 border border-gray-300 
+                           checked:bg-gradient-to-r checked:from-purple-600 checked:to-purple-800 
+                           transition-all duration-300 cursor-pointer"
                 />
-              </button>
+                <label
+                  htmlFor={`switch-theme-mode`}
+                  className="absolute -top-[0.1rem] left-0 h-5.5 w-5.5 bg-white rounded-full shadow-md border border-gray-300 
+                           transform transition-all duration-300 peer-checked:translate-x-5.5 
+                           peer-active:scale-90 cursor-pointer"
+                ></label>
+              </div>
             )} />
         </div>
 
         <div className="flex items-center justify-between">
           <span className=" text-gray-700">24-Hour Time Format</span>
-          <Controller name="timeFormat24"
-            control={control}
-            render={({ field }) => (
-              <button
-                type="button"
-                onClick={() => field.onChange(!field.value)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${field.value ? 'bg-purple-600' : 'bg-gray-300'
-                  }`}
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${field.value ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                />
-              </button>
-            )} />
+          <ToggleSwitch control={control} name="timeFormat24" />
         </div>
       </div>
     </div>
