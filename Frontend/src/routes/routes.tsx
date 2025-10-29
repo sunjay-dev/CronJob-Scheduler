@@ -1,17 +1,17 @@
 import { lazy, Suspense } from "react";
 import { createBrowserRouter, Outlet } from "react-router-dom";
-import { Dashboard, CreateJob, Jobs, EditJob, Logs, JobLogs, Settings } from "./pages";
-import { Layout, ProtectedRoute, PublicRoute, Loader } from "./components";
+import { Dashboard, CreateJob, Jobs, EditJob, Logs, JobLogs, Settings } from "../pages";
+import { Layout, ProtectedRoute, PublicRoute, Loader } from "../components";
 
-const Home = lazy(() => import("./pages/Home"));
-const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
-const Terms = lazy(() => import("./pages/Terms"));
-const VerifyEmail = lazy(() => import("./pages/VerifyUserEmail"));
-const ResetPassword = lazy(() => import("./pages/ResetPassword"));
-const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
-const Login = lazy(() => import("./pages/Login"));
-const Signup = lazy(() => import("./pages/Signup"));
-const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const Home = lazy(() => import("../pages/Home"));
+const PrivacyPolicy = lazy(() => import("../pages/PrivacyPolicy"));
+const Terms = lazy(() => import("../pages/Terms"));
+const VerifyEmail = lazy(() => import("../pages/VerifyUserEmail"));
+const ResetPassword = lazy(() => import("../pages/ResetPassword"));
+const NotFoundPage = lazy(() => import("../pages/NotFoundPage"));
+const Login = lazy(() => import("../pages/Login"));
+const Signup = lazy(() => import("../pages/Signup"));
+const ForgotPassword = lazy(() => import("../pages/ForgotPassword"));
 
 export const router = createBrowserRouter([
   {
