@@ -9,7 +9,7 @@ import redis from "../config/redis.config";
 
 export const handleUserLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const email = req.body.email.trim().toLowerCase();
-    const password = req.body.password;
+    const { password, rememberMe = false } = req.body;
 
     try {
         const user = await userModel.findOne({ email }).select('+password');
@@ -24,14 +24,15 @@ export const handleUserLogin = async (req: Request, res: Response, next: NextFun
 
         if (!user.verified) return next(new ForbiddenError("Please verify your email to login.", { id: user._id }));
 
-        const token = signToken({ userId: user.id }, "3d");
+        const token = signToken({ userId: user.id }, rememberMe ? "30d" : "3d");
 
         res.cookie('token', token, {
             httpOnly: true,
             secure: true,
             sameSite: 'none',
-            maxAge: 3 * 24 * 60 * 60 * 1000
+            maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined
         });
+
         const { password: _, ...safeUser } = user.toObject();
         res.status(200).json({
             message: "Login successful",
@@ -129,13 +130,13 @@ export const handleUserVerification = async (req: Request, res: Response, next: 
             redis.del(`otp:${userId}`, `otpAttempts:${userId}`, `otpResendAttempts:${userId}`, `otpResendLock:${userId}`)
         ]);
 
-        const cookieToken = signToken({ userId: user.id }, "3d");
+        const cookieToken = signToken({ userId: user.id }, "7d");
 
         res.cookie("token", cookieToken, {
             httpOnly: true,
             secure: true,
             sameSite: "none",
-            maxAge: 3 * 24 * 60 * 60 * 1000
+            maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
         res.status(200).json({
@@ -236,13 +237,13 @@ export const handleGoogleCallBack = async (req: Request, res: Response, next: Ne
         return next(new BadRequestError("Invalid user data from Google authentication"));
     }
     try {
-        const token = signToken({ userId: user._id! });
+        const token = signToken({ userId: user._id! }, "7d");
 
         res.cookie('token', token, {
             httpOnly: true,
             secure: true,
             sameSite: 'none',
-            maxAge: 24 * 60 * 60 * 1000
+            maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
         res.redirect(`${process.env.CLIENT_URL}/dashboard?loginMethod=google`);
@@ -276,7 +277,7 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
             .set(`otp:${email}`, token, 'EX', 60 * 60, 'NX')
             .set(`otptoken:${token}`, email, 'EX', 60 * 60)
             .exec();
-            
+
         res.status(200).json({
             message: "Email has been successfully sent to reset password"
         });

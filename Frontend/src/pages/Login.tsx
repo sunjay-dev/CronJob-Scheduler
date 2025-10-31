@@ -8,7 +8,7 @@ import { Helmet } from "react-helmet-async";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [details, setDetails] = useState({ email: '', password: '' });
+  const [details, setDetails] = useState({ email: '', password: '', rememberMe: false });
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
   const [lastUsed, setLastUsed] = useState("");
@@ -112,7 +112,8 @@ export default function Login() {
 
                 <div className="flex items-center justify-between text-sm">
                   <label className="flex items-center gap-2">
-                    <input className="cursor-pointer accent-purple-500" type="checkbox" name="remember" />
+                    <input onChange={e => setDetails(pre => ({...pre, rememberMe: e.target.checked }))}
+                    className="cursor-pointer accent-purple-500" type="checkbox" name="remember" />
                     <span className="text-gray-600">Remember me</span>
                   </label>
                   <Link to="/forgot-password" className="text-purple-700 hover:underline">Forgot password</Link>

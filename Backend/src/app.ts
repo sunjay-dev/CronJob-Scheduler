@@ -16,9 +16,9 @@ app.use(passport.initialize());
 app.use(express.json());
 app.use(cookieParser());
 
-import userRouter from './routes/user.routes'
-import cronRouter from './routes/log.routes'
-import jobRouter from './routes/job.routes'
+import userRouter from './routes/user.routes';
+import cronRouter from './routes/log.routes';
+import jobRouter from './routes/job.routes';
 
 app.use('/', userRouter);
 app.use('/api/logs', cronRouter);
@@ -26,7 +26,7 @@ app.use('/api/jobs', jobRouter);
 
 app.use(errorHandler);
 
-import connectDB from './config/db.config'
+import connectDB from './config/db.config';
 connectDB();
 
 import logger from './utils/logger.utils';
