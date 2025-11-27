@@ -116,7 +116,7 @@ export default function LogDetails({ details, setOpenDetailsMenu }: Props) {
                 </div>
 
                 {chartData && (
-                    <div className="mt-4">
+                    <div className="mt-4 sm:hidden md:block">
                         <h3 className="text-sm font-medium text-gray-600 mb-1">Timing</h3>
                         <div className="w-full h-36 relative">
                             <Bar data={chartData} options={chartOptions} />

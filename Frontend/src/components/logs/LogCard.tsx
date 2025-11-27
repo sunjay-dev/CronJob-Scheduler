@@ -11,35 +11,36 @@ export default function LogCard({ log }: {log: UserLogInterface}) {
 
   return (
     <>
-      <div className="grid grid-cols-[1fr_2fr_2fr_2fr_1fr] items-center gap-4 bg-white p-4 mb-2 rounded-md border border-gray-200 text-sm whitespace-nowrap">
+      <div className="flex items-center justify-between gap-4 bg-white p-4 mb-2 rounded-md border border-gray-200 text-sm whitespace-nowrap">
         <div className="overflow-hidden">
           <span className="text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded font-medium uppercase">
-            {log.method}
+        {log.method}
           </span>
         </div>
         <span title={log.url} className="truncate text-gray-700">{log.url}</span>
 
-        <div title={new Date(log.createdAt).toLocaleString()} className="flex items-center gap-2 text-gray-500">
+        <div title={new Date(log.createdAt).toLocaleString()} className=" items-center gap-2 text-gray-500 hidden sm:flex">
           <Clock className="w-4 h-4" />
           <span>{new Date(log.createdAt).toLocaleTimeString()}</span>
         </div>
 
         <div className={`flex items-center gap-1 font-medium ${isSuccess ? 'text-green-600' : 'text-red-600'}`}>
           {isSuccess ? (
-            <>
-              <CheckCircle className="w-4 h-4" />
-              <span>Success</span>
-            </>
+        <>
+          <CheckCircle className="w-4 h-4" />
+          <span>Success</span>
+        </>
           ) : (
-            <>
-              <XCircle className="w-4 h-4" />
-              <span>Failed</span>
-            </>
+        <>
+          <XCircle className="w-4 h-4" />
+          <span>Failed</span>
+        </>
           )}
         </div>
 
         <button title='View Log Details' onClick={() => setOpenDetailsMenu(true)} className="flex gap-1 items-center justify-center border border-gray-300 hover:bg-gray-100 rounded p-1">
-          <EllipsisVertical className="h-4 w-4" /> DETAILS
+          <EllipsisVertical className="h-4 w-4" />
+          <span className="hidden sm:block">DETAILS</span>
         </button>
       </div>
 

@@ -97,13 +97,13 @@ export default function CreateJob() {
   return (
     <>
       {isLoading && <Loader />}
-      <h1 className="text-3xl text-purple-600 mb-6">Create Cron Job</h1>
+      <h1 className="text-3xl font-semibold text-purple-600 mb-6">Create Cron Job</h1>
 
       <div className="flex gap-8 mb-4">
         <button
           type="button"
           onClick={() => setTab('common')}
-          className={`flex flex-col items-center text-sm font-medium px-4 py-2 transition-all duration-300 ease-in-out
+          className={`flex flex-col items-center tPext-sm font-medium px-4 py-2 transition-all duration-300 ease-in-out
             ${tab === 'common' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-500 hover:text-purple-500'}`}
         >
           <Clock className="w-6 h-6 mb-1 transition-transform duration-300" />

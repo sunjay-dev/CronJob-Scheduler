@@ -84,10 +84,10 @@ export default function Logs() {
       <LogChart logs={logsInsights} />
 
       <div className="bg-white p-6 mb-6 rounded-xl shadow">
-        <div className="grid grid-cols-[1fr_2fr_2fr_2fr_1fr] text-sm gap-4 items-center text-gray-500 font-medium px-4 mb-2">
+        <div className="flex justify-between text-sm gap-4 items-center text-gray-500 font-medium px-4 mb-2">
           <span>Method</span>
-          <span>URL</span>
-          <span>Time</span>
+            <span className="text-center sm:text-left flex-1/4 sm:flex-none ">URL</span>
+          <span className="hidden sm:block">Time</span>
           <span>Status</span>
           <span>Actions</span>
         </div>

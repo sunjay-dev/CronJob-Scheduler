@@ -92,7 +92,7 @@ export default function Jobs() {
       </div>
 
       <div className="p-6 bg-white rounded-xl shadow mb-4">
-        <div className="hidden md:grid md:grid-cols-[2.5fr_1.5fr_1.5fr_1fr_1fr_1fr_40px] gap-4 text-sm text-gray-600 font-medium px-4 mb-4">
+        <div className="grid grid-cols-[2.5fr_1.5fr_1.5fr_1fr_1fr_1fr_40px] gap-4 text-sm text-gray-600 font-medium px-4 mb-4">
           <span>Title, URL</span>
           <span className="text-center">Last execution</span>
           <span className="text-center">Next execution</span>

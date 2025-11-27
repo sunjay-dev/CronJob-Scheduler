@@ -27,7 +27,8 @@ export function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
 
   return (
     <>
-      <div className="fixed inset-0 bg-white/90 z-50 flex flex-col items-center justify-center text-lg font-medium">
+      <div className="fixed inset-0 bg-white
+        z-50 flex flex-col items-center justify-center text-lg font-medium">
 
         <button
           className="absolute top-4 right-4 text-gray-700 hover:text-purple-600"

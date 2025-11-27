@@ -40,7 +40,7 @@ export default function Headers({ jobDetails, setJobDetails }: Props) {
                         <p className="text-gray-500 italic text-sm border-b border-gray-400 pb-1">No custom headers defined.</p>
                     ) : (
                         jobDetails.headers.map((header, index) => (
-                            <div key={index} className='grid items-center grid-cols-[1fr_1fr_0.2fr] gap-4 border-b border-gray-300 pb-2'>
+                            <div key={index} className='grid grid-row-[1fr_1fr_0.2fr] items-center sm:grid-cols-[1fr_1fr_0.2fr] gap-4 border-b border-gray-300 pb-2'>
                                 <input
                                     onChange={e => updateHeader(index, "key", e.target.value)}
                                     value={header.key}
