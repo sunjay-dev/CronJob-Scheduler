@@ -143,11 +143,11 @@ export default function SettingsPage() {
             )} />
         </div>
 
-        <div className="text-right">
+        <div className=" w-full md:text-right md:w">
           <button
             disabled={isSubmitting}
             type="submit"
-            className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-2 rounded-md"
+            className="bg-purple-600 hover:bg-purple-700 text-white  font-semibold w-full px-6 py-2 rounded-md"
           >
             Save Changes
           </button>

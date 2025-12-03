@@ -26,7 +26,7 @@ export default function Headers({ register, control }: Props) {
             </p>
           ) : (
             fields.map((field, index) => (
-              <div key={field.id} className='grid items-center grid-cols-[1fr_1fr_0.2fr] gap-4 border-b border-gray-300 pb-2'>
+              <div key={field.id} className='grid grid-row-[1fr_1fr_0.2fr] items-center sm:grid-cols-[1fr_1fr_0.2fr] gap-4 border-b border-gray-300 pb-2'>
                 <input
                   {...register(`headers.${index}.key` as const)}
                   placeholder='Key'

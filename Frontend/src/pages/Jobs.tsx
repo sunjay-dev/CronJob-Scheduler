@@ -85,7 +85,7 @@ export default function Jobs() {
     <>
       {isLoading && <Loader />}
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-3xl font-normal text-purple-500">Cron jobs</h1>
+        <h1 className="text-3xl font-semibold text-purple-500">Cron jobs</h1>
         <Link to="/create" className="py-2 px-4 bg-purple-500 text-white flex items-center gap-1.5 rounded-sm active:scale-[0.98]">
           <PlusCircle className='w-5 h-5' />
           Create Job
@@ -93,13 +93,13 @@ export default function Jobs() {
       </div>
 
       <div className="p-6 bg-white rounded-xl shadow mb-4">
-        <div className="hidden md:grid md:grid-cols-[2.5fr_1.5fr_1.5fr_1fr_1fr_1fr_40px] gap-4 text-sm text-gray-600 font-medium px-4 mb-4">
+        <div className="grid grid-cols-[2.5fr_1fr_40px] sm:grid-cols-[2.5fr_1.5fr_1.5fr_1fr_1fr_1fr_40px] gap-4 text-sm text-gray-600 font-medium px-4 mb-4">
           <span>Title, URL</span>
-          <span className="text-center">Last execution</span>
-          <span className="text-center">Next execution</span>
+          <span className="text-center hidden sm:block">Last execution</span>
+          <span className="text-center hidden sm:block">Next execution</span>
           <span className="text-center">Status</span>
-          <span className="text-center">Edit</span>
-          <span className="text-center">History</span>
+          <span className="text-center hidden sm:block">Edit</span>
+          <span className="text-center hidden sm:block">History</span>
           <span className="text-center">Actions</span>
         </div>
 
@@ -123,6 +123,7 @@ export default function Jobs() {
                 handleChangeStatus={handleChangeStatus}
                 handleDeleteJob={handleDeleteJob}
                 timeFormat24={user?.timeFormat24}
+                
               />
             ))}
           </div>
