@@ -1,42 +1,40 @@
-import { Ban, PlusCircle } from 'lucide-react';
-import { JobCard, Loader } from '../components';
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useAppSelector, useAppDispatch } from '../hooks';
-import { removeJob, setJobs, updateJobStatus } from '../slices/jobSlice';
+import { Ban, PlusCircle } from "lucide-react";
+import { JobCard, Loader } from "../components";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { useAppSelector, useAppDispatch } from "../hooks";
+import { removeJob, setJobs, updateJobStatus } from "../slices/jobSlice";
 
 export default function Jobs() {
   const backendUrl = import.meta.env.VITE_BACKEND_URL!;
-  const jobs = useAppSelector(state => state.jobs.jobs);
+  const jobs = useAppSelector((state) => state.jobs.jobs);
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
-  const user = useAppSelector(state => state.auth.user);
+  const user = useAppSelector((state) => state.auth.user);
 
   useEffect(() => {
-    if (jobs.length !== 0)
-      return;
+    if (jobs.length !== 0) return;
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/jobs`, {
-      credentials: 'include',
+      credentials: "include",
     })
       .then(async (res) => {
         const data = await res.json();
 
-        if (!res.ok)
-          throw new Error(data.message || "Something went wrong, Please try again later.");
+        if (!res.ok) throw new Error(data.message || "Something went wrong, Please try again later.");
 
         return data;
       })
-      .then(data => {
-        dispatch(setJobs(data))
-      }).catch(err => console.error(err))
+      .then((data) => {
+        dispatch(setJobs(data));
+      })
+      .catch((err) => console.error(err))
       .finally(() => setIsLoading(false));
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleChangeStatus = (id: string, status: boolean) => {
     setIsLoading(true);
@@ -44,55 +42,54 @@ export default function Jobs() {
       method: "PUT",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ jobId: id, status })
-    }).then(async (res) => {
-      const data = await res.json();
-
-      if (!res.ok)
-        throw new Error(data.message || "Something went wrong, Please try again later.");
-
-      return data;
+      body: JSON.stringify({ jobId: id, status }),
     })
-      .then(() => {
-        
-        dispatch(updateJobStatus({ jobId: id, disabled: !status }))
+      .then(async (res) => {
+        const data = await res.json();
 
-      }).catch(err => console.error(err))
+        if (!res.ok) throw new Error(data.message || "Something went wrong, Please try again later.");
+
+        return data;
+      })
+      .then(() => {
+        dispatch(updateJobStatus({ jobId: id, disabled: !status }));
+      })
+      .catch((err) => console.error(err))
       .finally(() => setIsLoading(false));
-  }
+  };
 
   const handleDeleteJob = (id: string) => {
     setIsLoading(true);
     fetch(`${backendUrl}/api/jobs/${id}`, {
       method: "DELETE",
-      credentials: "include"
-    }).then(async (res) => {
-      const data = await res.json();
-
-      if (!res.ok)
-        throw new Error(data.message || "Something went wrong, Please try again later.");
-
-      return data;
+      credentials: "include",
     })
+      .then(async (res) => {
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.message || "Something went wrong, Please try again later.");
+
+        return data;
+      })
       .then(() => {
         dispatch(removeJob(id));
-
-      }).catch(err => console.error(err))
+      })
+      .catch((err) => console.error(err))
       .finally(() => setIsLoading(false));
-  }
+  };
 
   return (
     <>
       {isLoading && <Loader />}
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-3xl font-semibold text-purple-500">Cron jobs</h1>
+        <h1 className="text-3xl font-normal text-purple-500">Cron jobs</h1>
         <Link to="/create" className="py-2 px-4 bg-purple-500 text-white flex items-center gap-1.5 rounded-sm active:scale-[0.98]">
-          <PlusCircle className='w-5 h-5' />
+          <PlusCircle className="w-5 h-5" />
           Create Job
         </Link>
       </div>
 
-      <div className="p-6 bg-white rounded-xl shadow mb-4">
+      <div className="sm:px-6 py-6 px-4 bg-white rounded-xl shadow mb-4">
         <div className="grid grid-cols-[2.5fr_1fr_40px] sm:grid-cols-[2.5fr_1.5fr_1.5fr_1fr_1fr_1fr_40px] gap-4 text-sm text-gray-600 font-medium px-4 mb-4">
           <span>Title, URL</span>
           <span className="text-center hidden sm:block">Last execution</span>
@@ -110,7 +107,7 @@ export default function Jobs() {
           </div>
         ) : (
           <div className="space-y-3">
-            {jobs.map(job => (
+            {jobs.map((job) => (
               <JobCard
                 key={job._id}
                 _id={job._id}
@@ -123,7 +120,6 @@ export default function Jobs() {
                 handleChangeStatus={handleChangeStatus}
                 handleDeleteJob={handleDeleteJob}
                 timeFormat24={user?.timeFormat24}
-                
               />
             ))}
           </div>

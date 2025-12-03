@@ -14,8 +14,8 @@ export default function VerifyEmail() {
   useEffect(() => {
     const result = verifyUserIdSchema.safeParse({ userId });
     if (!result.success) {
-      setMessage({ type: 'error', text: result.error.issues[0].message });
-      navigate("/login")
+      setMessage({ type: "error", text: result.error.issues[0].message });
+      navigate("/login");
     }
   }, [navigate, userId]);
 
@@ -25,7 +25,7 @@ export default function VerifyEmail() {
     const result = verifyUserSchema.safeParse({ otp });
 
     if (!result.success) {
-      setMessage({ type: 'error', text: result.error.issues[0].message });
+      setMessage({ type: "error", text: result.error.issues[0].message });
       return;
     }
 
@@ -49,23 +49,25 @@ export default function VerifyEmail() {
         }
 
         return data;
-      }).then(data => {
+      })
+      .then((data) => {
         setMessage({ type: "success", text: data.message });
         setTimeout(() => navigate("/jobs"), 1000);
-
-      }).catch(err => {
-        setMessage({ type: "error", text: err.message || "Something went wrong. Please try again." });
-      }).finally(() => {
-        setOtp("")
-        setIsLoading(false);
       })
+      .catch((err) => {
+        setMessage({ type: "error", text: err.message || "Something went wrong. Please try again." });
+      })
+      .finally(() => {
+        setOtp("");
+        setIsLoading(false);
+      });
   };
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
     if (resendTimer > 0) {
       timer = setInterval(() => {
-        setResendTimer(prev => prev - 1);
+        setResendTimer((prev) => prev - 1);
       }, 1000);
     }
     return () => clearInterval(timer);
@@ -80,31 +82,29 @@ export default function VerifyEmail() {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId })
+      body: JSON.stringify({ userId }),
     })
       .then(async (res) => {
         const data = await res.json();
         if (!res.ok) {
-          if(res.status == 429){
+          if (res.status == 429) {
             setResendTimer(data.wait || 60);
-            setTimeout(()=> setMessage(null), 3000)
-            throw new Error(data.message || "Please wait before requesting again.")
+            setTimeout(() => setMessage(null), 3000);
+            throw new Error(data.message || "Please wait before requesting again.");
+          } else if (res.status == 404) {
+            setTimeout(() => navigate("/login"), 2000);
+            throw new Error(data.message || "User not found.");
           }
-
-          else if(res.status == 404){
-            setTimeout(()=> navigate("/login"), 2000)
-            throw new Error(data.message || "User not found.")
-          }          
 
           throw new Error(data.message || "Something went wrong, Please try again later.");
         }
         return data;
       })
-      .then(data => {
+      .then((data) => {
         setMessage({ type: "success", text: data.message });
         setResendTimer(data.wait || 60);
       })
-      .catch(err => {
+      .catch((err) => {
         setMessage({ type: "error", text: err.message || "Something went wrong. Please try again." });
       })
       .finally(() => setIsLoading(false));
@@ -114,7 +114,6 @@ export default function VerifyEmail() {
     <>
       {isLoading && <Loader />}
       <div className="font-[Inter] selection:bg-purple-500 selection:text-white h-dvh w-dvw grid grid-cols-1 md:grid-cols-2 overflow-x-hidden">
-
         <div className="flex flex-col px-8 md:px-6 py-6">
           <Link to="/login">
             <img src="/logo.webp" alt="logo" className="md:ml-2 h-10 w-10 mb-8" />
@@ -125,9 +124,7 @@ export default function VerifyEmail() {
               <fieldset disabled={isLoading} className="space-y-4">
                 <div className="space-y-1">
                   <h1 className="text-3xl font-bold">Verify Your Email</h1>
-                  <p className="text-sm text-gray-500">
-                    Please enter the 6-digit code we sent to your email.
-                  </p>
+                  <p className="text-sm text-gray-500">Please enter the 6-digit code we sent to your email.</p>
                 </div>
 
                 {message && <Popup type={message.type} message={message.text} />}
@@ -175,13 +172,9 @@ export default function VerifyEmail() {
         </div>
 
         <div className="bg-purple-100 hidden md:flex items-center justify-center">
-          <img
-            src="/verify-email.webp"
-            alt="Verify Email Illustration"
-            className="max-w-sm"
-          />
+          <img src="/verify-email.webp" alt="Verify Email Illustration" className="max-w-sm" />
         </div>
-      </div >
+      </div>
     </>
   );
 }

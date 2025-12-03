@@ -1,20 +1,20 @@
-import { Controller, type Control } from 'react-hook-form';
-import type { UserWithoutEmail } from '../../types'
-import { ToggleSwitch } from '../common';
+import { Controller, type Control } from "react-hook-form";
+import type { UserWithoutEmail } from "../../types";
+import { ToggleSwitch } from "../common";
 
 interface Props {
   control: Control<UserWithoutEmail>;
 }
 export default function Preference({ control }: Props) {
-
   return (
-    <div className='border border-gray-200 rounded-lg px-4 py-6 space-y-6'>
+    <div className="border border-gray-200 rounded-lg px-4 py-6 space-y-6">
       <h2 className="text-lg font-semibold text-gray-800 mb-4">Preferences</h2>
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <span className=" text-gray-700">Dark Mode</span>
 
-          <Controller name="mode"
+          <Controller
+            name="mode"
             control={control}
             render={({ field }) => (
               <div className="relative inline-flex items-center">
@@ -22,7 +22,7 @@ export default function Preference({ control }: Props) {
                   id={`switch-theme-mode`}
                   type="checkbox"
                   checked={field.value === "dark"}
-                  onChange={() => field.onChange(field.value === "dark"? "day": "dark")}
+                  onChange={() => field.onChange(field.value === "dark" ? "day" : "dark")}
                   className="peer appearance-none w-11 h-4.5 rounded-full bg-gray-200 border border-gray-300 
                            checked:bg-gradient-to-r checked:from-purple-600 checked:to-purple-800 
                            transition-all duration-300 cursor-pointer"
@@ -34,7 +34,8 @@ export default function Preference({ control }: Props) {
                            peer-active:scale-90 cursor-pointer"
                 ></label>
               </div>
-            )} />
+            )}
+          />
         </div>
 
         <div className="flex items-center justify-between">
@@ -43,5 +44,5 @@ export default function Preference({ control }: Props) {
         </div>
       </div>
     </div>
-  )
+  );
 }

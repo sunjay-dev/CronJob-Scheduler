@@ -1,32 +1,38 @@
-import { useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../hooks';
-import { setAuth } from '../slices/authSlice';
-import type { User, UserWithoutEmail } from '../types';
-import { ConfirmMenu, Loader, Preference } from '../components';
-import { useConfirmExit } from '../hooks/useConfirmExit';
-import { Controller, useForm } from 'react-hook-form';
+import { useState } from "react";
+import { useAppDispatch, useAppSelector } from "../hooks";
+import { setAuth } from "../slices/authSlice";
+import type { User, UserWithoutEmail } from "../types";
+import { ConfirmMenu, Loader, Preference } from "../components";
+import { useConfirmExit } from "../hooks/useConfirmExit";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { settingsSchema } from '../schemas/authSchemas';
-import { ToggleSwitch } from '../components';
+import { settingsSchema } from "../schemas/authSchemas";
+import { ToggleSwitch } from "../components";
 
 export default function SettingsPage() {
-  const user = useAppSelector(state => state.auth.user);
+  const user = useAppSelector((state) => state.auth.user);
   const dispatch = useAppDispatch();
   const [confirmUpdate, setConfirmUpdate] = useState(false);
 
-  const { register, handleSubmit, control, getValues, formState: { isDirty, isSubmitting, isSubmitted, errors } } = useForm<UserWithoutEmail>(
-    {
-      values: user ? {
-        name: user.name,
-        timezone: user.timezone,
-        emailNotifications: user.emailNotifications,
-        pushAlerts: user.pushAlerts,
-        mode: user.mode,
-        timeFormat24: user.timeFormat24
-      } : undefined,
-      resolver: zodResolver(settingsSchema),
-    }
-  );
+  const {
+    register,
+    handleSubmit,
+    control,
+    getValues,
+    formState: { isDirty, isSubmitting, isSubmitted, errors },
+  } = useForm<UserWithoutEmail>({
+    values: user
+      ? {
+          name: user.name,
+          timezone: user.timezone,
+          emailNotifications: user.emailNotifications,
+          pushAlerts: user.pushAlerts,
+          mode: user.mode,
+          timeFormat24: user.timeFormat24,
+        }
+      : undefined,
+    resolver: zodResolver(settingsSchema),
+  });
 
   useConfirmExit(isDirty, !isSubmitted && !isSubmitting);
 
@@ -37,33 +43,35 @@ export default function SettingsPage() {
       method: "PUT",
       credentials: "include",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(getValues())
-    }).then(async (res) => {
-      const data = await res.json();
-
-      if (!res.ok)
-        throw new Error(data.message || "Something went wrong, Please try again later.");
-
-      return data;
+      body: JSON.stringify(getValues()),
     })
-      .then(data => {
-        const userDetails: User = data.user;
-        dispatch(setAuth({
-          user: {
-            name: userDetails.name,
-            email: userDetails.email,
-            timezone: userDetails.timezone,
-            mode: userDetails.mode,
-            timeFormat24: userDetails.timeFormat24,
-            emailNotifications: userDetails.emailNotifications,
-            pushAlerts: userDetails.pushAlerts
-          }
-        }));
+      .then(async (res) => {
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.message || "Something went wrong, Please try again later.");
+
+        return data;
       })
-      .catch(err => console.error(err))
-  }
+      .then((data) => {
+        const userDetails: User = data.user;
+        dispatch(
+          setAuth({
+            user: {
+              name: userDetails.name,
+              email: userDetails.email,
+              timezone: userDetails.timezone,
+              mode: userDetails.mode,
+              timeFormat24: userDetails.timeFormat24,
+              emailNotifications: userDetails.emailNotifications,
+              pushAlerts: userDetails.pushAlerts,
+            },
+          }),
+        );
+      })
+      .catch((err) => console.error(err));
+  };
 
   if (!user) return <div>Loading user info...</div>;
 
@@ -72,12 +80,14 @@ export default function SettingsPage() {
       {isSubmitting && <Loader />}
       <h1 className="text-3xl text-purple-600 mb-6">Settings</h1>
 
-      <form onSubmit={e => {
-        e.preventDefault();
-        setConfirmUpdate(true);
-      }} className="space-y-10 bg-white p-6 rounded-xl shadow mb-4">
-
-        <div className='border border-gray-200 rounded-lg px-4 py-6 space-y-6'>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          setConfirmUpdate(true);
+        }}
+        className="space-y-10 bg-white sm:px-6 py-6 px-4 rounded-xl shadow mb-4"
+      >
+        <div className="border border-gray-200 rounded-lg px-4 py-6 space-y-6">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">Profile</h2>
 
           <div className="space-y-4">
@@ -88,9 +98,7 @@ export default function SettingsPage() {
                 type="text"
                 className="w-full mt-1 rounded-md px-3 py-2 border transition bg-white border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
-              {errors.name && (
-                <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
-              )}
+              {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
             </div>
             <div>
               <label className="block mb-1 font-medium text-gray-700">Email</label>
@@ -106,7 +114,7 @@ export default function SettingsPage() {
 
         <Preference control={control} />
 
-        <div className='border border-gray-200 rounded-lg px-4 py-6 space-y-6'>
+        <div className="border border-gray-200 rounded-lg px-4 py-6 space-y-6">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">Notifications</h2>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -116,11 +124,11 @@ export default function SettingsPage() {
 
             <div className="flex items-center justify-between">
               <span className=" text-gray-700">Push Alerts</span>
-                  <ToggleSwitch control={control} name="pushAlerts" />
+              <ToggleSwitch control={control} name="pushAlerts" />
             </div>
           </div>
         </div>
-        <div className='border border-gray-200 rounded-lg px-4 py-6 space-y-6 flex flex-col'>
+        <div className="border border-gray-200 rounded-lg px-4 py-6 space-y-6 flex flex-col">
           <label className="text-lg font-semibold text-gray-800 mb-4">Default Timezone</label>
 
           <Controller
@@ -130,7 +138,7 @@ export default function SettingsPage() {
               <select
                 className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 value={field.value}
-                onChange={e => field.onChange(e.target.value)}
+                onChange={(e) => field.onChange(e.target.value)}
               >
                 <option value="UTC">UTC</option>
                 <option value="Asia/Karachi">Asia/Karachi</option>
@@ -140,7 +148,8 @@ export default function SettingsPage() {
                 <option value="America/New_York">America/New_York</option>
                 <option value="America/Los_Angeles">America/Los_Angeles</option>
               </select>
-            )} />
+            )}
+          />
         </div>
 
         <div className=" w-full md:text-right md:w">
@@ -152,8 +161,8 @@ export default function SettingsPage() {
             Save Changes
           </button>
         </div>
-      </form >
-      {confirmUpdate &&
+      </form>
+      {confirmUpdate && (
         <ConfirmMenu
           title="Confirm Changes"
           message="Are you sure you want to update your account settings?"
@@ -165,7 +174,7 @@ export default function SettingsPage() {
           }}
           onCancel={() => setConfirmUpdate(false)}
         />
-      }
+      )}
     </>
   );
 }

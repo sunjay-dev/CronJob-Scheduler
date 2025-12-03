@@ -1,10 +1,10 @@
-import { PlusCircle, List, Clock, FileWarning } from 'lucide-react';
-import { StatCard, LogCard, Pagination, Loader } from '../components';
-import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { setJobs } from '../slices/jobSlice';
-import { useAppDispatch, useAppSelector } from '../hooks';
-import type { JobInterface, UserLogInterface } from '../types'
+import { PlusCircle, List, Clock, FileWarning } from "lucide-react";
+import { StatCard, LogCard, Pagination, Loader } from "../components";
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { setJobs } from "../slices/jobSlice";
+import { useAppDispatch, useAppSelector } from "../hooks";
+import type { JobInterface, UserLogInterface } from "../types";
 
 export default function Dashboard() {
   const limit = 8;
@@ -15,18 +15,18 @@ export default function Dashboard() {
     total: 0,
     active: 0,
     disabled: 0,
-    logs: 0
+    logs: 0,
   });
-  const user = useAppSelector(state => state.auth.user);
-  const jobs = useAppSelector(state => state.jobs.jobs);
+  const user = useAppSelector((state) => state.auth.user);
+  const jobs = useAppSelector((state) => state.jobs.jobs);
   const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if(!jobs.length) return ;
-    
-    const activeCount = jobs.reduce((count, job) => job.disabled ? count : count + 1, 0);
-    setAnalytics(pre => ({
+    if (!jobs.length) return;
+
+    const activeCount = jobs.reduce((count, job) => (job.disabled ? count : count + 1), 0);
+    setAnalytics((pre) => ({
       ...pre,
       total: jobs.length,
       active: activeCount,
@@ -35,26 +35,24 @@ export default function Dashboard() {
   }, [jobs]);
 
   useEffect(() => {
-
     if (!user) return;
     if (jobs.length !== 0) return;
 
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/jobs`, {
-      credentials: 'include',
+      credentials: "include",
     })
       .then(async (res) => {
         const data = await res.json();
 
-        if (!res.ok)
-          throw new Error(data.message || "Something went wrong, Please try again later.");
+        if (!res.ok) throw new Error(data.message || "Something went wrong, Please try again later.");
 
         return data;
       })
       .then((data: JobInterface[]) => {
-
         dispatch(setJobs(data));
-      }).catch(err => console.error(err));
-  }, [dispatch, jobs.length, user])
+      })
+      .catch((err) => console.error(err));
+  }, [dispatch, jobs.length, user]);
 
   useEffect(() => {
     if (!user) return;
@@ -63,24 +61,24 @@ export default function Dashboard() {
     const fetchLogs = () => {
       setIsLoading(true);
       fetch(`${import.meta.env.VITE_BACKEND_URL}/api/logs?page=${page}&limit=${limit}`, {
-        credentials: 'include',
+        credentials: "include",
       })
         .then(async (res) => {
           const data = await res.json();
 
-          if (!res.ok)
-            throw new Error(data.message || "Something went wrong, Please try again later.");
+          if (!res.ok) throw new Error(data.message || "Something went wrong, Please try again later.");
 
           return data;
         })
-        .then(data => {
-          setAnalytics(pre => ({ ...pre, logs: data.total }));
+        .then((data) => {
+          setAnalytics((pre) => ({ ...pre, logs: data.total }));
           setLogs(data.logs);
-          setTotalPages(data.totalPages)
+          setTotalPages(data.totalPages);
           setPage(data.page);
-        }).catch(err => console.error(err))
-        .finally(()=> setIsLoading(false))
-    }
+        })
+        .catch((err) => console.error(err))
+        .finally(() => setIsLoading(false));
+    };
 
     fetchLogs();
 
@@ -88,7 +86,7 @@ export default function Dashboard() {
     if (page === 1) {
       const now = new Date().getSeconds();
       const delay = (60 - now) * 1000 + 5000;
-      TimeOutId = setTimeout(()=> {
+      TimeOutId = setTimeout(() => {
         fetchLogs();
         intervalId = setInterval(fetchLogs, 60_000);
       }, delay);
@@ -96,27 +94,25 @@ export default function Dashboard() {
 
     return () => {
       clearTimeout(TimeOutId);
-      if (intervalId)
-        clearInterval(intervalId);
+      if (intervalId) clearInterval(intervalId);
     };
   }, [page, user]);
 
-
-  useEffect(() => { 
+  useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const loginMethod = params.get('loginMethod');
+    const loginMethod = params.get("loginMethod");
 
     if (loginMethod) {
-      localStorage.setItem('lastLoginMethod', loginMethod);
-      params.delete('loginMethod');
+      localStorage.setItem("lastLoginMethod", loginMethod);
+      params.delete("loginMethod");
       const newUrl = `${window.location.pathname} ${params.toString()}`;
       window.history.replaceState({}, document.title, newUrl);
     }
-  },[]);
+  }, []);
 
   return (
     <>
-      <h1 className="text-3xl font-semibold text-purple-600 mb-6">Dashboard</h1>
+      <h1 className="text-3xl font-normal text-purple-600 mb-6">Dashboard</h1>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <StatCard title="Total Jobs" value={analytics.total} />
@@ -130,28 +126,29 @@ export default function Dashboard() {
           <List className="w-5 h-5" />
           View All Jobs
         </Link>
-        <Link to='/create' className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 active:scale-[0.98]">
+        <Link to="/create" className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 active:scale-[0.98]">
           <PlusCircle className="w-5 h-5" />
           Create Job
         </Link>
       </div>
 
-      <div className="bg-white p-6 rounded-xl shadow mb-4">
+      <div className="bg-white px-4 py-6 sm:px-6 rounded-xl shadow mb-4">
         <div className="mb-5 flex items-center gap-2 text-gray-700 font-semibold text-xl">
           <Clock className="w-5 h-5" />
           Recent Logs
         </div>
 
-        <div className="flex justify-between text-sm gap-4 items-center text-gray-500 font-medium px-4 mb-2">
-          <span>Method</span>
-            <span className="text-center sm:text-left flex-1/4 sm:flex-none ">URL</span>
-          <span className="hidden sm:block">Time</span>
-          <span>Status</span>
-          <span>Actions</span>
+        <div className="flex justify-between text-sm items-center text-gray-500 font-medium pl-1 sm:px-4 mb-2">
+          <span className="sm:order-none order-2 sm:mr-4 mr-2">Method</span>
+          <span className="text-center mr-4 sm:order-none order-1 sm:text-left flex-1/3 sm:flex-none">URL</span>
+          <span className="hidden sm:block mr-4">Time</span>
+          <span className="order-first sm:order-none mr-4">Status</span>
+          <span className="order-last">Actions</span>
         </div>
 
-      {isLoading? <Loader/> : 
-        logs.length === 0 ? (
+        {isLoading ? (
+          <Loader />
+        ) : logs.length === 0 ? (
           <div className="py-12 text-center text-gray-500 text-sm flex flex-col items-center">
             <FileWarning className="w-8 h-8 mb-3 text-gray-400" />
             <p>No logs found.</p>
@@ -159,12 +156,8 @@ export default function Dashboard() {
         ) : (
           <>
             <div className="text-sm text-gray-600 space-y-1">
-              {logs.map(log => (
-                <LogCard
-                  key={log._id}
-                  log={log}
-                  timeFormat24={user?.timeFormat24}
-                />
+              {logs.map((log) => (
+                <LogCard key={log._id} log={log} timeFormat24={user?.timeFormat24} />
               ))}
             </div>
             <Pagination page={page} setPage={setPage} totalPages={totalPages} />

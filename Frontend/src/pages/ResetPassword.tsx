@@ -19,7 +19,7 @@ export default function ResetPassword() {
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => {
-    const result = tokenSchema.safeParse({token});
+    const result = tokenSchema.safeParse({ token });
     if (!result.success) {
       setMessage({ type: "error", text: result.error.issues[0].message });
       setTimeout(() => navigate("/dashboard"), 3000);
@@ -42,27 +42,31 @@ export default function ResetPassword() {
       credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token, password: details.password }),
-    }).then(async (res) => {
-      const data = await res.json();
-
-      if (!res.ok) {
-        if(res.status === 400) {
-          setMessage({ type: "error", text: data.message || "Invalid or expired token. Redirecting to login..." });
-          setTimeout(() => navigate("/login"), 4500);
-          return Promise.reject();
-        }
-        throw new Error(data.message || "Something went wrong.");
-      }
-      return data;
-    }).then(() => {
-      setMessage({ type: "success", text: "Password reset successful. Redirecting to dashboard..." });
-      setTimeout(() => navigate("/dashboard"), 2000);
-    }).catch(err => {
-      setMessage({ type: "error", text: err.message || "Failed to reset password." });
-    }).finally(() => {
-      setIsLoading(false);
-      setDetails(pre => ({...pre, password: "", confirm: ""}))
     })
+      .then(async (res) => {
+        const data = await res.json();
+
+        if (!res.ok) {
+          if (res.status === 400) {
+            setMessage({ type: "error", text: data.message || "Invalid or expired token. Redirecting to login..." });
+            setTimeout(() => navigate("/login"), 4500);
+            return Promise.reject();
+          }
+          throw new Error(data.message || "Something went wrong.");
+        }
+        return data;
+      })
+      .then(() => {
+        setMessage({ type: "success", text: "Password reset successful. Redirecting to dashboard..." });
+        setTimeout(() => navigate("/dashboard"), 2000);
+      })
+      .catch((err) => {
+        setMessage({ type: "error", text: err.message || "Failed to reset password." });
+      })
+      .finally(() => {
+        setIsLoading(false);
+        setDetails((pre) => ({ ...pre, password: "", confirm: "" }));
+      });
   };
 
   return (
@@ -71,7 +75,7 @@ export default function ResetPassword() {
       <div className="font-[Inter] selection:bg-purple-500 selection:text-white h-dvh w-dvw grid grid-cols-1 md:grid-cols-2 overflow-x-hidden">
         <div className="flex flex-col px-8 md:px-6 py-6">
           <Link to="/login">
-          <img src="/logo.webp" alt="logo" className="md:ml-2 h-10 w-10 mb-8" />
+            <img src="/logo.webp" alt="logo" className="md:ml-2 h-10 w-10 mb-8" />
           </Link>
 
           <div className="flex-grow flex flex-col justify-center items-center">
@@ -86,7 +90,9 @@ export default function ResetPassword() {
 
                 {/* New Password */}
                 <div className="flex flex-col space-y-1">
-                  <label htmlFor="password" className="text-sm font-medium">New Password</label>
+                  <label htmlFor="password" className="text-sm font-medium">
+                    New Password
+                  </label>
                   <div className="relative flex items-center">
                     <input
                       type={details.showPassword ? "text" : "password"}
@@ -94,16 +100,12 @@ export default function ResetPassword() {
                       required
                       value={details.password}
                       placeholder="Enter password"
-                      onChange={(e) =>
-                        setDetails((prev) => ({ ...prev, password: e.target.value }))
-                      }
+                      onChange={(e) => setDetails((prev) => ({ ...prev, password: e.target.value }))}
                       className="w-full border border-gray-300 rounded-md px-3 py-1.5 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
                     />
                     <button
                       type="button"
-                      onClick={() =>
-                        setDetails((prev) => ({ ...prev, showPassword: !prev.showPassword }))
-                      }
+                      onClick={() => setDetails((prev) => ({ ...prev, showPassword: !prev.showPassword }))}
                       className="absolute right-3 text-gray-500 hover:text-gray-700"
                     >
                       {details.showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -113,7 +115,9 @@ export default function ResetPassword() {
 
                 {/* Confirm Password */}
                 <div className="flex flex-col space-y-1">
-                  <label htmlFor="confirm" className="text-sm font-medium">Confirm Password</label>
+                  <label htmlFor="confirm" className="text-sm font-medium">
+                    Confirm Password
+                  </label>
                   <div className="relative flex items-center">
                     <input
                       type={details.showConfirm ? "text" : "password"}
@@ -121,16 +125,12 @@ export default function ResetPassword() {
                       required
                       placeholder="Re-enter your password"
                       value={details.confirm}
-                      onChange={(e) =>
-                        setDetails((prev) => ({ ...prev, confirm: e.target.value }))
-                      }
+                      onChange={(e) => setDetails((prev) => ({ ...prev, confirm: e.target.value }))}
                       className="w-full border border-gray-300 rounded-md px-3 py-1.5 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
                     />
                     <button
                       type="button"
-                      onClick={() =>
-                        setDetails((prev) => ({ ...prev, showConfirm: !prev.showConfirm }))
-                      }
+                      onClick={() => setDetails((prev) => ({ ...prev, showConfirm: !prev.showConfirm }))}
                       className="absolute right-3 text-gray-500 hover:text-gray-700"
                     >
                       {details.showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
