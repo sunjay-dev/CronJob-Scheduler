@@ -30,6 +30,16 @@ export function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
       <div className="fixed inset-0 bg-white
         z-50 flex flex-col items-center justify-center text-lg font-medium">
 
+          <div className="absolute top-4 left-6 flex items-center gap-2">
+          <img
+            onClick={() => navigate("/dashboard")}
+            src="/logo.webp"
+            alt="Cron Job Logo"
+            className="h-8 w-8 cursor-pointer"
+          />
+          <span className="text-xl font-semibold text-gray-800">Cron Job</span>
+        </div>
+
         <button
           className="absolute top-4 right-4 text-gray-700 hover:text-purple-600"
           onClick={() => setIsOpen(false)}
