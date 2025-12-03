@@ -1,5 +1,5 @@
 import { X, LogOut } from "lucide-react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../hooks";
 import { logout } from "../../slices/authSlice";
 import { clearJobs } from "../../slices/jobSlice";
@@ -38,6 +38,11 @@ export function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
       });
   };
 
+  const handleNavigation = (path: string) => {
+    setIsOpen(false);
+    navigate(path);
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -56,18 +61,10 @@ export function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
         </button>
 
         <nav className="flex flex-col items-center gap-6 [&>a]:hover:underline [&>a]:active:scale-[1.05] [&>a]:transition">
-          <NavLink to="/dashboard" onClick={() => setIsOpen(false)}>
-            Dashboard
-          </NavLink>
-          <NavLink to="/jobs" onClick={() => setIsOpen(false)}>
-            Jobs
-          </NavLink>
-          <NavLink to="/logs" onClick={() => setIsOpen(false)}>
-            Logs
-          </NavLink>
-          <NavLink to="/settings" onClick={() => setIsOpen(false)}>
-            Settings
-          </NavLink>
+          <button onClick={() => handleNavigation("/dashboard")}>Dashboard</button>
+          <button onClick={() => handleNavigation("/jobs")}>Jobs</button>
+          <button onClick={() => handleNavigation("/logs")}>Logs</button>
+          <button onClick={() => handleNavigation("/settings")}>Settings</button>
         </nav>
 
         <button
