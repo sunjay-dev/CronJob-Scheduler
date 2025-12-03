@@ -35,6 +35,28 @@ export default function Header({ sidebarOpen, setSidebarOpen, mobileMenuOpen, se
     }
   };
 
+  const handleUserLogout = async () => {
+    setConfirmLogout(false);
+
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/logout`, {
+      credentials: "include",
+      method: "POST",
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Something went wrong, please try again.");
+        return data;
+      })
+      .then(() => {
+        dispatch(logout());
+        dispatch(clearJobs());
+        navigate("/login");
+      })
+      .catch((error) => {
+        console.error("An error occured while user logout:", error.message);
+      });
+  };
+
   return (
     <header className="fixed top-0 left-0 z-50 bg-white shadow-sm h-16 w-full px-6 flex items-center justify-between">
       <div className="flex items-center gap-4">
@@ -66,12 +88,7 @@ export default function Header({ sidebarOpen, setSidebarOpen, mobileMenuOpen, se
           message="Are you sure you want to logout?"
           confirmText="Yes, Logout"
           confirmColor="bg-red-500 hover:bg-red-600 text-white"
-          onConfirm={() => {
-            dispatch(logout());
-            dispatch(clearJobs());
-            navigate("/login");
-            setConfirmLogout(false);
-          }}
+          onConfirm={() => handleUserLogout()}
           onCancel={() => setConfirmLogout(false)}
         />
       )}

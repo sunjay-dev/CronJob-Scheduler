@@ -14,33 +14,21 @@ export default function Header({ home }: { home: boolean }) {
             <Link to="/">
               <img src="/logo.webp" alt="CronJob Logo" className="w-10 h-10" />
             </Link>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">
-              Cron Job
-            </h1>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">Cron Job</h1>
           </div>
 
-          {/* Desktop Nav */}
           <nav className="hidden md:flex items-center space-x-6">
             {home ? (
               <>
-                <a
-                  href="/#features"
-                  className="text-gray-700 hover:text-purple-500 transition-colors font-medium"
-                >
+                <a href="/#features" className="text-gray-700 hover:text-purple-500 transition-colors font-medium">
                   Features
                 </a>
-                <a
-                  href="/#how-it-works"
-                  className="text-gray-700 hover:text-purple-500 transition-colors font-medium"
-                >
+                <a href="/#how-it-works" className="text-gray-700 hover:text-purple-500 transition-colors font-medium">
                   How it Works
                 </a>
               </>
             ) : (
-              <Link
-                to="/"
-                className="text-gray-700 hover:text-purple-500 transition-colors font-medium"
-              >
+              <Link to="/" className="text-gray-700 hover:text-purple-500 transition-colors font-medium">
                 Home
               </Link>
             )}
@@ -61,10 +49,7 @@ export default function Header({ home }: { home: boolean }) {
           </nav>
 
           {/* Mobile Hamburger */}
-          <button
-            className="md:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-200"
-            onClick={() => setIsOpen(!isOpen)}
-          >
+          <button className="md:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-200" onClick={() => setIsOpen(!isOpen)}>
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
@@ -90,11 +75,7 @@ export default function Header({ home }: { home: boolean }) {
                 </a>
               </>
             ) : (
-              <Link
-                to="/"
-                className="block text-gray-700 hover:text-purple-500 transition-colors font-medium"
-                onClick={() => setIsOpen(false)}
-              >
+              <Link to="/" className="block text-gray-700 hover:text-purple-500 transition-colors font-medium" onClick={() => setIsOpen(false)}>
                 Home
               </Link>
             )}

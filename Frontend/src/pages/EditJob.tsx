@@ -171,7 +171,7 @@ export default function EditJob() {
         </button>
       </div>
 
-      <form onSubmit={handleSubmit(handleJobEdit, onError)} className="bg-white p-6 rounded-xl shadow mb-4">
+      <form onSubmit={handleSubmit(handleJobEdit, onError)} className="bg-white sm:px-6 py-6 px-4 rounded-xl shadow mb-4">
         {message && (
           <div className="w-full">
             <Popup type={message.type} message={message.text} />

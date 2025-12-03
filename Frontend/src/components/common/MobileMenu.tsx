@@ -16,11 +16,26 @@ export function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
   const navigate = useNavigate();
   const [confirmLogout, setConfirmLogout] = useState(false);
 
-  const handleLogout = () => {
-    dispatch(logout());
-    dispatch(clearJobs());
-    setIsOpen(false);
-    navigate("/login");
+  const handleUserLogout = async () => {
+    setConfirmLogout(false);
+
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/logout`, {
+      credentials: "include",
+      method: "POST",
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Something went wrong, please try again.");
+        return data;
+      })
+      .then(() => {
+        dispatch(logout());
+        dispatch(clearJobs());
+        navigate("/login");
+      })
+      .catch((error) => {
+        console.error("An error occured while user logout:", error.message);
+      });
   };
 
   if (!isOpen) return null;
@@ -29,7 +44,7 @@ export function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
     <>
       <div
         className="fixed inset-0 bg-white
-        z-50 flex flex-col items-center justify-center text-lg font-medium"
+        z-50 flex flex-col items-center justify-center text-lg font-normal"
       >
         <div className="absolute top-4 left-6 flex items-center gap-2">
           <img onClick={() => navigate("/dashboard")} src="/logo.webp" alt="Cron Job Logo" className="h-8 w-8 cursor-pointer" />
@@ -71,8 +86,7 @@ export function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
           confirmText="Yes, Logout"
           confirmColor="bg-red-500 hover:bg-red-600 text-white"
           onConfirm={() => {
-            handleLogout();
-            setConfirmLogout(false);
+            handleUserLogout();
           }}
           onCancel={() => setConfirmLogout(false)}
         />

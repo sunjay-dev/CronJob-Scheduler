@@ -121,7 +121,7 @@ export default function CreateJob() {
         </button>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit, onError)} className="bg-white p-6 rounded-xl shadow mb-4">
+      <form onSubmit={handleSubmit(onSubmit, onError)} className="bg-white sm:px-6 py-6 px-4 rounded-xl shadow mb-4">
         {message && (
           <div className="w-full">
             <Popup type={message.type} message={message.text} />
