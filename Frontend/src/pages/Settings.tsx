@@ -1,47 +1,36 @@
-import { useEffect, useState } from 'react';
-import { Pencil, Save } from "lucide-react";
+import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { setAuth } from '../slices/authSlice';
 import type { User, UserWithoutEmail } from '../types';
 import { ConfirmMenu, Loader, Preference } from '../components';
 import { useConfirmExit } from '../hooks/useConfirmExit';
+import { Controller, useForm } from 'react-hook-form';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { settingsSchema } from '../schemas/authSchemas';
+import { ToggleSwitch } from '../components';
 
 export default function SettingsPage() {
   const user = useAppSelector(state => state.auth.user);
-  const [isEditingName, setIsEditingName] = useState(false);
   const dispatch = useAppDispatch();
   const [confirmUpdate, setConfirmUpdate] = useState(false);
-  const [initialDetails, setInitialDetails] = useState<UserWithoutEmail | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const [details, setDetails] = useState<UserWithoutEmail>({
-    name: '',
-    timezone: 'UTC',
-    emailNotifications: true,
-    pushAlerts: true,
-    mode: "day",
-    timeFormat24: true
-  });
+  const { register, handleSubmit, control, getValues, formState: { isDirty, isSubmitting, isSubmitted, errors } } = useForm<UserWithoutEmail>(
+    {
+      values: user ? {
+        name: user.name,
+        timezone: user.timezone,
+        emailNotifications: user.emailNotifications,
+        pushAlerts: user.pushAlerts,
+        mode: user.mode,
+        timeFormat24: user.timeFormat24
+      } : undefined,
+      resolver: zodResolver(settingsSchema),
+    }
+  );
 
-  useEffect(() => {
-    if (!user) return;
-    const value = {
-      name: user.name,
-      timezone: user.timezone,
-      emailNotifications: user.emailNotifications,
-      pushAlerts: user.pushAlerts,
-      mode: user.mode,
-      timeFormat24: user.timeFormat24
-    };
-    setDetails(value);
-    setInitialDetails(value);
-  }, [user]);
-
-  const isDirty = JSON.stringify(details) !== JSON.stringify(initialDetails);
-  useConfirmExit(isDirty, !isLoading);
+  useConfirmExit(isDirty, !isSubmitted && !isSubmitting);
 
   const handleSaveChanges = () => {
-    setIsLoading(true);
     if (!user) return;
 
     fetch(`${import.meta.env.VITE_BACKEND_URL}/`, {
@@ -50,7 +39,7 @@ export default function SettingsPage() {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(details)
+      body: JSON.stringify(getValues())
     }).then(async (res) => {
       const data = await res.json();
 
@@ -61,9 +50,6 @@ export default function SettingsPage() {
     })
       .then(data => {
         const userDetails: User = data.user;
-        setDetails(userDetails);
-        setInitialDetails(userDetails);
-        setIsEditingName(false);
         dispatch(setAuth({
           user: {
             name: userDetails.name,
@@ -77,21 +63,19 @@ export default function SettingsPage() {
         }));
       })
       .catch(err => console.error(err))
-      .finally(() => setIsLoading(false));
   }
 
   if (!user) return <div>Loading user info...</div>;
 
-
   return (
     <>
-      {isLoading && <Loader />}
-      <h1 className="text-3xl font-semibold text-purple-600 mb-6">Settings</h1>
+      {isSubmitting && <Loader />}
+      <h1 className="text-3xl text-purple-600 mb-6">Settings</h1>
 
       <form onSubmit={e => {
         e.preventDefault();
         setConfirmUpdate(true);
-      }} className="space-y-10 bg-white p-6 md:pb-6 pb-10 rounded-xl shadow">
+      }} className="space-y-10 bg-white p-6 rounded-xl shadow mb-4">
 
         <div className='border border-gray-200 rounded-lg px-4 py-6 space-y-6'>
           <h2 className="text-lg font-semibold text-gray-800 mb-4">Profile</h2>
@@ -99,27 +83,14 @@ export default function SettingsPage() {
           <div className="space-y-4">
             <div>
               <label className="block mb-1 font-medium text-gray-700">Full Name</label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="text"
-                  value={details.name}
-                  onChange={e => setDetails({ ...details, name: e.target.value })}
-                  readOnly={!isEditingName}
-                  className={`flex-1 rounded-md px-3 py-2 border transition
-      ${isEditingName
-                      ? 'bg-white border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500'
-                      : 'bg-gray-100 text-gray-500 cursor-not-allowed border-gray-200'
-                    }`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setIsEditingName(!isEditingName)}
-                  className="px-3 py-2.5 bg-gray-100 border border-gray-300 rounded hover:text-purple-600 transition"
-                  title={isEditingName ? "Lock" : "Edit Name"}
-                >
-                  {isEditingName ? <Save className="w-4 h-4" /> : <Pencil className="w-4 h-4" />}
-                </button>
-              </div>
+              <input
+                {...register("name", { required: true })}
+                type="text"
+                className="w-full mt-1 rounded-md px-3 py-2 border transition bg-white border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+              )}
             </div>
             <div>
               <label className="block mb-1 font-medium text-gray-700">Email</label>
@@ -131,64 +102,50 @@ export default function SettingsPage() {
               />
             </div>
           </div>
-
         </div>
 
-        <Preference details={details} setDetails={setDetails} />
+        <Preference control={control} />
 
         <div className='border border-gray-200 rounded-lg px-4 py-6 space-y-6'>
           <h2 className="text-lg font-semibold text-gray-800 mb-4">Notifications</h2>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className=" text-gray-700">Email Notifications</span>
-              <button
-                type="button"
-                onClick={() => setDetails({ ...details, emailNotifications: !details.emailNotifications })}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${details.emailNotifications ? 'bg-purple-600' : 'bg-gray-300'
-                  }`}
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${details.emailNotifications ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                />
-              </button>
+              <ToggleSwitch control={control} name="emailNotifications" />
             </div>
 
             <div className="flex items-center justify-between">
               <span className=" text-gray-700">Push Alerts</span>
-              <button
-                type="button"
-                onClick={() => setDetails({ ...details, pushAlerts: !details.pushAlerts })}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${details.pushAlerts ? 'bg-purple-600' : 'bg-gray-300'
-                  }`}
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${details.pushAlerts ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                />
-              </button>
+                  <ToggleSwitch control={control} name="pushAlerts" />
             </div>
           </div>
         </div>
         <div className='border border-gray-200 rounded-lg px-4 py-6 space-y-6 flex flex-col'>
-          <label className="text-lg font-semibold text-gray-800 mb-4">Timezone</label>
-          <select
-            className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
-            value={details.timezone}
-            onChange={e => setDetails({ ...details, timezone: e.target.value })}
-          >
-            <option value="UTC">UTC</option>
-            <option value="Asia/Karachi">Asia/Karachi</option>
-            <option value="Asia/Kolkata">Asia/Kolkata</option>
-            <option value="Asia/Dubai">Asia/Dubai</option>
-            <option value="Europe/London">Europe/London</option>
-            <option value="America/New_York">America/New_York</option>
-            <option value="America/Los_Angeles">America/Los_Angeles</option>
-          </select>
+          <label className="text-lg font-semibold text-gray-800 mb-4">Default Timezone</label>
+
+          <Controller
+            name="timezone"
+            control={control}
+            render={({ field }) => (
+              <select
+                className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                value={field.value}
+                onChange={e => field.onChange(e.target.value)}
+              >
+                <option value="UTC">UTC</option>
+                <option value="Asia/Karachi">Asia/Karachi</option>
+                <option value="Asia/Kolkata">Asia/Kolkata</option>
+                <option value="Asia/Dubai">Asia/Dubai</option>
+                <option value="Europe/London">Europe/London</option>
+                <option value="America/New_York">America/New_York</option>
+                <option value="America/Los_Angeles">America/Los_Angeles</option>
+              </select>
+            )} />
         </div>
 
         <div className=" w-full md:text-right md:w">
           <button
+            disabled={isSubmitting}
             type="submit"
             className="bg-purple-600 hover:bg-purple-700 text-white  font-semibold w-full px-6 py-2 rounded-md"
           >
@@ -203,7 +160,7 @@ export default function SettingsPage() {
           confirmText="Yes, Update"
           confirmColor="bg-purple-500 hover:bg-purple-700 text-white"
           onConfirm={() => {
-            handleSaveChanges();
+            handleSubmit(handleSaveChanges)();
             setConfirmUpdate(false);
           }}
           onCancel={() => setConfirmUpdate(false)}

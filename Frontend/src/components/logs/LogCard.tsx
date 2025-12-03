@@ -4,11 +4,16 @@ import LogDetails from './LogDetails';
 import type { UserLogInterface } from '../../types';
 
 
-export default function LogCard({ log }: {log: UserLogInterface}) {
+export default function LogCard({ log, timeFormat24 }: { log: UserLogInterface, timeFormat24?: boolean }) {
 
   const [openDetailsMenu, setOpenDetailsMenu] = useState<boolean>(false);
   const isSuccess = log.status === 'success';
-
+  const formattedTime = new Date(log.createdAt).toLocaleTimeString('en-US', {
+    hour12: !timeFormat24,
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  });
   return (
     <>
       <div className="flex items-center justify-between gap-4 bg-white p-4 mb-2 rounded-md border border-gray-200 text-sm whitespace-nowrap">
@@ -19,12 +24,12 @@ export default function LogCard({ log }: {log: UserLogInterface}) {
         </div>
         <span title={log.url} className="truncate text-gray-700">{log.url}</span>
 
-        <div title={new Date(log.createdAt).toLocaleString()} className=" items-center gap-2 text-gray-500 hidden sm:flex">
+        <div title={formattedTime} className="hidden sm:flex items-center gap-2 text-gray-500">
           <Clock className="w-4 h-4" />
-          <span>{new Date(log.createdAt).toLocaleTimeString()}</span>
+          <span>{formattedTime}</span>
         </div>
 
-        <div className={`flex items-center gap-1 font-medium ${isSuccess ? 'text-green-600' : 'text-red-600'}`}>
+        <div className={`flex items-center gap-1 font-medium truncate ${isSuccess ? 'text-green-600' : 'text-red-600'}`}>
           {isSuccess ? (
         <>
           <CheckCircle className="w-4 h-4" />
@@ -44,7 +49,7 @@ export default function LogCard({ log }: {log: UserLogInterface}) {
         </button>
       </div>
 
-      {openDetailsMenu && <LogDetails details={log} setOpenDetailsMenu={setOpenDetailsMenu} />}
+      {openDetailsMenu && <LogDetails details={log} setOpenDetailsMenu={setOpenDetailsMenu} timeFormat24={timeFormat24} />}
     </>
   );
 }

@@ -23,10 +23,19 @@ services:
       - ./Backend/.env
     environment:
       - MONGO_DB_URI=mongodb://mongodb:27017/cron-job
+      - REDIS_URL=redis://redis:6379
     ports:
       - "3000:3000"
     networks:
       - app-network
+    
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
 
   frontend:
     build: ./Frontend
@@ -64,6 +73,8 @@ services:
       - ./job-runner/.env
     environment:
       - MONGO_DB_URI=mongodb://mongodb:27017/cron-job
+    ports:
+    - "3002:3002"
     networks:
       - app-network
   

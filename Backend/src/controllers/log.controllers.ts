@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 import logsModels from "../models/logs.models";
 import mongoose from "mongoose";
 import { InternalServerError, NotFoundError } from "../utils/appError.utils";

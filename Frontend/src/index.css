@@ -33,19 +33,37 @@
 
 @import "tailwindcss";
 
-img, button {
-    user-select: none;
-    -webkit-user-drag: none;
+img,
+button {
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 button {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 button:active {
-    transform: scale(0.98);
+  transform: scale(0.98);
 }
 
 html {
   scroll-behavior: smooth;
+}
+
+label:has(+ input:required)::after {
+  content: " *";
+  color: red;
+  margin-left: 0.25rem;
+}
+
+label:has(+ select:required)::after {
+  content: " *";
+  color: red;
+  margin-left: 0.25rem;
+}
+label:has(~ div input:required)::after {
+  content: " *";
+  color: red;
+  margin-left: 5px;
 }

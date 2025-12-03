@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { LogChart, LogCard, Pagination, Loader } from '../components';
 import type { InsightLog, UserLogInterface } from '../types'
 import { FileWarning } from 'lucide-react';
+import { useAppSelector } from '../hooks';
 
 export default function Logs() {
   const limit = 10;
@@ -10,7 +11,8 @@ export default function Logs() {
   const [logs, setLogs] = useState<UserLogInterface[]>([]);
   const [logsInsights, setLogsInsights] = useState<InsightLog[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
+  const user = useAppSelector(state => state.auth.user);
+  
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval> | undefined;
 
@@ -105,6 +107,7 @@ export default function Logs() {
                 <LogCard
                   key={log._id}
                   log={log}
+                  timeFormat24={user?.timeFormat24}
                 />
               ))}
             </div>

@@ -1,4 +1,4 @@
-import { email, z } from "zod";
+import { z } from "zod";
 import { isValidCron } from "cron-validator";
 import validator from "validator";
 import mongoose from "mongoose";

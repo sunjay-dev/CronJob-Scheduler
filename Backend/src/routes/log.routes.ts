@@ -1,5 +1,5 @@
-import express from 'express';
-const router =  express.Router();
+import { Router } from 'express';
+const router =  Router();
 
 import { handleUserLogs, handleJobLogs, handleFailedLogs, handleGetLogById, handleGetLast24hoursLog} from '../controllers/log.controllers'
 import { restrictUserLogin } from '../middlewares/auth.middlewares';

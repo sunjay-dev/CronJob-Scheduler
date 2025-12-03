@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch } from '../hooks';
 import { setAuth } from '../slices/authSlice';
 import { Loader, Popup, GoogleAuth, PasswordInput } from "../components";
@@ -8,9 +8,10 @@ import { Helmet } from "react-helmet-async";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [details, setDetails] = useState({ email: '', password: '' });
+  const [details, setDetails] = useState({ email: '', password: '', rememberMe: false });
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const [lastUsed, setLastUsed] = useState("");
   const dispatch = useAppDispatch();
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -45,7 +46,6 @@ export default function Login() {
 
         return data;
       }).then(data => {
-
         dispatch(setAuth({
           user: {
             name: data.user.name,
@@ -58,6 +58,7 @@ export default function Login() {
           }
         }));
         setMessage({ type: 'success', text: 'Login successful!' });
+        localStorage.setItem("lastLoginMethod", "password");
         setTimeout(() => navigate("/dashboard"), 300);
       }).catch(err => {
         if (err) setMessage({ type: 'error', text: err.message || 'Login failed' });
@@ -68,9 +69,13 @@ export default function Login() {
       });
   }
 
+  useEffect(() => {
+    setLastUsed(localStorage.getItem('lastLoginMethod') || "");
+  }, []);
+
   return (
     <>
-    <Helmet>
+      <Helmet>
         <title>CronJob Scheduler</title>
         <meta
           name="description"
@@ -107,20 +112,33 @@ export default function Login() {
 
                 <div className="flex items-center justify-between text-sm">
                   <label className="flex items-center gap-2">
-                    <input className="cursor-pointer accent-purple-500" type="checkbox" name="remember" />
+                    <input onChange={e => setDetails(pre => ({...pre, rememberMe: e.target.checked }))}
+                    className="cursor-pointer accent-purple-500" type="checkbox" name="remember" />
                     <span className="text-gray-600">Remember me</span>
                   </label>
                   <Link to="/forgot-password" className="text-purple-700 hover:underline">Forgot password</Link>
                 </div>
 
-                <button disabled={isLoading} type="submit" className="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-2 rounded-md text-sm transition">
-                  Sign in
-                </button>
-                {<GoogleAuth text="Sign in with Google" />}
+                <div className="relative w-full">
+                  {lastUsed === "password" && (
+                    <span className="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/4 bg-green-500 text-white text-xs px-2 py-0.5 rounded-full shadow z-10">
+                      Last used
+                    </span>
+                  )}
+                  <button
+                    disabled={isLoading}
+                    type="submit"
+                    className="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-2 rounded-md text-sm transition"
+                  >
+                    Sign in
+                  </button>
+                </div>
+
+                {<GoogleAuth lastUsed={lastUsed === 'google'} text="Sign in with Google" />}
 
                 <p className="text-center text-sm text-gray-600">
                   Don’t have an account?{' '}
-                  <Link to="/Signup" className="text-purple-700 hover:underline">Sign up</Link>
+                  <Link to="/signup" className="text-purple-700 hover:underline">Sign up</Link>
                 </p>
               </fieldset>
             </form>

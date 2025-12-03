@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 import { verifyToken } from "../utils/jwt.utils";
 
 declare global {
@@ -79,4 +79,22 @@ export function softRestrictUserLogin(req: Request, res: Response, next: NextFun
     });
     return;
   }
+}
+
+export function prometheusAuth(req: Request, res: Response, next: NextFunction): void {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    res.status(401).json({ message: "Missing or invalid Authorization header" });
+    return;
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  if (token !== process.env.PROMETHEUS_SECRET) {
+    res.status(403).json({ message: "Unauthorized access to metrics" });
+    return;
+  }
+
+  next();
 }

@@ -10,6 +10,7 @@ export default function Jobs() {
   const jobs = useAppSelector(state => state.jobs.jobs);
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
+  const user = useAppSelector(state => state.auth.user);
 
   useEffect(() => {
     if (jobs.length !== 0)
@@ -92,13 +93,13 @@ export default function Jobs() {
       </div>
 
       <div className="p-6 bg-white rounded-xl shadow mb-4">
-        <div className="grid grid-cols-[2.5fr_1.5fr_1.5fr_1fr_1fr_1fr_40px] gap-4 text-sm text-gray-600 font-medium px-4 mb-4">
+        <div className="grid grid-cols-[2.5fr_1fr_40px] sm:grid-cols-[2.5fr_1.5fr_1.5fr_1fr_1fr_1fr_40px] gap-4 text-sm text-gray-600 font-medium px-4 mb-4">
           <span>Title, URL</span>
-          <span className="text-center">Last execution</span>
-          <span className="text-center">Next execution</span>
+          <span className="text-center hidden sm:block">Last execution</span>
+          <span className="text-center hidden sm:block">Next execution</span>
           <span className="text-center">Status</span>
-          <span className="text-center">Edit</span>
-          <span className="text-center">History</span>
+          <span className="text-center hidden sm:block">Edit</span>
+          <span className="text-center hidden sm:block">History</span>
           <span className="text-center">Actions</span>
         </div>
 
@@ -121,6 +122,8 @@ export default function Jobs() {
                 disabled={job.disabled ?? false}
                 handleChangeStatus={handleChangeStatus}
                 handleDeleteJob={handleDeleteJob}
+                timeFormat24={user?.timeFormat24}
+                
               />
             ))}
           </div>

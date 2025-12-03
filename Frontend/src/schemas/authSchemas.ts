@@ -39,3 +39,13 @@ export const tokenSchema = z.object({
     .min(64, { message: "Invalid reset password link." })
     .max(64, { message: "Invalid reset password link." }),
 })
+
+export const settingsSchema = z.object({ 
+  name: z.string().trim().min(2, { message: "Name must be at least 2 characters long." })
+  .max(100, { message: "Name must be at most 100 characters" }),
+  timezone: z.string(),
+  emailNotifications: z.boolean(),
+  pushAlerts: z.boolean(),
+  mode: z.enum(["day", "dark"]),
+  timeFormat24: z.boolean()
+});

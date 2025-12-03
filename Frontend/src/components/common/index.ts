@@ -7,3 +7,4 @@ export { default as Popup } from './Popup';
 export { default as Sidebar } from './Sidebar';
 export { default as GoogleAuth } from './GoogleAuth';
 export { default as PasswordInput } from './PasswordInput';
+export { default as ToggleSwitch } from './ToggleSwitch';

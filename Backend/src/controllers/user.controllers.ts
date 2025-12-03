@@ -1,15 +1,15 @@
-import { Request, Response, NextFunction } from "express"
+import type { Request, Response, NextFunction } from "express";
 import userModel from "../models/user.models";
 import bcrypt from "bcrypt";
 import crypto from 'crypto';
 import { signToken } from "../utils/jwt.utils";
 import { queueEmail } from "../utils/qstashEmail.utils";
-import { AppError, BadRequestError, ForbiddenError, InternalServerError, NotFoundError, UnauthorizedError } from "../utils/appError.utils";
+import { AppError, BadRequestError, ForbiddenError, InternalServerError, NotFoundError, TooManyRequestsError, UnauthorizedError } from "../utils/appError.utils";
 import redis from "../config/redis.config";
 
 export const handleUserLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const email = req.body.email.trim().toLowerCase();
-    const password = req.body.password;
+    const { password, rememberMe = false } = req.body;
 
     try {
         const user = await userModel.findOne({ email }).select('+password');
@@ -24,14 +24,15 @@ export const handleUserLogin = async (req: Request, res: Response, next: NextFun
 
         if (!user.verified) return next(new ForbiddenError("Please verify your email to login.", { id: user._id }));
 
-        const token = signToken({ userId: user.id }, "3d");
+        const token = signToken({ userId: user.id }, rememberMe ? "30d" : "3d");
 
         res.cookie('token', token, {
             httpOnly: true,
             secure: true,
             sameSite: 'none',
-            maxAge: 3 * 24 * 60 * 60 * 1000
+            maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined
         });
+
         const { password: _, ...safeUser } = user.toObject();
         res.status(200).json({
             message: "Login successful",
@@ -56,8 +57,6 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
             return next(new BadRequestError("An account with this email already exists."));
         }
 
-        const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
         const newUser = await userModel.create({
             name,
             email,
@@ -65,6 +64,7 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
             timezone
         });
 
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
         await Promise.all([
             queueEmail({ data: { otp }, name, email, template: "EMAIL_VERIFY" }),
             redis.set(`otp:${newUser._id}`, otp, 'EX', 60 * 60)
@@ -89,7 +89,7 @@ export const handleUserVerification = async (req: Request, res: Response, next: 
 
         if (otpLockedUntil > 0) {
             const minutesLeft = Math.ceil((otpLockedUntil / 60));
-            return next(new AppError(`Too many attempts. Try again after ${minutesLeft} minute(s).`, 429));
+            return next(new TooManyRequestsError(`Too many attempts. Try again after ${minutesLeft} minute(s).`));
         }
 
         const [cachedOtp, otpAttemptsStr] = await redis.mget(`otp:${userId}`, `otpAttempts:${userId}`);
@@ -102,7 +102,7 @@ export const handleUserVerification = async (req: Request, res: Response, next: 
                     .set(`otpLockedUntil:${userId}`, "true", 'EX', 15 * 60)
                     .del(`otpAttempts:${userId}`)
                     .exec();
-                return next(new AppError(`Too many failed attempts. Try again after 15 minutes`, 429));
+                return next(new TooManyRequestsError(`Too many failed attempts. Try again after 15 minutes`));
             }
 
             await redis.set(`otpAttempts:${userId}`, otpAttempts, 'EX', 15 * 60);
@@ -130,13 +130,13 @@ export const handleUserVerification = async (req: Request, res: Response, next: 
             redis.del(`otp:${userId}`, `otpAttempts:${userId}`, `otpResendAttempts:${userId}`, `otpResendLock:${userId}`)
         ]);
 
-        const cookieToken = signToken({ userId: user.id }, "3d");
+        const cookieToken = signToken({ userId: user.id }, "7d");
 
         res.cookie("token", cookieToken, {
             httpOnly: true,
             secure: true,
             sameSite: "none",
-            maxAge: 3 * 24 * 60 * 60 * 1000
+            maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
         res.status(200).json({
@@ -149,7 +149,6 @@ export const handleUserVerification = async (req: Request, res: Response, next: 
 
 export const handleOtpResend = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { userId } = req.body;
-    let delay = 60;
 
     try {
         const [otpResendAttemptsStr, otpResendLock] = await Promise.all([
@@ -157,6 +156,7 @@ export const handleOtpResend = async (req: Request, res: Response, next: NextFun
             redis.ttl(`otpResendLock:${userId}`)
         ]);
 
+        let delay = 60;
         const otpResendAttempts = parseInt(otpResendAttemptsStr ?? "0");
 
         switch (otpResendAttempts) {
@@ -166,7 +166,7 @@ export const handleOtpResend = async (req: Request, res: Response, next: NextFun
         }
 
         if (otpResendLock > 0) {
-            return next(new AppError(`Too many requests. Please wait before requesting again.`, 429, { wait: otpResendLock }));
+            return next(new TooManyRequestsError(`Too many requests. Please wait before requesting again.`, { wait: otpResendLock }));
         }
 
         const user = await userModel.findById(userId);
@@ -237,16 +237,16 @@ export const handleGoogleCallBack = async (req: Request, res: Response, next: Ne
         return next(new BadRequestError("Invalid user data from Google authentication"));
     }
     try {
-        const token = signToken({ userId: user._id! });
+        const token = signToken({ userId: user._id! }, "7d");
 
         res.cookie('token', token, {
             httpOnly: true,
             secure: true,
             sameSite: 'none',
-            maxAge: 24 * 60 * 60 * 1000
+            maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
-        res.redirect(`${process.env.CLIENT_URL}/dashboard`);
+        res.redirect(`${process.env.CLIENT_URL}/dashboard?loginMethod=google`);
     } catch (error) {
         next(new InternalServerError("Error while creating account with Google."));
     }
@@ -258,7 +258,7 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
     try {
         const redisOtp = await redis.get(`otp:${email}`);
         if (redisOtp) {
-            return next(new AppError("You can request a reset link only once per hour.", 429));
+            return next(new TooManyRequestsError("You can request a reset link only once per hour."));
         }
 
         const user = await userModel.findOne({ email });
@@ -273,8 +273,10 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
 
         await queueEmail({ data: { url }, name: user.name, email, template: "FORGOT_PASSWORD" });
 
-        await redis.set(`otp:${email}`, token, 'EX', 60 * 60, 'NX');
-        await redis.set(`otptoken:${token}`, email, 'EX', 60 * 60);
+        await redis.multi()
+            .set(`otp:${email}`, token, 'EX', 60 * 60, 'NX')
+            .set(`otptoken:${token}`, email, 'EX', 60 * 60)
+            .exec();
 
         res.status(200).json({
             message: "Email has been successfully sent to reset password"

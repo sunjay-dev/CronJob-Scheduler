@@ -1,32 +1,36 @@
 import { useEffect } from 'react';
 import type { JobDetails } from '../../types'
-import Headers  from './Headers'
+import Headers from './Headers'
+import type { UseFormRegister,  UseFormWatch, UseFormSetValue, Control } from 'react-hook-form';
+
 interface Props {
-  jobDetails: JobDetails;
-  setJobDetails: React.Dispatch<React.SetStateAction<JobDetails>>;
+ register: UseFormRegister<JobDetails>;
+  watch: UseFormWatch<JobDetails>;
+  setValue: UseFormSetValue<JobDetails>;
+  control: Control<JobDetails>;
 }
 
-export default function Advanced({ jobDetails, setJobDetails }: Props) {
-  const { method, body, timezone, timeout } = jobDetails;
-  const allowBody = ["POST", "PUT", "PATCH"].includes(method?.toUpperCase());
+export default function Advanced({ control, register, watch, setValue }: Props) {
+
+  const methodValue = watch("method");
+  const allowBody = ["POST", "PUT", "PATCH"].includes(methodValue?.toUpperCase());
 
   useEffect(() => {
     if (!allowBody)
-      setJobDetails(pre => ({ ...pre, body: "" }));
+      setValue("body", "")
 
-  }, [allowBody, setJobDetails])
+  }, [allowBody, setValue])
 
   return (
     <>
       <div className="border border-gray-200 rounded-lg px-4 py-6 space-y-6">
         <div className="text-base flex flex-col space-y-2">
           <div className="flex flex-col space-y-2">
-            <label className="font-medium text-gray-700">HTTP Method</label>
+            <label htmlFor="method" className="font-medium text-gray-700">HTTP Method</label>
             <select
-              value={method}
-              onChange={e =>
-                setJobDetails(prev => ({ ...prev, method: e.target.value }))
-              }
+              {...register("method", { required: true })}
+              required 
+              id='method'
               className="border-0 border-b-2 border-gray-400 px-3 py-2 focus:outline-none focus:border-purple-500 transition"
             >
               <option>GET</option>
@@ -40,29 +44,27 @@ export default function Advanced({ jobDetails, setJobDetails }: Props) {
             </select>
           </div>
 
-          <label className="font-medium text-gray-700">Request Body</label>
+          <label htmlFor="body" className="font-medium text-gray-700">Request Body</label>
           <textarea
             rows={4}
-            value={body}
+            id='body'
+            required
+            {...register("body", { required: true })}
             disabled={!allowBody}
-            onChange={(e) =>
-              setJobDetails(prev => ({ ...prev, body: e.target.value }))
-            }
             className="border border-gray-300 resize-none rounded px-3 py-2 font-mono focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
         </div>
       </div>
 
-      <Headers jobDetails={jobDetails} setJobDetails={setJobDetails} />
+      <Headers register={register} control={control} />
 
       <div className="border border-gray-200 rounded-lg px-4 py-6 space-y-6">
         <div className="flex flex-col space-y-2">
-          <label className="font-medium text-gray-700">Timezone</label>
+          <label htmlFor="timezone" className="font-medium text-gray-700">Timezone</label>
           <select
-            value={timezone}
-            onChange={e =>
-              setJobDetails(prev => ({ ...prev, timezone: e.target.value }))
-            }
+            required
+            id='timezone'
+            {...register("timezone", { required: true })}
             className="border-0 border-b-2 border-gray-400 px-3 py-2 focus:outline-none focus:border-purple-500 transition"
           >
             <option value="UTC">UTC</option>
@@ -75,14 +77,20 @@ export default function Advanced({ jobDetails, setJobDetails }: Props) {
           </select>
         </div>
         <div className="flex flex-col space-y-2">
-          <label className="font-medium text-gray-700">Timeout (seconds)</label>
+          <label htmlFor="timeout" className="font-medium text-gray-700">Timeout (seconds)</label>
           <input
             type="number"
             min={1}
             max={30}
-            value={timeout}
-            onChange={e =>
-              setJobDetails(prev => ({ ...prev, timeout: Number(e.target.value) }))}
+            defaultValue={30}
+            id='timeout'
+            required
+            {...register("timeout", { required: true, valueAsNumber: true })}
+            onInput={(e) => {
+              const target = e.target as HTMLInputElement;
+              if (parseInt(target.value) > 30) target.value = "30";
+              if (parseInt(target.value) < 1) target.value = "1";
+            }}
             className="border-0 border-b-2 border-gray-400 px-3 py-2 focus:outline-none focus:border-purple-500 transition"
           />
         </div>

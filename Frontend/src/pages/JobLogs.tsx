@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import type { UserLogInterface } from '../types';
 import { LogCard, Pagination, Loader } from '../components';
 import { FileWarning } from 'lucide-react';
+import { useAppSelector } from '../hooks';
 
 export default function JobLogs() {
     const [jobName, setJobName] = useState('')
@@ -13,7 +14,7 @@ export default function JobLogs() {
     const [logs, setLogs] = useState<UserLogInterface[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
-    
+    const user = useAppSelector(state => state.auth.user);
     useEffect(() => {
         setIsLoading(true);
 
@@ -43,15 +44,15 @@ export default function JobLogs() {
 
     return (
         <>
-            <h2 className="text-3xl font-normal mb-6 text-purple-500 truncate">Logs for Job : {jobName}</h2>
+            <h2 className="text-3xl font-semibold mb-6 text-purple-500 truncate">Logs for Job : {jobName}</h2>
             <div className="bg-white p-6 mb-6 rounded-xl shadow">
-                <div className="grid grid-cols-[1fr_2fr_2fr_2fr_1fr] text-sm gap-4 items-center text-gray-500 font-medium px-4 mb-2">
-                    <span>Method</span>
-                    <span>URL</span>
-                    <span>Time</span>
-                    <span>Status</span>
-                    <span>Actions</span>
-                </div>
+                <div className="flex justify-between text-sm gap-4 items-center text-gray-500 font-medium px-4 mb-2">
+          <span>Method</span>
+            <span className="text-center sm:text-left flex-1/4 sm:flex-none ">URL</span>
+          <span className="hidden sm:block">Time</span>
+          <span>Status</span>
+          <span>Actions</span>
+        </div>
                 {isLoading ?
                     (<Loader />) : logs.length === 0 ? (
                         <div className="py-12 text-center text-gray-500 text-sm flex flex-col items-center">
@@ -65,6 +66,7 @@ export default function JobLogs() {
                                     <LogCard
                                         key={log._id}
                                         log={log}
+                                        timeFormat24={user?.timeFormat24}
                                     />
                                 ))}
                             </div>
