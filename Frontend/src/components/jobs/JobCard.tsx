@@ -1,154 +1,158 @@
-import { Pencil, FileText, MoreVertical, Trash2, CheckCircle, XCircle, PauseCircle, EllipsisVertical } from "lucide-react";
+import { Pencil, FileText, MoreVertical, PauseCircle, EllipsisVertical } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ConfirmMenu } from "../common";
 import type { JobCardProps } from "../../types";
-import JobDetails from "./JobDetails";
+import ActionMenu from "./ActionMenu";
 
 export default function JobCard(job: JobCardProps) {
   const { _id, jobName, method, url, nextRunAt, lastRunAt, disabled = false, handleDeleteJob, handleChangeStatus, timeFormat24 } = job;
-  const [openDetailsMenu, setOpenDetailsMenu] = useState<boolean>(false);
+
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [open, setOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const desktopMenuRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
-  const formattedTime_NextRunAt = new Date(nextRunAt).toLocaleTimeString("en-US", {
-    hour12: !timeFormat24,
-    year: "numeric",
-    month: "short",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
-
-  const formattedTime_LastRunAt = new Date(lastRunAt).toLocaleTimeString("en-US", {
-    hour12: !timeFormat24,
-    year: "numeric",
-    month: "short",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
+  const formattedNextRun = nextRunAt ? new Date(nextRunAt).toLocaleString("en-US", { hour12: !timeFormat24 }) : "-";
+  const formattedLastRun = lastRunAt ? new Date(lastRunAt).toLocaleString("en-US", { hour12: !timeFormat24 }) : "-";
 
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setOpen(false);
+    const handler = (e: PointerEvent | TouchEvent) => {
+      if (
+        desktopMenuRef.current &&
+        !desktopMenuRef.current.contains(e.target as Node) &&
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(e.target as Node)
+      ) {
+        setMenuOpen(false);
       }
     };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+
+    document.addEventListener("pointerdown", handler);
+    document.addEventListener("touchstart", handler);
+    return () => {
+      document.removeEventListener("pointerdown", handler);
+      document.removeEventListener("touchstart", handler);
+    };
   }, []);
 
   return (
-    <div className="bg-white cursor-pointer border border-gray-300 rounded-lg p-4 transition grid grid-cols-[2.5fr_1fr_40px]  sm:grid-cols-[2.5fr_1.5fr_1.5fr_1fr_1fr_1fr_40px] items-center text-sm gap-4 relative">
-      <div className="overflow-hidden">
-        <h2 title={jobName} className="font-semibold text-gray-800 truncate">
-          {jobName}
-        </h2>
-        <p title={url} className="text-gray-500 lowercase  max-w-[250px] whitespace-nowrap overflow-hidden text-ellipsis">
-          <span className="uppercase">{method}</span> • {url}
-        </p>
-      </div>
+    <>
+      {/* Desktop */}
 
-      {lastRunAt ? (
-        <div title={formattedTime_LastRunAt} className="text-gray-700 hidden sm:block truncate">
-          {formattedTime_LastRunAt}
+      <div className="bg-white border border-gray-300 rounded-lg p-4 hidden sm:grid grid-cols-[2.5fr_1.5fr_1.5fr_1fr_1fr_1fr_40px] items-center text-sm gap-4 relative cursor-pointer">
+        <div className="overflow-hidden">
+          <h2 title={jobName} className="font-semibold text-gray-800 truncate">
+            {jobName}
+          </h2>
+          <p title={url} className="text-gray-500 lowercase truncate">
+            <span className="uppercase">{method}</span> • {url}
+          </p>
         </div>
-      ) : (
-        <span className=" hidden sm:block text-center">-</span>
-      )}
 
-      {disabled ? (
-        <span title="Job Paused" className="hidden sm:flex items-center justify-center gap-1 text-gray-400 italic">
-          <PauseCircle className="w-4 h-4" />
-          Paused
-        </span>
-      ) : (
-        <div title={formattedTime_NextRunAt} className="text-gray-700 hidden sm:block truncate">
-          {formattedTime_NextRunAt}
-        </div>
-      )}
+        <div className="truncate text-gray-700">{formattedLastRun}</div>
 
-      <div className=" text-center">
         {disabled ? (
-          <span className="text-xs text-red-700 bg-red-100 px-2 py-0.5 rounded-full select-none">Disabled</span>
+          <span className="flex items-center gap-1 text-gray-400 italic">
+            <PauseCircle className="w-4 h-4" /> Paused
+          </span>
         ) : (
-          <span className="text-xs text-green-700 bg-green-100 px-2 py-0.5 rounded-full select-none">Enabled</span>
+          <div className="truncate text-gray-700">{formattedNextRun}</div>
         )}
+
+        <div className="text-center">
+          <span className={`text-xs px-2 py-0.5 rounded-full ${disabled ? "text-red-700 bg-red-100" : "text-green-700 bg-green-100"}`}>
+            {disabled ? "Disabled" : "Enabled"}
+          </span>
+        </div>
+
+        <Link to={`/job/${_id}/edit`} title="Edit Job" className="hover:text-purple-500">
+          <button className="flex items-center gap-1 hover:underline">
+            <Pencil className="w-4 h-4" /> Edit
+          </button>
+        </Link>
+
+        <Link to={`/job/${_id}/logs`} title="View Job Logs" className="hover:text-purple-500">
+          <button className="flex items-center gap-1 hover:underline">
+            <FileText className="w-4 h-4" /> History
+          </button>
+        </Link>
+
+        <div className="relative text-center">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setMenuOpen(!menuOpen);
+            }}
+            className="px-1 py-1.5 rounded hover:bg-gray-100"
+          >
+            <MoreVertical className="w-5 h-5" />
+          </button>
+
+          {menuOpen && (
+            <div ref={desktopMenuRef} className="absolute right-0 z-50 mt-2 w-36">
+              <ActionMenu
+                setConfirmDelete={setConfirmDelete}
+                setOpen={setMenuOpen}
+                handleChangeStatus={handleChangeStatus}
+                _id={_id}
+                disabled={disabled}
+              />
+            </div>
+          )}
+        </div>
       </div>
 
-      <Link title="Edit Job" to={`/job/${_id}/edit`} className="hidden sm:block hover:text-purple-500 justify-start md:justify-center">
-        <button className="flex items-center gap-1 hover:underline">
-          <Pencil className="w-4 h-4" />
-          Edit
-        </button>
-      </Link>
+      {/* Moblie */}
 
-      <Link
-        title="View Job Logs"
-        to={`/job/${_id}/logs`}
-        className="hidden sm:block justify-start hover:text-purple-500 md:justify-center items-center"
-      >
-        <button className="flex items-center gap-1 hover:underline">
-          <FileText className="w-4 h-4" />
-          History
-        </button>
-      </Link>
+      <div className="bg-white sm:hidden border border-gray-300 rounded-lg p-4 text-sm space-y-3 relative">
+        <div className="flex items-center justify-between">
+          <h2 className="font-semibold text-gray-800 truncate">{jobName}</h2>
 
-      <button
-        title="View Log Details"
-        onClick={() => setOpenDetailsMenu(true)}
-        className="flex sm:hidden gap-1 items-center justify-center sm:border sm:border-gray-300 hover:bg-gray-100 sm:rounded sm:p-1"
-      >
-        <EllipsisVertical className="h-4 w-4" />
-      </button>
-
-      {openDetailsMenu && <JobDetails details={job} setOpenDetailsMenu={setOpenDetailsMenu} timeFormat24={timeFormat24} />}
-
-      <div className="hidden sm:block relative text-center" ref={menuRef}>
-        <button onClick={() => setOpen(!open)} className="px-1 py-1.5 rounded hover:bg-gray-100">
-          <MoreVertical className="w-5 h-5" />
-        </button>
-
-        {open && (
-          <div className="absolute right-0 z-20 mt-2 w-36 bg-white border border-gray-200 rounded shadow-md text-sm">
+          <div className="flex items-center gap-3 relative">
+            <span className={`text-xs px-2 py-0.5 rounded-full ${disabled ? "text-red-700 bg-red-100" : "text-green-700 bg-green-100"}`}>
+              {disabled ? "Disabled" : "Enabled"}
+            </span>
             <button
-              title="Delete Job"
-              className="w-full flex items-center gap-2 text-left px-4 py-2 hover:bg-gray-100"
-              onClick={() => {
-                setOpen(false);
-                setConfirmDelete(true);
+              onClick={(e) => {
+                e.stopPropagation();
+                setMenuOpen(!menuOpen);
               }}
             >
-              <Trash2 className="w-4 h-4 text-red-500" />
-              Delete
+              <EllipsisVertical className="w-5 h-5 text-gray-700" />
             </button>
 
-            <button
-              title="Enable Job"
-              className={`w-full flex items-center gap-2 text-left px-4 py-2 ${!disabled ? "text-gray-400 cursor-not-allowed" : "hover:bg-gray-100"}`}
-              disabled={!disabled}
-              onClick={() => handleChangeStatus(_id, true)}
-            >
-              <CheckCircle className={`w-4 h-4 ${!disabled ? "text-gray-400" : "text-green-600"}`} />
-              Enable
-            </button>
-
-            <button
-              title="Disable Job"
-              className={`w-full flex items-center gap-2 text-left px-4 py-2 ${disabled ? "text-gray-400 cursor-not-allowed" : "hover:bg-gray-100"}`}
-              disabled={disabled}
-              onClick={() => handleChangeStatus(_id, false)}
-            >
-              <XCircle className={`w-4 h-4 ${disabled ? "text-gray-400" : "text-yellow-500"}`} />
-              Disable
-            </button>
+            {menuOpen && (
+              <div ref={mobileMenuRef} className="absolute top-full right-0 z-50 mt-2 w-40">
+                <ActionMenu
+                  setConfirmDelete={setConfirmDelete}
+                  setOpen={setMenuOpen}
+                  handleChangeStatus={handleChangeStatus}
+                  _id={_id}
+                  disabled={disabled}
+                />
+              </div>
+            )}
           </div>
-        )}
+        </div>
+
+        <p className="text-gray-500 truncate lowercase">
+          <span className="uppercase">{method}</span> • {url}
+        </p>
+
+        <div className="border-t border-gray-200" />
+
+        <div className="flex justify-between text-gray-500 text-xs">
+          <span>Last Run</span>
+          <span>Next Run</span>
+        </div>
+
+        <div className="flex justify-between text-gray-800 text-sm font-medium">
+          <span>{formattedLastRun}</span>
+          <span className="text-end">{disabled ? "Paused" : formattedNextRun}</span>
+        </div>
       </div>
+
       {confirmDelete && (
         <ConfirmMenu
           title="Confirm Deletion"
@@ -162,6 +166,6 @@ export default function JobCard(job: JobCardProps) {
           onCancel={() => setConfirmDelete(false)}
         />
       )}
-    </div>
+    </>
   );
 }
