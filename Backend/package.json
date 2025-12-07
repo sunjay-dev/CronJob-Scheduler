@@ -12,7 +12,7 @@
     "bun watch": "bun --watch ./src/app.ts"
   },
   "keywords": [],
-  "author": "",
+  "author": "sunjay kumar",
   "license": "MIT",
   "packageManager": "pnpm@10.11.0",
   "dependencies": {

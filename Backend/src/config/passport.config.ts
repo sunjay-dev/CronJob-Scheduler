@@ -1,33 +1,38 @@
-import passport from 'passport';
-import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import userModels from '../models/user.models';
+import passport from "passport";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import userModels from "../models/user.models";
 
-passport.use(new GoogleStrategy(
+passport.use(
+  new GoogleStrategy(
     {
-        clientID: process.env.GOOGLE_CLIENT_ID!,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-        callbackURL: process.env.GOOGLE_CALLBACK_URL!
+      clientID: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      callbackURL: process.env.GOOGLE_CALLBACK_URL!,
     },
-    async (accessToken, refreshToken, profile, done) => {
+    async (_accessToken, _refreshToken, profile, done) => {
+      const email = profile.emails?.[0]?.value;
+      if (!email) return done(new Error("No email from Google"), false);
 
-        if (!profile.emails || !profile.emails[0]?.value) {
-            return done(new Error('Email not found in Google profile'), false);
-        }
+      try {
+        const user = await userModels.findOneAndUpdate(
+          { email },
+          {
+            $setOnInsert: {
+              name: profile.displayName,
+              email,
+              authProvider: "google",
+              verified: true,
+            },
+          },
+          { new: true, upsert: true },
+        );
 
-        const email = profile.emails?.[0].value as string;
-
-        let user = await userModels.findOne({ email });
-
-        if (!user) {
-            user = await userModels.create({
-                name: profile.displayName,
-                email: email,
-                authProvider: "google",
-                verified: true
-            })
-        }
-        done(null, user);
-    }
-));
+        return done(null, user);
+      } catch (err) {
+        return done(err, false);
+      }
+    },
+  ),
+);
 
 export default passport;
