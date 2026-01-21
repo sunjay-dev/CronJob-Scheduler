@@ -47,7 +47,7 @@ export default function confirmEmailTemplate(name: string, otp: string) {
           <!-- Footer -->
           <tr>
             <td align="center" style="background: #f3f4f6; padding: 18px; font-size: 12px; color: #666666; line-height: 1.6;">
-              © 2025 CronJon Scheduler. All rights reserved. <br/>
+              © ${new Date().getFullYear()} CronJon Scheduler. All rights reserved. <br/>
               You are receiving this email because you created an account on CronJon Scheduler.
             </td>
           </tr>

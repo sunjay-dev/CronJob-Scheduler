@@ -1,7 +1,7 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
-import { VitePWA } from 'vite-plugin-pwa'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
   plugins: [
@@ -9,15 +9,10 @@ export default defineConfig({
     react(),
     VitePWA({
       devOptions: {
-        enabled: false
+        enabled: false,
       },
       registerType: "autoUpdate",
-      includeAssets: [
-        'index.html',
-        'offline.html',
-        '*.webp',
-        'fonts/inter/*.woff2'
-      ],
+      includeAssets: ["index.html", "offline.html", "*.webp", "fonts/inter/*.woff2"],
       manifest: {
         name: "CronJob Scheduler",
         short_name: "CronJob",
@@ -38,17 +33,14 @@ export default defineConfig({
         ],
       },
       workbox: {
-        navigateFallback: '/index.html',
-        navigateFallbackAllowlist: [
-          /^\/$/,
-          /^\/dashboard/,
-        ],
+        navigateFallback: "/index.html",
+        navigateFallbackAllowlist: [/^\/$/, /^\/dashboard/],
         runtimeCaching: [
           {
-            urlPattern: ({ request }) => request.mode === 'navigate',
-            handler: 'NetworkFirst',
+            urlPattern: ({ request }) => request.mode === "navigate",
+            handler: "NetworkFirst",
             options: {
-              cacheName: 'pages-cache',
+              cacheName: "pages-cache",
               networkTimeoutSeconds: 3,
               expiration: {
                 maxEntries: 20,
@@ -56,20 +48,18 @@ export default defineConfig({
             },
           },
           {
-            urlPattern: ({ request }) =>
-              ['style', 'script', 'worker'].includes(request.destination),
-            handler: 'StaleWhileRevalidate',
+            urlPattern: ({ request }) => ["style", "script", "worker"].includes(request.destination),
+            handler: "StaleWhileRevalidate",
             options: {
-              cacheName: 'assets-cache',
+              cacheName: "assets-cache",
               expiration: { maxEntries: 50 },
             },
           },
           {
-            urlPattern: ({ request }) =>
-              ['image', 'font'].includes(request.destination),
-            handler: 'CacheFirst',
+            urlPattern: ({ request }) => ["image", "font"].includes(request.destination),
+            handler: "CacheFirst",
             options: {
-              cacheName: 'static-resources',
+              cacheName: "static-resources",
               expiration: { maxEntries: 50 },
             },
           },
@@ -78,4 +68,4 @@ export default defineConfig({
       },
     }),
   ],
-})
+});

@@ -46,7 +46,7 @@ export default function jobFailedTemplate({ name, jobName, method, url, lastRunA
                 </tr>
                 <tr style="background-color: #f3e8ff;">
                   <td style="border: 1px solid #e2e8f0;"><strong>Method</strong></td>
-                  <td style="border: 1px solid #e2e8f0;">${method  || "N/A"}</td>
+                  <td style="border: 1px solid #e2e8f0;">${method || "N/A"}</td>
                 </tr>
                 <tr>
                 <td style="border: 1px solid #e2e8f0;"><strong>Error</strong></td>
@@ -54,7 +54,7 @@ export default function jobFailedTemplate({ name, jobName, method, url, lastRunA
                 </tr>
                 <tr style="background-color: #f3e8ff;">
                   <td style="border: 1px solid #e2e8f0;"><strong>Last Run At</strong></td>
-                  <td style="border: 1px solid #e2e8f0;">${lastRunAt? new Date(lastRunAt).toUTCString().replace("GMT", "UTC"): "N/A"}</td>
+                  <td style="border: 1px solid #e2e8f0;">${lastRunAt ? new Date(lastRunAt).toUTCString().replace("GMT", "UTC") : "N/A"}</td>
                 </tr>
               </table>
 
@@ -79,7 +79,7 @@ export default function jobFailedTemplate({ name, jobName, method, url, lastRunA
           <!-- Footer -->
           <tr>
             <td align="center" style="background: #f3f4f6; padding: 15px; font-size: 12px; color: #666666;">
-              © ${lastRunAt? new Date(lastRunAt).getFullYear(): "2025"} cronJob scheduler. All rights reserved.<br/>
+              © ${lastRunAt ? new Date(lastRunAt).getFullYear() : new Date().getFullYear()} cronJob scheduler. All rights reserved.<br/>
               You are receiving this email because you have a scheduled job on cronJob scheduler.
             </td>
           </tr>

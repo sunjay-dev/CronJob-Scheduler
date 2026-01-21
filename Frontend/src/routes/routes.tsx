@@ -33,7 +33,9 @@ export const router = createBrowserRouter([
     path: "/login",
     element: (
       <Suspense fallback={<Loader />}>
-        <PublicRoute><Login /></PublicRoute>
+        <PublicRoute>
+          <Login />
+        </PublicRoute>
       </Suspense>
     ),
   },
@@ -41,7 +43,9 @@ export const router = createBrowserRouter([
     path: "/signup",
     element: (
       <Suspense fallback={<Loader />}>
-        <PublicRoute><Signup /></PublicRoute>
+        <PublicRoute>
+          <Signup />
+        </PublicRoute>
       </Suspense>
     ),
   },
@@ -49,7 +53,9 @@ export const router = createBrowserRouter([
     path: "/forgot-password",
     element: (
       <Suspense fallback={<Loader />}>
-        <PublicRoute><ForgotPassword /></PublicRoute>
+        <PublicRoute>
+          <ForgotPassword />
+        </PublicRoute>
       </Suspense>
     ),
   },

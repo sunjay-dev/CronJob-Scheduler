@@ -16,46 +16,46 @@ export default function LogDetails({ details, setOpenDetailsMenu, timeFormat24 }
 
   const chartData = details?.responseTime
     ? {
-        labels: [""],
-        datasets: [
-          {
-            label: "DNS",
-            data: [details.responseTime.DNS],
-            backgroundColor: "#60a5fa",
-            stack: "timing",
-          },
-          {
-            label: "Connect",
-            data: [details.responseTime.Connect],
-            backgroundColor: "#34d399",
-            stack: "timing",
-          },
-          {
-            label: "SSL",
-            data: [details.responseTime.SSL],
-            backgroundColor: "#fbbf24",
-            stack: "timing",
-          },
-          {
-            label: "Send",
-            data: [details.responseTime.Send],
-            backgroundColor: "#f87171",
-            stack: "timing",
-          },
-          {
-            label: "Wait",
-            data: [details.responseTime.Wait],
-            backgroundColor: "#a78bfa",
-            stack: "timing",
-          },
-          {
-            label: "Receive",
-            data: [details.responseTime.Receive],
-            backgroundColor: "#38bdf8",
-            stack: "timing",
-          },
-        ],
-      }
+      labels: [""],
+      datasets: [
+        {
+          label: "DNS",
+          data: [details.responseTime.DNS],
+          backgroundColor: "#60a5fa",
+          stack: "timing",
+        },
+        {
+          label: "Connect",
+          data: [details.responseTime.Connect],
+          backgroundColor: "#34d399",
+          stack: "timing",
+        },
+        {
+          label: "SSL",
+          data: [details.responseTime.SSL],
+          backgroundColor: "#fbbf24",
+          stack: "timing",
+        },
+        {
+          label: "Send",
+          data: [details.responseTime.Send],
+          backgroundColor: "#f87171",
+          stack: "timing",
+        },
+        {
+          label: "Wait",
+          data: [details.responseTime.Wait],
+          backgroundColor: "#a78bfa",
+          stack: "timing",
+        },
+        {
+          label: "Receive",
+          data: [details.responseTime.Receive],
+          backgroundColor: "#38bdf8",
+          stack: "timing",
+        },
+      ],
+    }
     : null;
 
   const chartOptions = {
@@ -94,7 +94,7 @@ export default function LogDetails({ details, setOpenDetailsMenu, timeFormat24 }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4 text-left">
       <div className="bg-white max-w-4xl w-full px-6 py-5 rounded-sm relative tracking-wide">
         <h2 className="text-lg font-semibold mb-6">
           Execution Details (

@@ -1,5 +1,5 @@
-import { PlusCircle, List, Clock, FileWarning } from "lucide-react";
-import { StatCard, LogCard, Pagination, Loader } from "../components";
+import { PlusCircle, List, Clock } from "lucide-react";
+import { StatCard, LogTable } from "../components";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { setJobs } from "../slices/jobSlice";
@@ -138,31 +138,7 @@ export default function Dashboard() {
           Recent Logs
         </div>
 
-        <div className="flex justify-between text-sm items-center text-gray-500 font-medium pl-1 sm:px-4 mb-2">
-          <span className="sm:order-none order-2 sm:mr-4 mr-2">Method</span>
-          <span className="text-center mr-4 sm:order-none order-1 sm:text-left flex-1/3 sm:flex-none">URL</span>
-          <span className="hidden sm:block mr-4">Time</span>
-          <span className="order-first sm:order-none mr-4">Status</span>
-          <span className="order-last">Actions</span>
-        </div>
-
-        {isLoading ? (
-          <Loader />
-        ) : logs.length === 0 ? (
-          <div className="py-12 text-center text-gray-500 text-sm flex flex-col items-center">
-            <FileWarning className="w-8 h-8 mb-3 text-gray-400" />
-            <p>No logs found.</p>
-          </div>
-        ) : (
-          <>
-            <div className="text-sm text-gray-600 space-y-1">
-              {logs.map((log) => (
-                <LogCard key={log._id} log={log} timeFormat24={user?.timeFormat24} />
-              ))}
-            </div>
-            <Pagination page={page} setPage={setPage} totalPages={totalPages} />
-          </>
-        )}
+        <LogTable logs={logs} isLoading={isLoading} page={page} setPage={setPage} totalPages={totalPages} />
       </div>
     </>
   );
