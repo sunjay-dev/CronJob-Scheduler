@@ -20,7 +20,6 @@ export default function Footer() {
             <h4 className="font-semibold mb-4">Product</h4>
             <div className="space-y-2 text-gray-400">
               <a href="/#features" className="block hover:text-white transition-colors">Features</a>
-              <a href="/#how-it-works" className="block hover:text-white transition-colors">How it Works</a>
               <a target="_blank" href="https://github.com/sunjay-dev/CronJob-Scheduler#readme" className="block hover:text-white transition-colors">Documentation</a>
             </div>
           </div>

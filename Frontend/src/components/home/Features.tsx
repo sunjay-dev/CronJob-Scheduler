@@ -1,4 +1,4 @@
-import { Bell, Clock, Code, Monitor, Settings, Shield } from "lucide-react";
+import { Bell, Clock, Monitor } from "lucide-react";
 
 export default function Features() {
 
@@ -17,32 +17,17 @@ export default function Features() {
       icon: <Bell className="w-8 h-8" />,
       title: "Smart Notifications",
       description: "Get instant email alerts when jobs succeed, fail, or require your attention. Stay informed without constantly checking the dashboard."
-    },
-    {
-      icon: <Shield className="w-8 h-8" />,
-      title: "Reliable Execution",
-      description: "Built-in retries, error handling, and failover support ensure your critical jobs always run on time."
-    },
-    {
-      icon: <Settings className="w-8 h-8" />,
-      title: "Easy Management",
-      description: "Pause, resume, edit, or delete jobs instantly. Group jobs into projects for a cleaner, organized workflow."
-    },
-    {
-      icon: <Code className="w-8 h-8" />,
-      title: "API Integration",
-      description: "Full-featured REST API for programmatic job control. Seamlessly integrate CronJob Scheduler into your existing tools and pipelines."
     }
   ];
 
   return (
     <section id="features" className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-16 px-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
             Everything you need to automate tasks
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
             From simple cron jobs to complex automation workflows, CronJob Scheduler provides all the tools developers need in one reliable platform.
           </p>
         </div>
