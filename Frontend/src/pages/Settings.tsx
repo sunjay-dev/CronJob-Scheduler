@@ -39,7 +39,7 @@ export default function SettingsPage() {
   const handleSaveChanges = () => {
     if (!user) return;
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/`, {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/`, {
       method: "PUT",
       credentials: "include",
       headers: {

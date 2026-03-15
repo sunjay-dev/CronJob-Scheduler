@@ -13,7 +13,7 @@ import {
   handleOtpResend,
 } from "../controllers/user.controllers.js";
 
-import { restrictUserLogin, softRestrictUserLogin, prometheusAuth } from "../middlewares/auth.middlewares.js";
+import { restrictUserLogin, softRestrictUserLogin } from "../middlewares/auth.middlewares.js";
 import {
   changeUserDetailsSchema,
   forgotPasswordSchema,
@@ -25,21 +25,7 @@ import {
 } from "../schemas/user.schema.js";
 
 import { validate } from "../middlewares/validate.middlewares.js";
-import register from "../config/prometheus.config.js";
 const router = Router();
-
-router.get("/", (req: Request, res: Response): void => {
-  res.status(200).send(`Hello from my server!`);
-});
-
-router.get("/health", (req: Request, res: Response): void => {
-  res.status(200).send("OK");
-});
-
-router.get("/metrics", prometheusAuth, async (req: Request, res: Response) => {
-  res.set("Content-Type", register.contentType);
-  res.end(await register.metrics());
-});
 
 router.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 

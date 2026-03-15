@@ -18,11 +18,13 @@ app.use(passport.initialize());
 app.use(express.json());
 app.use(cookieParser());
 
+import serverRouter from "./routes/server.routes.js";
 import userRouter from "./routes/user.routes.js";
 import cronRouter from "./routes/log.routes.js";
 import jobRouter from "./routes/job.routes.js";
 
-app.use("/", userRouter);
+app.use("/", serverRouter);
+app.use("/api/user", userRouter);
 app.use("/api/logs", cronRouter);
 app.use("/api/jobs", jobRouter);
 

@@ -12,7 +12,7 @@ export default function Layout() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/details`, {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/details`, {
       credentials: 'include',
     })
       .then(async (res) => {

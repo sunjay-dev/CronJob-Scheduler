@@ -27,7 +27,7 @@ export default function Signup() {
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     };
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/register`, {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/register`, {
       method: "POST",
       credentials: "include",
       headers: {

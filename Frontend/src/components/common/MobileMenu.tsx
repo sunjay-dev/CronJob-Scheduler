@@ -19,7 +19,7 @@ export function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
   const handleUserLogout = async () => {
     setConfirmLogout(false);
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/logout`, {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/logout`, {
       credentials: "include",
       method: "POST",
     })
