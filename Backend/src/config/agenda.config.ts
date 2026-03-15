@@ -5,7 +5,6 @@ const agenda = new Agenda({
     address: process.env.MONGO_DB_URI as string,
     collection: process.env.MONGO_DB_COLLECTION as string,
   },
-  processEvery: "5 seconds",
 });
 
 export default agenda;

@@ -1,22 +1,22 @@
-import Redis from "ioredis";
-import logger from "../utils/logger.utils";
+import { Redis } from "ioredis";
+import logger from "../utils/logger.utils.js";
 
-const redis = new Redis(process.env.REDIS_URL!);
+const redis = new Redis(process.env.REDIS_URL as string);
 
 redis.on("connect", () => {
-  logger.info("Redis client connected");
+  logger.info({ message: "Redis client connected" });
 });
 
 redis.on("ready", () => {
-  logger.info("Redis is ready to use");
+  logger.info({ message: "Redis is ready to use" });
 });
 
-redis.on("error", (err) => {
-  logger.error(`Redis connection error: ${err}`);
+redis.on("error", (error) => {
+  logger.error({ message: `Redis connection error`, error });
 });
 
 redis.on("close", () => {
-  logger.info("Redis connection closed");
+  logger.info({ message: "Redis connection closed" });
 });
 
 export default redis;

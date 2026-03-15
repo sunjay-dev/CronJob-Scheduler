@@ -11,8 +11,9 @@ import {
   handleResetPassword,
   handleUserVerification,
   handleOtpResend,
-} from "../controllers/user.controllers";
-import { restrictUserLogin, softRestrictUserLogin, prometheusAuth } from "../middlewares/auth.middlewares";
+} from "../controllers/user.controllers.js";
+
+import { restrictUserLogin, softRestrictUserLogin, prometheusAuth } from "../middlewares/auth.middlewares.js";
 import {
   changeUserDetailsSchema,
   forgotPasswordSchema,
@@ -21,9 +22,10 @@ import {
   resetPasswordSchema,
   verifyUserIdSchema,
   verifyUserSchema,
-} from "../schemas/user.schema";
-import { validate } from "../middlewares/validate.middlewares";
-import register from "../config/prometheus.config";
+} from "../schemas/user.schema.js";
+
+import { validate } from "../middlewares/validate.middlewares.js";
+import register from "../config/prometheus.config.js";
 const router = Router();
 
 router.get("/", (req: Request, res: Response): void => {

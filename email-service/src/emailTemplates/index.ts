@@ -1,4 +1,5 @@
-import forgetPasswordTemplete from './forgetPassword';
-import jobFailedTemplate from './jobFailed';
-import confirmEmailTemplate from './confirmEmail'
-export { forgetPasswordTemplete, jobFailedTemplate, confirmEmailTemplate}
+import forgetPasswordTemplete from "./forgetPassword.js";
+import jobFailedTemplate from "./jobFailed.js";
+import confirmEmailTemplate from "./confirmEmail.js";
+
+export { forgetPasswordTemplete, jobFailedTemplate, confirmEmailTemplate };

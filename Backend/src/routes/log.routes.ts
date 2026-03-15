@@ -1,10 +1,10 @@
 import { Router } from "express";
 const router = Router();
 
-import { handleUserLogs, handleJobLogs, handleFailedLogs, handleGetLogById, handleGetLast24hoursLog } from "../controllers/log.controllers";
-import { restrictUserLogin } from "../middlewares/auth.middlewares";
-import { validateParams } from "../middlewares/validate.middlewares";
-import { jobLogsParamsSchema, LogIdSchema } from "../schemas/log.schema";
+import { handleUserLogs, handleJobLogs, handleFailedLogs, handleGetLogById, handleGetLast24hoursLog } from "../controllers/log.controllers.js";
+import { restrictUserLogin } from "../middlewares/auth.middlewares.js";
+import { validateParams } from "../middlewares/validate.middlewares.js";
+import { jobLogsParamsSchema, LogIdSchema } from "../schemas/log.schema.js";
 
 // Logs routes
 router.get("/", restrictUserLogin, handleUserLogs);

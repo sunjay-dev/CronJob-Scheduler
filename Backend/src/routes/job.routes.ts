@@ -9,10 +9,10 @@ import {
   handleJobStatus,
   handleJobEdit,
   handleDeleteJob,
-} from "../controllers/job.controllers";
-import { restrictUserLogin } from "../middlewares/auth.middlewares";
-import { validate, validateParams } from "../middlewares/validate.middlewares";
-import { jobIdSchema, jobSchema, jobStatusSchema } from "../schemas/job.schema";
+} from "../controllers/job.controllers.js";
+import { restrictUserLogin } from "../middlewares/auth.middlewares.js";
+import { validate, validateParams } from "../middlewares/validate.middlewares.js";
+import { jobIdSchema, jobSchema, jobStatusSchema } from "../schemas/job.schema.js";
 
 router.get("/", restrictUserLogin, handleUserJobs);
 router.get("/:jobId", restrictUserLogin, validateParams(jobIdSchema), handleUserJobById);

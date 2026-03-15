@@ -2,24 +2,23 @@
   "name": "job-runner",
   "version": "1.0.0",
   "description": "instance that pings the jobs",
+  "type": "module",
   "main": "app.js",
   "scripts": {
     "start": "node dist/app.js",
     "watch": "tsc -w",
     "build": "tsc",
-    "dev": "concurrently \"tsc -w\" \"nodemon ./dist/app.js\"",
+    "dev": "concurrently \"tsc -w\" \"node --watch ./dist/app.js\"",
     "bun": "bun ./src/app.ts",
     "bun watch": "bun --watch ./src/app.ts"
   },
   "keywords": [],
-  "author": "",
-  "type": "module",
+  "author": "https://github.com/sunjay-dev/",
   "license": "MIT",
   "packageManager": "pnpm@10.17.1",
   "devDependencies": {
     "@types/node": "^24.5.2",
     "concurrently": "^9.2.1",
-    "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
   },

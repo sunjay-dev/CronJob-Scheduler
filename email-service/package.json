@@ -3,14 +3,15 @@
   "version": "1.0.0",
   "description": "email service for cronJob Scheduler",
   "main": "app.js",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "vercel-build": "tsc",
     "start": "node dist/app.js",
-    "dev": "concurrently \"tsc -w\" \"nodemon dist/app.js\""
+    "dev": "concurrently \"tsc -w\" \"node --watch dist/app.js\""
   },
   "keywords": [],
-  "author": "",
+  "author": "https://github.com/sunjay-dev/",
   "license": "MIT",
   "packageManager": "pnpm@10.14.0",
   "dependencies": {
@@ -25,7 +26,6 @@
     "@types/express": "^5.0.3",
     "@types/node": "^24.2.1",
     "concurrently": "^9.2.0",
-    "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
   }

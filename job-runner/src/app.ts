@@ -1,5 +1,5 @@
 import "dotenv/config";
-import connectDB from './config/db.config.js';
+import connectDB from "./config/db.config.js";
 import http from "http";
 import register from "./config/prometheus.config.js";
 
@@ -15,36 +15,35 @@ async function startAgenda() {
 
 startAgenda();
 
-http.createServer(async (req, res) => {
+http
+  .createServer(async (req, res) => {
+    if (req.url === "/health") {
+      res.statusCode = 200;
+      res.setHeader("Content-Type", "text/plain");
+      res.end("OK");
+    } else if (req.url === "/metrics") {
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        res.statusCode = 401;
+        res.setHeader("Content-Type", "application/json");
+        res.end(JSON.stringify({ message: "Missing or invalid Authorization header" }));
+        return;
+      }
 
-  if (req.url === "/health") {
-    res.statusCode = 200;
-    res.setHeader("Content-Type", "text/plain");
-    res.end("OK");
-  }
-  else if (req.url === "/metrics") {
-
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      res.statusCode = 401;
-      res.setHeader("Content-Type", "application/json");
-      res.end(JSON.stringify({ message: "Missing or invalid Authorization header" }));
-      return;
+      const token = authHeader.split(" ")[1];
+      if (token !== (process.env.PROMETHEUS_SECRET as string)) {
+        res.statusCode = 403;
+        res.setHeader("Content-Type", "application/json");
+        res.end(JSON.stringify({ message: "Invalid Authorization token" }));
+        return;
+      }
+      res.setHeader("Content-Type", register.contentType);
+      res.end(await register.metrics());
+    } else {
+      res.writeHead(404);
+      res.end();
     }
-
-    const token = authHeader.split(" ")[1];
-    if (token !== process.env.PROMETHEUS_SECRET) {
-      res.statusCode = 403;
-      res.setHeader("Content-Type", "application/json");
-      res.end(JSON.stringify({ message: "Invalid Authorization token" }));
-      return;
-    }
-    res.setHeader("Content-Type", register.contentType);
-    res.end(await register.metrics());
-  } else {
-    res.writeHead(404);
-    res.end();
-  }
-}).listen(process.env.PORT || 3002, () => {
-  console.log("Job Runner metrics server running on port 3002");
-});
+  })
+  .listen(process.env.PORT || 3002, () => {
+    console.log("Job Runner metrics server running on port 3002");
+  });

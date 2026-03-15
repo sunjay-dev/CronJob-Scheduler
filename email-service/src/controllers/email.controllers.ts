@@ -1,19 +1,18 @@
-import type { Request, Response, NextFunction } from "express";
-import sendEmail from "../lib/sendEmail";
+import type { Request, Response } from "express";
+import sendEmail from "../lib/sendEmail.js";
 
-export const handleHomeRoute = (req: Request, res: Response, next: NextFunction): void => {
-  res.status(200).send("Hey from email service");
+export function handleHomeRoute(req: Request, res: Response) {
+  return res.status(200).send("Hey from email service");
 }
 
-export const handleSendEmail = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  
-  const { name, email, template, data} = req.body;
+export async function handleSendEmail(req: Request, res: Response) {
+  const { name, email, template, data } = req.body;
 
   try {
-    await sendEmail({ name, email, template, data});
-    res.status(200).json({message: 'Email sent', body: {name, email, template, data}});
+    await sendEmail({ name, email, template, data });
+    return res.status(200).json({ message: "Email sent", body: { name, email, template, data } });
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).send('Internal Server Error');
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 }

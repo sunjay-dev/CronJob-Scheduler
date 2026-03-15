@@ -1,9 +1,9 @@
 import type { Request, Response, NextFunction } from "express";
-import userModel from "../models/user.models";
+import userModel from "../models/user.models.js";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
-import { signToken } from "../utils/jwt.utils";
-import { queueEmail } from "../utils/qstashEmail.utils";
+import { signToken } from "../utils/jwt.utils.js";
+import { queueEmail } from "../utils/qstashEmail.utils.js";
 import {
   AppError,
   BadRequestError,
@@ -12,8 +12,8 @@ import {
   NotFoundError,
   TooManyRequestsError,
   UnauthorizedError,
-} from "../utils/appError.utils";
-import redis from "../config/redis.config";
+} from "../utils/appError.utils.js";
+import redis from "../config/redis.config.js";
 
 export const handleUserLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const email = req.body.email.trim().toLowerCase();
@@ -247,7 +247,7 @@ export const handleGoogleCallBack = async (req: Request, res: Response, next: Ne
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    res.redirect(`${process.env.CLIENT_URL}/dashboard?loginMethod=google`);
+    res.redirect(`${process.env.CLIENT_URL as string}/dashboard?loginMethod=google`);
   } catch (error) {
     next(new InternalServerError("Error while creating account with Google."));
   }
@@ -271,7 +271,7 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
 
     const token = crypto.randomBytes(32).toString("hex");
 
-    const url = `${process.env.CLIENT_URL}/reset-password/${token}`;
+    const url = `${process.env.CLIENT_URL as string}/reset-password/${token}`;
 
     await queueEmail({ data: { url }, name: user.name, email, template: "FORGOT_PASSWORD" });
 

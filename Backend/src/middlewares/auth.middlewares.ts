@@ -1,10 +1,11 @@
 import type { Request, Response, NextFunction } from "express";
-import { verifyToken } from "../utils/jwt.utils";
+import { verifyToken } from "../utils/jwt.utils.js";
+import logger from "../utils/logger.utils.js";
 
 declare global {
   namespace Express {
     interface Request {
-      jwtUser?: any
+      jwtUser?: any;
     }
   }
 }
@@ -21,7 +22,7 @@ export function restrictUserLogin(req: Request, res: Response, next: NextFunctio
 
   if (!token) {
     res.status(401).json({
-      message: "Please login again or create new account."
+      message: "Please login again or create new account.",
     });
     return;
   }
@@ -36,7 +37,7 @@ export function restrictUserLogin(req: Request, res: Response, next: NextFunctio
     req.jwtUser = verifiedUser;
     next();
   } catch (err) {
-    console.error("Auth error:", err);
+    logger.error({ message: "Auth error:", err });
     res.status(401).json({ message: "Authentication failed" });
     return;
   }
@@ -54,17 +55,17 @@ export function softRestrictUserLogin(req: Request, res: Response, next: NextFun
   if (!token) {
     res.status(200).json({
       authorized: false,
-      message: "Please login again or create a new account."
+      message: "Please login again or create a new account.",
     });
     return;
   }
 
   try {
     const verifiedUser = verifyToken(token);
-   if (!verifiedUser) {
+    if (!verifiedUser) {
       res.status(200).json({
         authorized: false,
-        message: "Invalid or expired token"
+        message: "Invalid or expired token",
       });
       return;
     }
@@ -72,10 +73,10 @@ export function softRestrictUserLogin(req: Request, res: Response, next: NextFun
     req.jwtUser = verifiedUser;
     next();
   } catch (err) {
-    console.error("Auth error:", err);
+    logger.error({ message: "Auth error:", err });
     res.status(200).json({
       authorized: false,
-      message: "Authentication failed"
+      message: "Authentication failed",
     });
     return;
   }
@@ -91,7 +92,7 @@ export function prometheusAuth(req: Request, res: Response, next: NextFunction):
 
   const token = authHeader.split(" ")[1];
 
-  if (token !== process.env.PROMETHEUS_SECRET) {
+  if (token !== (process.env.PROMETHEUS_SECRET as string)) {
     res.status(403).json({ message: "Unauthorized access to metrics" });
     return;
   }

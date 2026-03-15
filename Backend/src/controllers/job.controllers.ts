@@ -1,17 +1,20 @@
 import type { Request, Response, NextFunction } from "express";
-import agenda from "../agenda/agenda";
-import logsModels from "../models/logs.models";
+import agenda from "../config/agenda.config.js";
+import logsModels from "../models/logs.models.js";
 import mongoose from "mongoose";
-import { BadRequestError, InternalServerError, NotFoundError } from "../utils/appError.utils";
+import { BadRequestError, InternalServerError, NotFoundError } from "../utils/appError.utils.js";
 
 function getHeaderObj(headers: any[]) {
-  return headers.reduce((acc, { key, value }) => {
-    const trimmedKey = key?.trim();
-    const trimmedValue = value?.trim();
+  return headers.reduce(
+    (acc, { key, value }) => {
+      const trimmedKey = key?.trim();
+      const trimmedValue = value?.trim();
 
-    if (trimmedKey && trimmedValue) acc[trimmedKey] = trimmedValue;
-    return acc;
-  }, {} as Record<string, string>);
+      if (trimmedKey && trimmedValue) acc[trimmedKey] = trimmedValue;
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
 }
 
 export const handleNewCronJobs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

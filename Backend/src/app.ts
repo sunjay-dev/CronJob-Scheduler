@@ -2,14 +2,14 @@ import "dotenv/config";
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import passport from "./config/passport.config";
-import errorHandler from "./middlewares/errorHandler.middlewares";
+import passport from "./config/passport.config.js";
+import errorHandler from "./middlewares/errorHandler.middlewares.js";
 
 const app = express();
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL!,
+    origin: process.env.CLIENT_URL as string,
     credentials: true,
   }),
 );
@@ -18,9 +18,9 @@ app.use(passport.initialize());
 app.use(express.json());
 app.use(cookieParser());
 
-import userRouter from "./routes/user.routes";
-import cronRouter from "./routes/log.routes";
-import jobRouter from "./routes/job.routes";
+import userRouter from "./routes/user.routes.js";
+import cronRouter from "./routes/log.routes.js";
+import jobRouter from "./routes/job.routes.js";
 
 app.use("/", userRouter);
 app.use("/api/logs", cronRouter);
@@ -28,9 +28,9 @@ app.use("/api/jobs", jobRouter);
 
 app.use(errorHandler);
 
-import connectDB from "./config/db.config";
+import connectDB from "./config/db.config.js";
 connectDB();
 
-import logger from "./utils/logger.utils";
+import logger from "./utils/logger.utils.js";
 const port = process.env.PORT || 3000;
 app.listen(port, () => logger.info(`Server running on Port ${port}`));

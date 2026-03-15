@@ -6,7 +6,8 @@ import { useAppSelector, useAppDispatch } from "../hooks";
 import { removeJob, setJobs, updateJobStatus } from "../slices/jobSlice";
 
 export default function Jobs() {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL!;
+  const backendUrl = import.meta.env.VITE_BACKEND_URL as string;
+
   const jobs = useAppSelector((state) => state.jobs.jobs);
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();

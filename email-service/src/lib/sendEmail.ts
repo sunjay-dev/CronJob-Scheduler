@@ -1,36 +1,34 @@
-import { Resend } from 'resend';
-import type { EmailSchema } from '../schemas/email.schema';
-import {forgetPasswordTemplete, jobFailedTemplate, confirmEmailTemplate} from '../emailTemplates';
+import { Resend } from "resend";
+import type { EmailSchema } from "../schemas/email.schema.js";
+import { forgetPasswordTemplete, jobFailedTemplate, confirmEmailTemplate } from "../emailTemplates/index.js";
 
 export default async function sendEmail({ email, name, template, data }: EmailSchema): Promise<void> {
-  const resend = new Resend(process.env.RESEND_EMAIL_API_KEY!);
+  const resend = new Resend(process.env.RESEND_EMAIL_API_KEY as string);
   let emailTemplate = ``;
   let subject = ``;
 
-  if (template === 'FORGOT_PASSWORD') {
+  if (template === "FORGOT_PASSWORD") {
     emailTemplate = forgetPasswordTemplete(name, data?.url);
-    subject = `Password Reset Request ${new Date().toISOString().split('T')[1]}`
-  }
-  
-  else if (template === 'JOB_FAILED') {
+    subject = `Password Reset Request ${new Date().toISOString().split("T")[1]}`;
+  } else if (template === "JOB_FAILED") {
     emailTemplate = jobFailedTemplate({
-      name, jobName: data?.jobName ,
+      name,
+      jobName: data?.jobName,
       url: data?.url,
       method: data?.method,
-      error: data?.error ,
-      lastRunAt: data?.lastRunAt
+      error: data?.error,
+      lastRunAt: data?.lastRunAt,
     });
-    
-    subject = `Job "${data?.jobName}" Disabled After Multiple Failures`
-  }
-  else {
-    emailTemplate  = confirmEmailTemplate(name, data?.otp);
+
+    subject = `Job "${data?.jobName}" Disabled After Multiple Failures`;
+  } else {
+    emailTemplate = confirmEmailTemplate(name, data?.otp);
     subject = `Welcome! Confirm Your Email to Get Started`;
   }
 
   try {
     await resend.emails.send({
-      from: `CronJon Scheduler <${process.env.SENDEREMAIL!}>`,
+      from: `CronJon Scheduler <${process.env.SENDEREMAIL as string}>`,
       to: email,
       subject,
       html: emailTemplate,
