@@ -1,0 +1,4 @@
+pnpm exec lint-staged 
+pnpm -C frontend lint 
+pnpm -C backend build
+pnpm -C backend test

@@ -38,13 +38,13 @@ services:
       - "9090:9090"
 
   frontend:
-    build: ./Frontend
+    build: ./frontend
     container_name: frontend
     image: sunjay195/frontend:latest
     depends_on:
       - backend
     env_file:
-      - ./Frontend/.env
+      - ./frontend/.env
     ports:
       - "5173:5173"
     networks:

@@ -38,7 +38,7 @@ The project is structured as a monorepo with separate services.
 3. **Frontend Setup:**
 
    ```bash
-   cd ../Frontend
+   cd ../frontend
    pnpm install
    pnpm run dev
    ```

@@ -18,7 +18,10 @@ export default function LogCard({ log, timeFormat24 }: { log: UserLogInterface; 
         <td className="sm:table-cell sm:px-6 sm:py-4 order-2 sm:order-none">
           <span className="text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded font-medium uppercase">{log.method}</span>
         </td>
-        <td title={log.url} className="sm:table-cell sm:px-6 sm:py-4 order-1 sm:order-none truncate flex-1 sm:w-auto max-w-[150px] sm:max-w-xs text-gray-700">
+        <td
+          title={log.url}
+          className="sm:table-cell sm:px-6 sm:py-4 order-1 sm:order-none truncate flex-1 sm:w-auto max-w-[150px] sm:max-w-xs text-gray-700"
+        >
           {log.url}
         </td>
 
@@ -29,7 +32,9 @@ export default function LogCard({ log, timeFormat24 }: { log: UserLogInterface; 
           </div>
         </td>
 
-        <td className={`flex sm:table-cell sm:px-6 sm:py-4 sm:order-none order-first items-center gap-1 font-medium truncate ${isSuccess ? "text-green-600" : "text-red-600"}`}>
+        <td
+          className={`flex sm:table-cell sm:px-6 sm:py-4 sm:order-none order-first items-center gap-1 font-medium truncate ${isSuccess ? "text-green-600" : "text-red-600"}`}
+        >
           {isSuccess ? (
             <div className="flex items-center gap-1">
               <CheckCircle className="w-4 h-4" />

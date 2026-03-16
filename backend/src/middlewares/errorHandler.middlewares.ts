@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 import { AppError } from "../utils/appError.utils.js";
 import logger from "../utils/logger.utils.js";
 
-export default function errorHandler(err: Error, req: Request, res: Response) {
+export default function errorHandler(err: Error, req: Request, res: Response): void {
   if (err instanceof AppError) {
     logger.error(
       {
@@ -14,15 +14,17 @@ export default function errorHandler(err: Error, req: Request, res: Response) {
       err.message,
     );
 
-    return res.status(err.statusCode).json({
+    res.status(err.statusCode).json({
       message: err.message,
       ...(err.details || {}),
     });
+    return;
   }
 
   logger.error({ stack: err.stack || {}, method: req.method, url: req.originalUrl }, err.message);
 
-  return res.status(500).json({
+  res.status(500).json({
     message: "Something went wrong, Please try again later.",
   });
+  return;
 }
