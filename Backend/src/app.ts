@@ -30,9 +30,4 @@ app.use("/api/jobs", jobRouter);
 
 app.use(errorHandler);
 
-import connectDB from "./config/db.config.js";
-connectDB();
-
-import logger from "./utils/logger.utils.js";
-const port = process.env.PORT || 3000;
-app.listen(port, () => logger.info(`Server running on Port ${port}`));
+export default app;

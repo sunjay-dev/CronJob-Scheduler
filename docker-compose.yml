@@ -13,14 +13,14 @@ services:
       - app-network
 
   backend:
-    build: ./Backend
+    build: ./backend
     container_name: backend
     image: sunjay195/backend:latest
     depends_on:
       - mongodb
       - redis
     env_file:
-      - ./Backend/.env
+      - ./backend/.env
     environment:
       - MONGO_DB_URI=mongodb://mongodb:27017/cron-job
       - REDIS_URL=redis://redis:6379
@@ -28,7 +28,7 @@ services:
       - "3000:3000"
     networks:
       - app-network
-    
+
   prometheus:
     image: prom/prometheus
     container_name: prometheus
@@ -49,7 +49,7 @@ services:
       - "5173:5173"
     networks:
       - app-network
-  
+
   email-service:
     build: ./email-service
     container_name: email-service
@@ -62,7 +62,7 @@ services:
       - "3001:3001"
     networks:
       - app-network
-  
+
   job-runner:
     build: ./job-runner
     container_name: job-runner
@@ -74,10 +74,10 @@ services:
     environment:
       - MONGO_DB_URI=mongodb://mongodb:27017/cron-job
     ports:
-    - "3002:3002"
+      - "3002:3002"
     networks:
       - app-network
-  
+
   redis:
     image: redis:latest
     container_name: redis

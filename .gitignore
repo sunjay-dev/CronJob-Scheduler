@@ -139,3 +139,9 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+
+.vscode
+/nginx.conf
+docker-compose-override.yml
+.vercel
