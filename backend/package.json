@@ -13,7 +13,6 @@
     "bun watch": "bun --watch ./src/server.ts",
     "test": "vitest run"
   },
-  "keywords": [],
   "author": "https://github.com/sunjay-dev/",
   "license": "MIT",
   "packageManager": "pnpm@10.11.0",

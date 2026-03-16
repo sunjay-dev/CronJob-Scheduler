@@ -4,8 +4,8 @@ import { forgetPasswordTemplete, jobFailedTemplate, confirmEmailTemplate } from 
 
 export default async function sendEmail({ email, name, template, data }: EmailSchema): Promise<void> {
   const resend = new Resend(process.env.RESEND_EMAIL_API_KEY as string);
-  let emailTemplate = ``;
-  let subject = ``;
+  let emailTemplate: string;
+  let subject: string;
 
   if (template === "FORGOT_PASSWORD") {
     emailTemplate = forgetPasswordTemplete(name, data?.url);

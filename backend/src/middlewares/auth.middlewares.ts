@@ -1,14 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { verifyToken } from "../utils/jwt.utils.js";
 import logger from "../utils/logger.utils.js";
-
-declare global {
-  namespace Express {
-    interface Request {
-      jwtUser?: any;
-    }
-  }
-}
+import { JwtUser } from "../types/jwt.types.js";
 
 export function restrictUserLogin(req: Request, res: Response, next: NextFunction): void {
   let token = req.cookies?.token;
@@ -28,7 +21,7 @@ export function restrictUserLogin(req: Request, res: Response, next: NextFunctio
   }
 
   try {
-    const verifiedUser = verifyToken(token);
+    const verifiedUser = verifyToken(token) as JwtUser;
     if (!verifiedUser) {
       res.status(401).json({ message: "Invalid or expired token" });
       return;
@@ -62,7 +55,7 @@ export function softRestrictUserLogin(req: Request, res: Response, next: NextFun
   }
 
   try {
-    const verifiedUser = verifyToken(token);
+    const verifiedUser = verifyToken(token) as JwtUser;
     if (!verifiedUser) {
       res.status(200).json({
         authorized: false,

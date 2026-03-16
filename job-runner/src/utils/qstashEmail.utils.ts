@@ -2,7 +2,7 @@ interface EmailProps {
   name: string;
   email: string;
   template: "FORGOT_PASSWORD" | "JOB_FAILED" | "EMAIL_VERIFY";
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
 }
 
 export const queueEmail = async ({ name, email, template, data }: EmailProps): Promise<void> => {

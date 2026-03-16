@@ -4,7 +4,19 @@ import logsModels from "../models/logs.models.js";
 import mongoose from "mongoose";
 import { BadRequestError, InternalServerError, NotFoundError } from "../utils/appError.utils.js";
 
-function getHeaderObj(headers: any[]) {
+interface Payload {
+  name: string;
+  url: string;
+  method: string;
+  headers: Record<string, string | undefined>;
+  userId: string;
+  timeout?: number;
+  email?: string;
+  body?: string;
+  errorCount?: number;
+}
+
+function getHeaderObj(headers: { key: string; value: string }[]) {
   return headers.reduce(
     (acc, { key, value }) => {
       const trimmedKey = key?.trim();
@@ -23,7 +35,7 @@ export const handleNewCronJobs = async (req: Request, res: Response, next: NextF
 
   const headersObj = Array.isArray(headers) ? getHeaderObj(headers) : {};
 
-  let payload = {
+  const payload: Payload = {
     name,
     url,
     method,
@@ -32,7 +44,7 @@ export const handleNewCronJobs = async (req: Request, res: Response, next: NextF
     errorCount: 0,
     timeout,
     email,
-  } as any;
+  };
 
   if (body && body.trim() !== "") {
     const allowedMethods = ["POST", "PUT", "PATCH"];
@@ -46,7 +58,7 @@ export const handleNewCronJobs = async (req: Request, res: Response, next: NextF
     if (contentType === "application/json") {
       try {
         JSON.parse(body);
-      } catch (error) {
+      } catch {
         return next(new BadRequestError("Invalid JSON in body."));
       }
     }
@@ -68,7 +80,7 @@ export const handleNewCronJobs = async (req: Request, res: Response, next: NextF
     await job.save();
 
     res.status(200).json({ message: "Job created successfully", job });
-  } catch (error) {
+  } catch {
     next(new InternalServerError("Error while creating new job"));
   }
 };
@@ -81,7 +93,7 @@ export const handleJobEdit = async (req: Request, res: Response, next: NextFunct
 
   const headersObj = Array.isArray(headers) ? getHeaderObj(headers) : {};
 
-  let payload = { name, url, method, headers: headersObj, userId, timeout, email } as any;
+  const payload: Payload = { name, url, method, headers: headersObj, userId, timeout, email };
 
   if (body && body.trim() !== "") {
     const allowedMethods = ["POST", "PUT", "PATCH"];
@@ -95,7 +107,7 @@ export const handleJobEdit = async (req: Request, res: Response, next: NextFunct
     if (contentType === "application/json") {
       try {
         JSON.parse(body);
-      } catch (error) {
+      } catch {
         return next(new BadRequestError("Invalid JSON in body."));
       }
     }
@@ -131,7 +143,7 @@ export const handleJobEdit = async (req: Request, res: Response, next: NextFunct
     await job.save();
 
     res.status(200).json({ message: "Job updated successfully", job });
-  } catch (error) {
+  } catch {
     next(new InternalServerError("Server error while editing job"));
   }
 };
@@ -141,7 +153,7 @@ export const handleUserJobs = async (req: Request, res: Response, next: NextFunc
   try {
     const jobs = await agenda.jobs({ "data.userId": userId });
     res.status(200).json(jobs);
-  } catch (error) {
+  } catch {
     next(new InternalServerError("Error while fetching user jobs"));
   }
 };
@@ -156,7 +168,7 @@ export const handleUserJobById = async (req: Request, res: Response, next: NextF
       _id: new mongoose.Types.ObjectId(jobId),
     });
     res.status(200).json(jobs);
-  } catch (error) {
+  } catch {
     next(new InternalServerError("Error while fetching user job by Id"));
   }
 };
@@ -176,13 +188,15 @@ export const handleJobStatus = async (req: Request, res: Response, next: NextFun
     }
 
     const job = jobs[0];
-    status ? job.enable() : job.disable();
+    if (status) job.enable();
+    else job.disable();
+
     job.attrs.data.errorCount = 0;
     // delete job.attrs.data.cooldownUntil;
     await job.save();
 
     res.status(200).json({ message: `Job ${status ? "enabled" : "disabled"}`, status });
-  } catch (error) {
+  } catch {
     next(new InternalServerError("Server error while updating job status"));
   }
 };
@@ -208,7 +222,7 @@ export const handleDeleteJob = async (req: Request, res: Response, next: NextFun
       job: result,
       jobId,
     });
-  } catch (error) {
+  } catch {
     next(new InternalServerError("Error while deleting job"));
   }
 };
@@ -236,7 +250,7 @@ export const handleRunJobNow = async (req: Request, res: Response, next: NextFun
     });
 
     res.status(200).json({ message: "Job executed immediately" });
-  } catch (error) {
+  } catch {
     next(new InternalServerError("Error while running job now"));
   }
 };

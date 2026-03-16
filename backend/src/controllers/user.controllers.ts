@@ -41,13 +41,14 @@ export const handleUserLogin = async (req: Request, res: Response, next: NextFun
       maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...safeUser } = user;
     res.status(200).json({
       message: "Login successful",
       user: safeUser,
       token,
     });
-  } catch (error) {
+  } catch {
     next(new InternalServerError("Something went wrong. Please try again later."));
   }
 };
@@ -81,7 +82,7 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
       id: newUser._id,
       email,
     });
-  } catch (error) {
+  } catch {
     next(new InternalServerError("Something went wrong. Please try again later."));
   }
 };
@@ -100,7 +101,7 @@ export const handleUserVerification = async (req: Request, res: Response, next: 
     const [cachedOtp, otpAttemptsStr] = await redis.mget(`otp:${userId}`, `otpAttempts:${userId}`);
 
     if (cachedOtp && otp !== cachedOtp) {
-      let otpAttempts = parseInt(otpAttemptsStr || "0") + 1;
+      const otpAttempts = parseInt(otpAttemptsStr || "0") + 1;
 
       if (otpAttempts >= 5) {
         await redis
@@ -145,7 +146,7 @@ export const handleUserVerification = async (req: Request, res: Response, next: 
     res.status(200).json({
       message: "Your email has been successfully verified.",
     });
-  } catch (error) {
+  } catch {
     next(new InternalServerError("Error while verifying user email."));
   }
 };
@@ -199,15 +200,14 @@ export const handleOtpResend = async (req: Request, res: Response, next: NextFun
       message: `A new OTP has been sent to your email.`,
       wait: delay,
     });
-  } catch (error) {
+  } catch {
     next(new InternalServerError("Error while resending OTP. Please try again later."));
   }
 };
 
-export const handleUserLogout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const handleUserLogout = async (req: Request, res: Response): Promise<void> => {
   res.clearCookie("token");
   res.status(200).json({ message: "Logged out successfully" });
-  return;
 };
 
 export const handleUserDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -219,7 +219,7 @@ export const handleUserDetails = async (req: Request, res: Response, next: NextF
       return next(new NotFoundError("User not found"));
     }
     res.status(200).json(user);
-  } catch (error) {
+  } catch {
     next(new InternalServerError("Error while fetching user details"));
   }
 };
@@ -231,7 +231,7 @@ export const handleChangeUserDetails = async (req: Request, res: Response, next:
   try {
     const user = await userModel.findByIdAndUpdate(userId, updateFields, { new: true }).lean();
     res.status(200).json({ message: "User updated successfully", user });
-  } catch (error) {
+  } catch {
     next(new InternalServerError("Error while updating user details"));
   }
 };
@@ -252,7 +252,7 @@ export const handleGoogleCallBack = async (req: Request, res: Response, next: Ne
     });
 
     res.redirect(`${process.env.CLIENT_URL as string}/dashboard?loginMethod=google`);
-  } catch (error) {
+  } catch {
     next(new InternalServerError("Error while creating account with Google."));
   }
 };
@@ -296,7 +296,7 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
     res.status(200).json({
       message: "Email has been successfully sent to reset password",
     });
-  } catch (error) {
+  } catch {
     next(new InternalServerError("Something went wrong. Please try again later", { email: email }));
   }
 };
@@ -333,7 +333,7 @@ export const handleResetPassword = async (req: Request, res: Response, next: Nex
     res.status(200).json({
       message: "Your password has been successfully reset. You’re now logged in.",
     });
-  } catch (error) {
+  } catch {
     next(new InternalServerError("Something went wrong. Please try again later."));
   }
 };

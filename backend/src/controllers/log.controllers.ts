@@ -22,7 +22,7 @@ export const handleUserLogs = async (req: Request, res: Response, next: NextFunc
       page,
       totalPages: Math.ceil(total / limit),
     });
-  } catch (error) {
+  } catch {
     next(new InternalServerError("Error while fetching user logs"));
   }
 };
@@ -46,7 +46,7 @@ export const handleJobLogs = async (req: Request, res: Response, next: NextFunct
       page,
       totalPages: Math.ceil(total / limit),
     });
-  } catch (error) {
+  } catch {
     next(new InternalServerError("Error while fetching user logs"));
   }
 };
@@ -64,7 +64,7 @@ export const handleFailedLogs = async (req: Request, res: Response, next: NextFu
       })
       .lean();
     res.status(200).json(logs);
-  } catch (error) {
+  } catch {
     next(new InternalServerError("Error while fetching failed logs"));
   }
 };
@@ -81,7 +81,7 @@ export const handleGetLogById = async (req: Request, res: Response, next: NextFu
     }
 
     res.status(200).json(log);
-  } catch (error) {
+  } catch {
     next(new InternalServerError("Error while fetching log by Id"));
   }
 };
@@ -129,7 +129,7 @@ export const handleGetLast24hoursLog = async (req: Request, res: Response, next:
 
     await redis.set(`logsInsights_${userId}`, JSON.stringify(insights), "EX", 60);
     res.status(200).json(insights);
-  } catch (error) {
+  } catch {
     next(new InternalServerError("Error while fetching log insights"));
   }
 };
