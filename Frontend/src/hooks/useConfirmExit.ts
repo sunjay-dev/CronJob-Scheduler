@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { useBlocker } from "react-router-dom";
 
 export function useConfirmExit(isFilled: boolean, shouldBlock: boolean = true) {
-
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (!isFilled || !shouldBlock) return;
@@ -11,11 +10,8 @@ export function useConfirmExit(isFilled: boolean, shouldBlock: boolean = true) {
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [isFilled, shouldBlock]);
-  
-   const blocker = useBlocker(
-    ({ currentLocation, nextLocation }) =>
-      isFilled && shouldBlock && currentLocation.pathname !== nextLocation.pathname,
-  );
+
+  const blocker = useBlocker(({ currentLocation, nextLocation }) => isFilled && shouldBlock && currentLocation.pathname !== nextLocation.pathname);
 
   useEffect(() => {
     if (shouldBlock && blocker.state === "blocked") {

@@ -5,6 +5,7 @@ import { Request, Response, NextFunction } from "express";
 import { createNext, createMockReq, createMockRes } from "../__helpers__/expressMocks.js";
 
 vi.mock("../../src/utils/jwt.utils.js");
+
 describe("Auth Middlewares", () => {
   let mockReq: Partial<Request>;
   let mockRes: Partial<Response>;

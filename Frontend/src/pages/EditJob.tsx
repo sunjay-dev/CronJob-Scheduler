@@ -48,7 +48,10 @@ export default function EditJob() {
   const onError = (errors: FieldErrors<JobDetails>) => {
     if (errors.name || errors.url) setTab("common");
     if (Object.keys(errors).length > 0)
-      setMessage({ type: "error", text: (Object.values(errors)[0]?.message as string) || "Please fix the errors in the form." });
+      setMessage({
+        type: "error",
+        text: (Object.values(errors)[0]?.message as string) || "Please fix the errors in the form.",
+      });
     else setMessage(null);
   };
 
@@ -81,7 +84,10 @@ export default function EditJob() {
             timeout: job.data.timeout,
             headers:
               job.data?.headers && typeof job.data.headers === "object"
-                ? Object.entries(job.data.headers).map(([key, value]) => ({ key, value: String(value) }))
+                ? Object.entries(job.data.headers).map(([key, value]) => ({
+                    key,
+                    value: String(value),
+                  }))
                 : [],
           },
           { keepDirty: false },

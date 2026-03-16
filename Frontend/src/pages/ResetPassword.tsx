@@ -48,7 +48,10 @@ export default function ResetPassword() {
 
         if (!res.ok) {
           if (res.status === 400) {
-            setMessage({ type: "error", text: data.message || "Invalid or expired token. Redirecting to login..." });
+            setMessage({
+              type: "error",
+              text: data.message || "Invalid or expired token. Redirecting to login...",
+            });
             setTimeout(() => navigate("/login"), 4500);
             return Promise.reject();
           }
@@ -57,7 +60,10 @@ export default function ResetPassword() {
         return data;
       })
       .then(() => {
-        setMessage({ type: "success", text: "Password reset successful. Redirecting to dashboard..." });
+        setMessage({
+          type: "success",
+          text: "Password reset successful. Redirecting to dashboard...",
+        });
         setTimeout(() => navigate("/dashboard"), 2000);
       })
       .catch((err) => {

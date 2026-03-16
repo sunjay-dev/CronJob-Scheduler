@@ -1,17 +1,17 @@
-import { createSlice } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
-import type { JobInterface } from '../types';
+import { createSlice } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import type { JobInterface } from "../types";
 
 interface JobState {
   jobs: JobInterface[];
 }
 
 const initialState: JobState = {
-  jobs: []
+  jobs: [],
 };
 
 const jobSlice = createSlice({
-  name: 'jobs',
+  name: "jobs",
   initialState,
   reducers: {
     setJobs(state, action: PayloadAction<JobInterface[]>) {
@@ -21,16 +21,16 @@ const jobSlice = createSlice({
       state.jobs.push(action.payload);
     },
     removeJob(state, action: PayloadAction<string>) {
-      state.jobs = state.jobs.filter(job => job._id !== action.payload);
+      state.jobs = state.jobs.filter((job) => job._id !== action.payload);
     },
-    updateJob(state, action: PayloadAction<JobInterface>){
-      const index = state.jobs.findIndex(job => job._id === action.payload._id);
-      if(index !== -1){
+    updateJob(state, action: PayloadAction<JobInterface>) {
+      const index = state.jobs.findIndex((job) => job._id === action.payload._id);
+      if (index !== -1) {
         state.jobs[index] = action.payload;
       }
     },
     updateJobStatus(state, action: PayloadAction<{ jobId: string; disabled: boolean }>) {
-      const job = state.jobs.find(job => job._id === action.payload.jobId);
+      const job = state.jobs.find((job) => job._id === action.payload.jobId);
       if (job) {
         job.disabled = action.payload.disabled;
       }

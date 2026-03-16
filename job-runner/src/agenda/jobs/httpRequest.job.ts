@@ -3,7 +3,7 @@ import logsModel from "../../models/logs.models.js";
 import userModel from "../../models/user.models.js";
 import { queueEmail } from "../../utils/qstashEmail.utils.js";
 
-import got from 'got';
+import got from "got";
 import type { Job } from "agenda";
 
 interface HttpRequestJobData {
@@ -14,7 +14,7 @@ interface HttpRequestJobData {
   userId: string;
   jobId?: string;
   body: string;
-  errorCount: number
+  errorCount: number;
   cooldownUntil?: number;
   timeout: number;
   email: boolean;
@@ -32,20 +32,19 @@ agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJob
     const response = await got(url, {
       method,
       headers: {
-        'user-agent': 'CronJon/1.0 (+https://www.cronjon.site)',
+        "user-agent": "CronJon/1.0 (+https://www.cronjon.site)",
         ...headers,
       },
       body: body || undefined,
       throwHttpErrors: true,
-      responseType: 'buffer',
+      responseType: "buffer",
       resolveBodyOnly: false,
       decompress: false,
       retry: { limit: 0 },
       timeout: {
-        request: 1000 * timeout
+        request: 1000 * timeout,
       },
     });
-
 
     const { dns, tcp, tls, request, firstByte, download, total } = response?.timings?.phases;
     await logsModel.create({
@@ -66,12 +65,11 @@ agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJob
         Wait: firstByte || 0,
         Receive: download || 0,
         Total: total || 0,
-      }
+      },
     });
 
     job.attrs.data.errorCount = 0;
     await job.save();
-
   } catch (err: any) {
     job.attrs.data.errorCount += 1;
 
@@ -80,10 +78,14 @@ agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJob
 
       const now = Date.now();
       if (!job.attrs.data.cooldownUntil || job.attrs.data.cooldownUntil < now) {
-
         const user = await userModel.findById(userId);
         if (user && email && user.emailNotifications)
-          await queueEmail({ data: { jobName: name, url, method, error: err.message, lastRunAt: new Date(now) }, name: user.name, email: user.email, template: "JOB_FAILED" });
+          await queueEmail({
+            data: { jobName: name, url, method, error: err.message, lastRunAt: new Date(now) },
+            name: user.name,
+            email: user.email,
+            template: "JOB_FAILED",
+          });
 
         job.attrs.data.cooldownUntil = now + 3 * 24 * 60 * 60 * 1000;
       }
@@ -111,7 +113,7 @@ agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJob
           Wait: timings.firstByte || 0,
           Receive: timings.download || 0,
           Total: timings.total || 0,
-        }
+        },
       });
     } catch (logError) {
       console.error("Failed to save log to DB:", logError);

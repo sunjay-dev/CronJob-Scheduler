@@ -4,19 +4,18 @@ import { Footer, Loader, Popup } from "../components";
 import { forgotPasswordSchema } from "../schemas/authSchemas";
 
 export default function ForgetPassword() {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const result = forgotPasswordSchema.safeParse({ email });
     if (!result.success) {
-      setMessage({ type: 'error', text: result.error.issues[0].message });
+      setMessage({ type: "error", text: result.error.issues[0].message });
       return;
     }
-
 
     setIsLoading(true);
     setMessage(null);
@@ -28,19 +27,24 @@ export default function ForgetPassword() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ email }),
-    }).then(async (res) => {
-
-      const data = await res.json();
-
-      if (!res.ok) throw new Error(data.message || "Something went wrong, Please try again later.");
-
-      setMessage({ type: "success", text: "Reset link sent to your email" });
-    }).catch(err => {
-      setMessage({ type: "error", text: err.message || "Failed to send reset link, Please try again later." });
-    }).finally(() => {
-      setEmail("")
-      setIsLoading(false);
     })
+      .then(async (res) => {
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.message || "Something went wrong, Please try again later.");
+
+        setMessage({ type: "success", text: "Reset link sent to your email" });
+      })
+      .catch((err) => {
+        setMessage({
+          type: "error",
+          text: err.message || "Failed to send reset link, Please try again later.",
+        });
+      })
+      .finally(() => {
+        setEmail("");
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -62,7 +66,9 @@ export default function ForgetPassword() {
               {message && <Popup type={message.type} message={message.text} />}
 
               <div className="flex flex-col space-y-1">
-                <label htmlFor="email" className="text-sm font-medium">Email address</label>
+                <label htmlFor="email" className="text-sm font-medium">
+                  Email address
+                </label>
                 <input
                   type="email"
                   id="email"
@@ -83,8 +89,10 @@ export default function ForgetPassword() {
               </button>
 
               <p className="text-center text-sm text-gray-600">
-                Remember your password?{' '}
-                <Link to="/login" className="text-purple-500 hover:underline">Back to login</Link>
+                Remember your password?{" "}
+                <Link to="/login" className="text-purple-500 hover:underline">
+                  Back to login
+                </Link>
               </p>
             </form>
           </div>
@@ -92,11 +100,7 @@ export default function ForgetPassword() {
         </div>
 
         <div className="bg-purple-100 hidden md:flex items-center justify-center">
-          <img
-            src="/Forgot-password.webp"
-            alt="Forgot password illustration"
-            className="max-w-sm"
-          />
+          <img src="/Forgot-password.webp" alt="Forgot password illustration" className="max-w-sm" />
         </div>
       </div>
     </>

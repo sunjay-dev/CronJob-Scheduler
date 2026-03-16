@@ -1,5 +1,5 @@
-import { Github, Play, Zap } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Github, Play, Zap } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function Hero() {
   return (
@@ -14,9 +14,7 @@ export default function Hero() {
           <div className="space-y-4">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight tracking-tight">
               Automate Your
-              <span className="text-purple-600 block mt-1">
-                Cron Jobs
-              </span>
+              <span className="text-purple-600 block mt-1">Cron Jobs</span>
             </h1>
 
             <p className="text-lg sm:text-xl text-gray-500 leading-relaxed max-w-2xl mx-auto">
@@ -25,7 +23,10 @@ export default function Hero() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
-            <Link to="/dashboard" className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 active:scale-95 active:shadow-inner text-white px-8 py-3.5 rounded-xl font-bold transition-all duration-200 flex items-center justify-center space-x-2 shadow-sm hover:shadow-md">
+            <Link
+              to="/dashboard"
+              className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 active:scale-95 active:shadow-inner text-white px-8 py-3.5 rounded-xl font-bold transition-all duration-200 flex items-center justify-center space-x-2 shadow-sm hover:shadow-md"
+            >
               <Play className="w-4 h-4 fill-current" />
               <span>Start Scheduling</span>
             </Link>
@@ -41,5 +42,5 @@ export default function Hero() {
         </div>
       </div>
     </section>
-  )
+  );
 }

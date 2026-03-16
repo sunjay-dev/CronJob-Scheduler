@@ -1,14 +1,14 @@
 export interface JobDetails {
-  name: string,
-  url: string,
-  method: string,
-  cron: string,
-  headers?: {key: string, value: string }[],
-  body: string,
-  enabled: boolean,
-  timezone: string,
-  timeout: number,
-  email: boolean
+  name: string;
+  url: string;
+  method: string;
+  cron: string;
+  headers?: { key: string; value: string }[];
+  body: string;
+  enabled: boolean;
+  timezone: string;
+  timeout: number;
+  email: boolean;
 }
 
 export interface JobInterface {
@@ -38,26 +38,25 @@ export interface JobInterface {
   };
 }
 
-
 export interface UserLogInterface {
   _id: string;
   createdAt: string;
   url: string;
   method: string;
   status: "success" | "failed";
-  jobId:string;
-  name:string;
+  jobId: string;
+  name: string;
   response?: string;
   statusCode?: string;
   responseTime: {
-    DNS: number,
-    Connect: number,
-    SSL: number,
-    Send: number,
-    Wait: number,
-    Receive: number,
-    Total: number
-  }
+    DNS: number;
+    Connect: number;
+    SSL: number;
+    Send: number;
+    Wait: number;
+    Receive: number;
+    Total: number;
+  };
 }
 
 export interface User {
@@ -70,26 +69,25 @@ export interface User {
   pushAlerts: boolean;
 }
 
-
-export type UserWithoutEmail = Omit<User, 'email'>;
+export type UserWithoutEmail = Omit<User, "email">;
 
 export interface JobCardProps {
-_id: string;
+  _id: string;
   jobName: string;
   method: string;
   url: string;
   nextRunAt: string;
   lastRunAt: string;
   disabled?: boolean;
-  handleDeleteJob: (id:string) => void;
-  handleChangeStatus: (id:string, status: boolean) => void;
-  timeFormat24?: boolean
+  handleDeleteJob: (id: string) => void;
+  handleChangeStatus: (id: string, status: boolean) => void;
+  timeFormat24?: boolean;
 }
 
 export interface InsightLog {
   _id: number;
   counts: {
-    status: 'success' | 'failed';
+    status: "success" | "failed";
     count: number;
   }[];
 }

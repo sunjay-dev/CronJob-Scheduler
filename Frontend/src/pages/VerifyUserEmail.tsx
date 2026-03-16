@@ -55,7 +55,10 @@ export default function VerifyEmail() {
         setTimeout(() => navigate("/jobs"), 1000);
       })
       .catch((err) => {
-        setMessage({ type: "error", text: err.message || "Something went wrong. Please try again." });
+        setMessage({
+          type: "error",
+          text: err.message || "Something went wrong. Please try again.",
+        });
       })
       .finally(() => {
         setOtp("");
@@ -105,7 +108,10 @@ export default function VerifyEmail() {
         setResendTimer(data.wait || 60);
       })
       .catch((err) => {
-        setMessage({ type: "error", text: err.message || "Something went wrong. Please try again." });
+        setMessage({
+          type: "error",
+          text: err.message || "Something went wrong. Please try again.",
+        });
       })
       .finally(() => setIsLoading(false));
   };

@@ -1,7 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { validate, validateParams } from "../../src/middlewares/validate.middlewares.js";
 import { z } from "zod";
 import { Request, Response, NextFunction } from "express";
+import { createMockReq, createMockRes, createNext } from "../__helpers__/expressMocks.js";
 
 describe("Validate Middlewares", () => {
   let mockReq: Partial<Request>;
@@ -9,15 +10,9 @@ describe("Validate Middlewares", () => {
   let nextFunction: NextFunction;
 
   beforeEach(() => {
-    mockReq = {
-      body: {},
-      params: {},
-    };
-    mockRes = {
-      status: vi.fn().mockReturnThis(),
-      json: vi.fn(),
-    };
-    nextFunction = vi.fn();
+    mockReq = createMockReq();
+    mockRes = createMockRes();
+    nextFunction = createNext();
   });
 
   describe("validate body", () => {
@@ -42,9 +37,7 @@ describe("Validate Middlewares", () => {
       middleware(mockReq as Request, mockRes as Response, nextFunction);
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith(
-        expect.objectContaining({ message: expect.any(String) })
-      );
+      expect(mockRes.json).toHaveBeenCalledWith(expect.objectContaining({ message: expect.any(String) }));
       expect(nextFunction).not.toHaveBeenCalled();
     });
   });
@@ -70,9 +63,7 @@ describe("Validate Middlewares", () => {
       middleware(mockReq as Request, mockRes as Response, nextFunction);
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith(
-        expect.objectContaining({ message: expect.any(String) })
-      );
+      expect(mockRes.json).toHaveBeenCalledWith(expect.objectContaining({ message: expect.any(String) }));
       expect(nextFunction).not.toHaveBeenCalled();
     });
   });

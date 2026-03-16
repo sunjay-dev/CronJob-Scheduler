@@ -1,7 +1,8 @@
 import { vi } from "vitest";
 import type { Request, Response, NextFunction } from "express";
 
-export const createMockReq = (overrides?: Partial<Request>): Partial<Request> => ({
+export function createMockReq(overrides?: Partial<Request>): Partial<Request> {
+  return {
     body: {},
     params: {},
     query: {},
@@ -10,14 +11,17 @@ export const createMockReq = (overrides?: Partial<Request>): Partial<Request> =>
     method: "GET",
     originalUrl: "/test-url",
     ...overrides,
-});
+  };
+}
 
-export const createMockRes = (): Partial<Response> => {
-    const res: Partial<Response> = {};
-    res.status = vi.fn().mockReturnThis();
-    res.json = vi.fn().mockReturnThis();
-    res.send = vi.fn().mockReturnThis();
-    return res;
-};
+export function createMockRes(): Partial<Response> {
+  const res: Partial<Response> = {};
+  res.status = vi.fn().mockReturnThis();
+  res.json = vi.fn().mockReturnThis();
+  res.send = vi.fn().mockReturnThis();
+  return res;
+}
 
-export const createNext = (): NextFunction => vi.fn();
+export function createNext(): NextFunction {
+  return vi.fn();
+}

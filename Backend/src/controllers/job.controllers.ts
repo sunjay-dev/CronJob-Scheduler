@@ -23,7 +23,16 @@ export const handleNewCronJobs = async (req: Request, res: Response, next: NextF
 
   const headersObj = Array.isArray(headers) ? getHeaderObj(headers) : {};
 
-  let payload = { name, url, method, headers: headersObj, userId, errorCount: 0, timeout, email } as any;
+  let payload = {
+    name,
+    url,
+    method,
+    headers: headersObj,
+    userId,
+    errorCount: 0,
+    timeout,
+    email,
+  } as any;
 
   if (body && body.trim() !== "") {
     const allowedMethods = ["POST", "PUT", "PATCH"];
@@ -95,7 +104,10 @@ export const handleJobEdit = async (req: Request, res: Response, next: NextFunct
   payload.body = body.trim();
 
   try {
-    const jobs = await agenda.jobs({ "data.userId": userId, _id: new mongoose.Types.ObjectId(jobId) });
+    const jobs = await agenda.jobs({
+      "data.userId": userId,
+      _id: new mongoose.Types.ObjectId(jobId),
+    });
 
     if (jobs.length === 0) {
       return next(new NotFoundError("No Job found"));
@@ -139,7 +151,10 @@ export const handleUserJobById = async (req: Request, res: Response, next: NextF
   const { userId } = req.jwtUser;
 
   try {
-    const jobs = await agenda.jobs({ "data.userId": userId, _id: new mongoose.Types.ObjectId(jobId) });
+    const jobs = await agenda.jobs({
+      "data.userId": userId,
+      _id: new mongoose.Types.ObjectId(jobId),
+    });
     res.status(200).json(jobs);
   } catch (error) {
     next(new InternalServerError("Error while fetching user job by Id"));
@@ -151,7 +166,10 @@ export const handleJobStatus = async (req: Request, res: Response, next: NextFun
   const { jobId, status } = req.body;
 
   try {
-    const jobs = await agenda.jobs({ "data.userId": userId, _id: new mongoose.Types.ObjectId(jobId as string) });
+    const jobs = await agenda.jobs({
+      "data.userId": userId,
+      _id: new mongoose.Types.ObjectId(jobId as string),
+    });
 
     if (jobs.length === 0) {
       return next(new NotFoundError("No Job found"));
@@ -174,7 +192,10 @@ export const handleDeleteJob = async (req: Request, res: Response, next: NextFun
   const { userId } = req.jwtUser;
 
   try {
-    const result = await agenda.cancel({ _id: new mongoose.Types.ObjectId(jobId), "data.userId": userId });
+    const result = await agenda.cancel({
+      _id: new mongoose.Types.ObjectId(jobId),
+      "data.userId": userId,
+    });
 
     if (result === 0) {
       return next(new NotFoundError("No Job found"));
@@ -197,7 +218,10 @@ export const handleRunJobNow = async (req: Request, res: Response, next: NextFun
   const { jobId } = req.body;
 
   try {
-    const jobs = await agenda.jobs({ _id: new mongoose.Types.ObjectId(jobId as string), "data.userId": userId });
+    const jobs = await agenda.jobs({
+      _id: new mongoose.Types.ObjectId(jobId as string),
+      "data.userId": userId,
+    });
 
     if (jobs.length === 0) {
       return next(new NotFoundError("Job not found"));

@@ -9,7 +9,7 @@ export function validate(schema: z.ZodObject<any, any>) {
     } catch (error) {
       if (error instanceof ZodError) {
         const isDefaultError = error.issues[0].message.startsWith("Invalid input");
-        const message = isDefaultError? `${error.issues[0].path}: ${error.issues[0].message}`: error.issues[0].message;
+        const message = isDefaultError ? `${error.issues[0].path}: ${error.issues[0].message}` : error.issues[0].message;
         res.status(400).json({ message });
         return;
       }
@@ -28,8 +28,8 @@ export function validateParams(schema: z.ZodTypeAny) {
     } catch (error) {
       if (error instanceof ZodError) {
         const isDefaultError = error.issues[0].message.startsWith("Invalid input");
-        const message = isDefaultError? `${error.issues[0].path}: ${error.issues[0].message}`: error.issues[0].message;
-        
+        const message = isDefaultError ? `${error.issues[0].path}: ${error.issues[0].message}` : error.issues[0].message;
+
         res.status(400).json({ message });
         return;
       }

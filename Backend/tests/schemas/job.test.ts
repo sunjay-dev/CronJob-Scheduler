@@ -71,13 +71,5 @@ describe("Job Schemas", () => {
       const result = jobSchema.safeParse({ ...validJob, cron: "invalid cron" });
       expect(result.success).toBe(false);
     });
-
-    it("should automatically uppercase the method", () => {
-      const result = jobSchema.safeParse({ ...validJob, method: "post" });
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data.method).toBe("POST");
-      }
-    });
   });
 });

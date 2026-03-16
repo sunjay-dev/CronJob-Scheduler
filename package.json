@@ -1,0 +1,15 @@
+{
+  "name": "cronjob-scheduler",
+  "version": "1.0.0",
+  "description": "An Agenda.js-powered cron job scheduler to automate API/webhook calls. Built with express, Agenda.js, and React.",
+  "scripts": {
+    "format": "prettier . --write"
+  },
+  "author": "https://github.com/sunjay-dev/",
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@10.11.0",
+  "devDependencies": {
+    "prettier": "^3.8.1"
+  }
+}

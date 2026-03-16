@@ -1,6 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
-import type { User } from '../types';
+import { createSlice } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import type { User } from "../types";
 
 interface AuthState {
   user: User | null;
@@ -9,14 +9,14 @@ interface AuthState {
 
 const initialState: AuthState = {
   user: null,
-  checked: false
+  checked: false,
 };
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
-    setAuth(state, action: PayloadAction<{ user: NonNullable<AuthState['user']> }>) {
+    setAuth(state, action: PayloadAction<{ user: NonNullable<AuthState["user"]> }>) {
       state.user = action.payload.user;
       state.checked = true;
     },

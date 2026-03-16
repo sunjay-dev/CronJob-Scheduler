@@ -170,7 +170,11 @@ export const handleOtpResend = async (req: Request, res: Response, next: NextFun
     }
 
     if (otpResendLock > 0) {
-      return next(new TooManyRequestsError(`Too many requests. Please wait before requesting again.`, { wait: otpResendLock }));
+      return next(
+        new TooManyRequestsError(`Too many requests. Please wait before requesting again.`, {
+          wait: otpResendLock,
+        }),
+      );
     }
 
     const user = await userModel.findById(userId).select("verified name email ").lean();
@@ -259,7 +263,11 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
   try {
     const redisOtp = await redis.get(`otp:${email}`);
     if (redisOtp) {
-      return next(new TooManyRequestsError("You can request a reset link only once per hour.", { email: email }));
+      return next(
+        new TooManyRequestsError("You can request a reset link only once per hour.", {
+          email: email,
+        }),
+      );
     }
 
     const user = await userModel.findOne({ email }).select("authProvider name email").lean();
@@ -267,7 +275,11 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
     if (!user) return next(new NotFoundError("No user found with this email address.", { email: email }));
 
     if (user.authProvider === "google")
-      return next(new ForbiddenError("This account is connected with Google. Please sign in using Google.", { email: email }));
+      return next(
+        new ForbiddenError("This account is connected with Google. Please sign in using Google.", {
+          email: email,
+        }),
+      );
 
     const token = crypto.randomBytes(32).toString("hex");
 

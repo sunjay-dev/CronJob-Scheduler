@@ -44,7 +44,10 @@ export default function CreateJob() {
   const onError = (errors: FieldErrors<JobDetails>) => {
     if (errors.name || errors.url) setTab("common");
     if (Object.keys(errors).length > 0)
-      setMessage({ type: "error", text: (Object.values(errors)[0]?.message as string) || "Please fix the errors in the form." });
+      setMessage({
+        type: "error",
+        text: (Object.values(errors)[0]?.message as string) || "Please fix the errors in the form.",
+      });
     else setMessage(null);
   };
 

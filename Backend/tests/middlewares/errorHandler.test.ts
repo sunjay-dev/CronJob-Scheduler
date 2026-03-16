@@ -1,21 +1,16 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import errorHandler from "../../src/middlewares/errorHandler.middlewares.js";
 import { AppError } from "../../src/utils/appError.utils.js";
 import { Request, Response } from "express";
+import { createMockReq, createMockRes } from "../__helpers__/expressMocks.js";
 
 describe("errorHandler Middleware", () => {
   let mockReq: Partial<Request>;
   let mockRes: Partial<Response>;
 
   beforeEach(() => {
-    mockReq = {
-      method: "GET",
-      originalUrl: "/test-url",
-    };
-    mockRes = {
-      status: vi.fn().mockReturnThis(),
-      json: vi.fn(),
-    };
+    mockReq = createMockReq();
+    mockRes = createMockRes();
   });
 
   it("should handle an AppError correctly", () => {
