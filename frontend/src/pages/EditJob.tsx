@@ -18,7 +18,10 @@ export default function EditJob() {
   const user = useAppSelector((state) => state.auth.user);
   const [confirmEdit, setConfirmEdit] = useState(false);
   const [confirmAddJsonHeader, setConfirmAddJsonHeader] = useState(false);
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   const {
     register,
@@ -105,7 +108,9 @@ export default function EditJob() {
       try {
         const parsed = JSON.parse(job.body);
         if (typeof parsed === "object" && parsed !== null) {
-          const hasJsonHeader = job.headers?.some((h) => h.key?.toLowerCase() === "content-type" && h.value?.toLowerCase() === "application/json");
+          const hasJsonHeader = job.headers?.some(
+            (h) => h.key?.toLowerCase() === "content-type" && h.value?.toLowerCase() === "application/json",
+          );
           if (!hasJsonHeader) {
             setConfirmAddJsonHeader(true);
             return;
@@ -177,7 +182,10 @@ export default function EditJob() {
         </button>
       </div>
 
-      <form onSubmit={handleSubmit(handleJobEdit, onError)} className="bg-white sm:px-6 py-6 px-4 rounded-xl shadow mb-4">
+      <form
+        onSubmit={handleSubmit(handleJobEdit, onError)}
+        className="bg-white sm:px-6 py-6 px-4 rounded-xl shadow mb-4"
+      >
         {message && (
           <div className="w-full">
             <Popup type={message.type} message={message.text} />
@@ -185,7 +193,13 @@ export default function EditJob() {
         )}
         <fieldset disabled={isSubmitting} className="space-y-5">
           {tab === "common" ? (
-            <Common register={register} control={control} watch={watch} errors={errors} emailNotifications={user?.emailNotifications} />
+            <Common
+              register={register}
+              control={control}
+              watch={watch}
+              errors={errors}
+              emailNotifications={user?.emailNotifications}
+            />
           ) : (
             <Advanced register={register} control={control} watch={watch} setValue={setValue} />
           )}

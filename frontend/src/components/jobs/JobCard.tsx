@@ -6,7 +6,18 @@ import type { JobCardProps } from "../../types";
 import ActionMenu from "./ActionMenu";
 
 export default function JobCard(job: JobCardProps) {
-  const { _id, jobName, method, url, nextRunAt, lastRunAt, disabled = false, handleDeleteJob, handleChangeStatus, timeFormat24 } = job;
+  const {
+    _id,
+    jobName,
+    method,
+    url,
+    nextRunAt,
+    lastRunAt,
+    disabled = false,
+    handleDeleteJob,
+    handleChangeStatus,
+    timeFormat24,
+  } = job;
 
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -61,7 +72,9 @@ export default function JobCard(job: JobCardProps) {
         )}
 
         <div className="text-center">
-          <span className={`text-xs px-2 py-0.5 rounded-full ${disabled ? "text-red-700 bg-red-100" : "text-green-700 bg-green-100"}`}>
+          <span
+            className={`text-xs px-2 py-0.5 rounded-full ${disabled ? "text-red-700 bg-red-100" : "text-green-700 bg-green-100"}`}
+          >
             {disabled ? "Disabled" : "Enabled"}
           </span>
         </div>
@@ -110,7 +123,9 @@ export default function JobCard(job: JobCardProps) {
           <h2 className="font-semibold text-gray-800 truncate">{jobName}</h2>
 
           <div className="flex items-center gap-3 relative">
-            <span className={`text-xs px-2 py-0.5 rounded-full ${disabled ? "text-red-700 bg-red-100" : "text-green-700 bg-green-100"}`}>
+            <span
+              className={`text-xs px-2 py-0.5 rounded-full ${disabled ? "text-red-700 bg-red-100" : "text-green-700 bg-green-100"}`}
+            >
               {disabled ? "Disabled" : "Enabled"}
             </span>
             <button

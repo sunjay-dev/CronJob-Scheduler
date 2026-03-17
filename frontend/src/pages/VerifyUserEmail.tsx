@@ -8,7 +8,10 @@ export default function VerifyEmail() {
   const navigate = useNavigate();
   const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
   const [resendTimer, setResendTimer] = useState(0);
 
   useEffect(() => {

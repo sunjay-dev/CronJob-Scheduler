@@ -9,7 +9,12 @@ export default function Layout() {
 
   return (
     <div className="bg-gray-50 h-dvh overflow-x-hidden font-[Inter] selection:bg-purple-500 selection:text-white">
-      <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
+      <Header
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+        mobileMenuOpen={mobileMenuOpen}
+        setMobileMenuOpen={setMobileMenuOpen}
+      />
 
       <Sidebar collapsed={sidebarOpen} />
 

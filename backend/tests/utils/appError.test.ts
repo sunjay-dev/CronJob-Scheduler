@@ -25,7 +25,9 @@ describe("AppError and Subclasses", () => {
     expect(error.message.length).toBeGreaterThan(0);
     expect(error.statusCode).toBe(400);
 
-    const customError = new BadRequestError("Custom Bad Request", { field: "email" });
+    const customError = new BadRequestError("Custom Bad Request", {
+      field: "email",
+    });
     expect(customError.message).toBe("Custom Bad Request");
     expect(customError.details).toEqual({ field: "email" });
   });

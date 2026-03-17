@@ -10,7 +10,9 @@ interface EmailProps {
 export const queueEmail = async ({ name, email, template, data }: EmailProps): Promise<void> => {
   if ((process.env.ENABLE_EMAIL_SERVICE as string) !== "true") {
     logger.info({ message: "Email sent to: ", name, email, template, data });
-    logger.info({ message: "Email service is disabled. Skipping actual email sending." });
+    logger.info({
+      message: "Email service is disabled. Skipping actual email sending.",
+    });
     return;
   }
 

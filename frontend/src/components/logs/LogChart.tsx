@@ -63,7 +63,12 @@ function LogChart({ logs }: { logs: InsightLog[] }) {
       maintainAspectRatio: false,
       plugins: { legend: { position: "top" as const } },
       scales: {
-        y: { beginAtZero: true, precision: 0, ticks: { stepSize: 1 }, suggestedMax: yMax },
+        y: {
+          beginAtZero: true,
+          precision: 0,
+          ticks: { stepSize: 1 },
+          suggestedMax: yMax,
+        },
       },
     }),
     [yMax],

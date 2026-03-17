@@ -38,7 +38,10 @@ export default function Header({ home }: { home: boolean }) {
           </nav>
 
           {/* Mobile Hamburger */}
-          <button className="md:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-200" onClick={() => setIsOpen(!isOpen)}>
+          <button
+            className="md:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-200"
+            onClick={() => setIsOpen(!isOpen)}
+          >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
@@ -56,7 +59,11 @@ export default function Header({ home }: { home: boolean }) {
                 </a>
               </>
             ) : (
-              <Link to="/" className="block text-gray-700 hover:text-purple-500 transition-colors font-medium" onClick={() => setIsOpen(false)}>
+              <Link
+                to="/"
+                className="block text-gray-700 hover:text-purple-500 transition-colors font-medium"
+                onClick={() => setIsOpen(false)}
+              >
                 Home
               </Link>
             )}

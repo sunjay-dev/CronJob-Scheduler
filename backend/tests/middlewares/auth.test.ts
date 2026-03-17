@@ -22,7 +22,9 @@ describe("Auth Middlewares", () => {
       restrictUserLogin(mockReq as Request, mockRes as Response, nextFunction);
 
       expect(mockRes.status).toHaveBeenCalledWith(401);
-      expect(mockRes.json).toHaveBeenCalledWith({ message: expect.any(String) });
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: expect.any(String),
+      });
       expect(nextFunction).not.toHaveBeenCalled();
     });
 
@@ -47,7 +49,9 @@ describe("Auth Middlewares", () => {
       restrictUserLogin(mockReq as Request, mockRes as Response, nextFunction);
 
       expect(mockRes.status).toHaveBeenCalledWith(401);
-      expect(mockRes.json).toHaveBeenCalledWith({ message: expect.any(String) });
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: expect.any(String),
+      });
       expect(nextFunction).not.toHaveBeenCalled();
     });
   });
@@ -82,7 +86,9 @@ describe("Auth Middlewares", () => {
       prometheusAuth(mockReq as Request, mockRes as Response, nextFunction);
 
       expect(mockRes.status).toHaveBeenCalledWith(401);
-      expect(mockRes.json).toHaveBeenCalledWith({ message: expect.any(String) });
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: expect.any(String),
+      });
       expect(nextFunction).not.toHaveBeenCalled();
     });
 
@@ -92,12 +98,16 @@ describe("Auth Middlewares", () => {
       prometheusAuth(mockReq as Request, mockRes as Response, nextFunction);
 
       expect(mockRes.status).toHaveBeenCalledWith(403);
-      expect(mockRes.json).toHaveBeenCalledWith({ message: expect.any(String) });
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: expect.any(String),
+      });
       expect(nextFunction).not.toHaveBeenCalled();
     });
 
     it("should call next if token matches PROMETHEUS_SECRET", () => {
-      mockReq.headers = { authorization: `Bearer ${process.env.PROMETHEUS_SECRET}` };
+      mockReq.headers = {
+        authorization: `Bearer ${process.env.PROMETHEUS_SECRET}`,
+      };
 
       prometheusAuth(mockReq as Request, mockRes as Response, nextFunction);
 

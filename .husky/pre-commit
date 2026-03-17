@@ -1,6 +1,6 @@
-pnpm exec lint-staged
-pnpm -C backend build
-pnpm -C email-service build
-pnpm -C frontend build
-pnpm -C job-runner build
-pnpm -C backend test
+pnpm lint-staged
+pnpm --dir backend build
+pnpm --dir backend test
+pnpm --dir frontend build
+pnpm --dir job-runner build
+pnpm --dir email-service build

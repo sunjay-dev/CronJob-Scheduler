@@ -4,7 +4,7 @@
   "description": "An Agenda.js-powered cron job scheduler to automate API/webhook calls. Built with express, Agenda.js, and React.",
   "lint-staged": {
     "{backend,job-runner,email-service}/**/*.{js,ts}": "eslint --fix",
-    "frontend/**/*.{js,jsx,ts,tsx}": "pnpm -C frontend eslint --fix",
+    "frontend/**/*.{js,jsx,ts,tsx}": "pnpm --filter ./frontend eslint --fix",
     "*.{js,jsx,ts,tsx,md,css,json,yml,yaml}": "prettier --write"
   },
   "scripts": {

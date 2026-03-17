@@ -26,7 +26,11 @@ http
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
         res.statusCode = 401;
         res.setHeader("Content-Type", "application/json");
-        res.end(JSON.stringify({ message: "Missing or invalid Authorization header" }));
+        res.end(
+          JSON.stringify({
+            message: "Missing or invalid Authorization header",
+          }),
+        );
         return;
       }
 

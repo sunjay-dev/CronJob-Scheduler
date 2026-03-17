@@ -1,22 +1,31 @@
 import { useEffect, useState } from "react";
-import { LogChart, LogTable } from "../components";
+import { LogChart, LogTable, LogFilters } from "../components";
 import type { InsightLog, UserLogInterface } from "../types";
 
 export default function Logs() {
-  const limit = 10;
+  const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [logs, setLogs] = useState<UserLogInterface[]>([]);
   const [logsInsights, setLogsInsights] = useState<InsightLog[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState("");
+  const [methodFilter, setMethodFilter] = useState("");
 
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval> | undefined;
 
-    const fetchLogs = () => {
-      setIsLoading(true);
+    const fetchLogs = (shouldLoad = true) => {
+      if (shouldLoad) setIsLoading(true);
 
-      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/logs?page=${page}&limit=${limit}`, {
+      const queryParams = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+      });
+      if (statusFilter) queryParams.append("status", statusFilter);
+      if (methodFilter) queryParams.append("method", methodFilter);
+
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/logs?${queryParams.toString()}`, {
         credentials: "include",
       })
         .then(async (res) => {
@@ -42,8 +51,8 @@ export default function Logs() {
       const now = new Date().getSeconds();
       const delay = (60 - now) * 1000 + 5000;
       TimeOutId = setTimeout(() => {
-        fetchLogs();
-        intervalId = setInterval(fetchLogs, 60_000);
+        fetchLogs(false);
+        intervalId = setInterval(() => fetchLogs(false), 60_000);
       }, delay);
     }
 
@@ -51,7 +60,7 @@ export default function Logs() {
       clearTimeout(TimeOutId);
       if (intervalId) clearInterval(intervalId);
     };
-  }, [page]);
+  }, [page, statusFilter, methodFilter, limit]);
 
   useEffect(() => {
     const fetchInsights = () => {
@@ -76,12 +85,28 @@ export default function Logs() {
 
   return (
     <>
-      <h1 className="text-3xl font-normal mb-6 text-purple-500">Logs</h1>
+      <h1 className="text-3xl font-normal text-purple-500 mb-6">Logs</h1>
 
       <LogChart logs={logsInsights} />
 
+      <LogFilters
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
+        methodFilter={methodFilter}
+        setMethodFilter={setMethodFilter}
+        setPage={setPage}
+      />
+
       <div className="bg-white px-4 py-6 sm:px-6 mb-6 rounded-xl shadow">
-        <LogTable logs={logs} isLoading={isLoading} page={page} setPage={setPage} totalPages={totalPages} />
+        <LogTable
+          logs={logs}
+          isLoading={isLoading}
+          page={page}
+          setPage={setPage}
+          totalPages={totalPages}
+          limit={limit}
+          setLimit={setLimit}
+        />
       </div>
     </>
   );

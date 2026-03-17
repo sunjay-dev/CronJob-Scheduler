@@ -18,7 +18,8 @@ export default function Hero() {
             </h1>
 
             <p className="text-lg sm:text-xl text-gray-500 leading-relaxed max-w-2xl mx-auto">
-              The simplest way to schedule, monitor, and manage recurring tasks. Built for developers who value reliability and simplicity.
+              The simplest way to schedule, monitor, and manage recurring tasks. Built for developers who value
+              reliability and simplicity.
             </p>
           </div>
 

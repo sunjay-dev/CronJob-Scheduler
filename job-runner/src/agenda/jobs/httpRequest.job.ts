@@ -3,7 +3,7 @@ import logsModel from "../../models/logs.models.js";
 import userModel from "../../models/user.models.js";
 import { queueEmail } from "../../utils/qstashEmail.utils.js";
 
-import got, { HTTPError, RequestError, TimeoutError } from "got";
+import got, { HTTPError, OptionsOfBufferResponseBody, RequestError, TimeoutError } from "got";
 import type { Job } from "agenda";
 
 interface HttpRequestJobData {
@@ -28,25 +28,36 @@ agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJob
 
   const jobId = data.jobId || _id.toString();
 
-  try {
-    const response = await got(url, {
-      method,
-      headers: {
-        "user-agent": "CronJon/1.0 (+https://www.cronjon.site)",
-        ...headers,
-      },
-      body: body || undefined,
-      throwHttpErrors: true,
-      responseType: "buffer",
-      resolveBodyOnly: false,
-      decompress: false,
-      retry: { limit: 0 },
-      timeout: {
-        request: 1000 * timeout,
-      },
-    });
+  const methodsWithBody: OptionsOfBufferResponseBody["method"][] = ["POST", "PUT", "PATCH"];
+  const requestOptions: OptionsOfBufferResponseBody = {
+    method,
+    headers: {
+      "user-agent": "CronJon/1.0 (+https://www.cronjon.site)",
+      ...headers,
+    },
+    throwHttpErrors: true,
+    responseType: "buffer",
+    decompress: false,
+    retry: { limit: 0 },
+    timeout: { request: 1000 * timeout },
+  };
 
-    const { dns = 0, tcp = 0, tls = 0, request: send = 0, firstByte = 0, download = 0, total = 0 } = response?.timings?.phases || {};
+  if (body && methodsWithBody.includes(method)) {
+    requestOptions.body = body;
+  }
+
+  try {
+    const response = await got(url, requestOptions);
+
+    const {
+      dns = 0,
+      tcp = 0,
+      tls = 0,
+      request: send = 0,
+      firstByte = 0,
+      download = 0,
+      total = 0,
+    } = response?.timings?.phases || {};
 
     await logsModel.create({
       name,
@@ -81,8 +92,12 @@ agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJob
     if (err instanceof HTTPError) {
       statusCode = err.response.statusCode;
       timings = err.response.timings?.phases ?? {};
-      errorMessage = err.message;
-    } else if (err instanceof RequestError || err instanceof TimeoutError || err instanceof Error) {
+      errorMessage = err.response.statusMessage
+        ? `${err.response.statusCode} ${err.response.statusMessage}`
+        : err.message;
+    } else if (err instanceof TimeoutError) {
+      errorMessage = "Request timed out";
+    } else if (err instanceof RequestError || err instanceof Error) {
       errorMessage = err.message;
     } else {
       console.error("Unknown error type in http-request job:", err);

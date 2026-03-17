@@ -43,7 +43,12 @@ export default function Headers({ register, control }: Props) {
                   type="text"
                 />
 
-                <button title="delete" type="button" onClick={() => remove(index)} className="flex items-center justify-center active:scale-[0.98]">
+                <button
+                  title="delete"
+                  type="button"
+                  onClick={() => remove(index)}
+                  className="flex items-center justify-center active:scale-[0.98]"
+                >
                   <Trash2 className="w-5 h-5" />
                 </button>
               </div>

@@ -7,7 +7,10 @@ export default function Signup() {
   const navigate = useNavigate();
   const [details, setDetails] = useState({ name: "", email: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

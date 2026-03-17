@@ -27,7 +27,9 @@ describe("JWT Utilities", () => {
 
       const token = signToken(payload, expiresIn);
 
-      expect(jwt.sign).toHaveBeenCalledWith(payload, process.env.JWT_SECRET, { expiresIn });
+      expect(jwt.sign).toHaveBeenCalledWith(payload, process.env.JWT_SECRET, {
+        expiresIn,
+      });
       expect(token).toBe(mockedToken);
     });
   });

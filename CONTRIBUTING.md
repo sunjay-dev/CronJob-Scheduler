@@ -1,8 +1,10 @@
 # Contributing to CronJob-Scheduler
 
-First off, thank you for considering contributing to CronJob-Scheduler! It's people like you that make this tool better for everyone.
+First off, thank you for considering contributing to CronJob-Scheduler! It's people like you that make this tool better
+for everyone.
 
-When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owner of this repository before making a change.
+When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other
+method with the owner of this repository before making a change.
 
 ---
 
@@ -65,8 +67,10 @@ The project is structured as a monorepo with separate services.
 ## Pull Request Process
 
 1. **Setup & Cleanliness**: Ensure any install or build dependencies are removed before finishing a build.
-2. **Documentation**: Update the `README.md` with details of changes to the interface, including new environment variables, exposed ports, or configuration changes.
-3. **Approval**: You may request a review for your Pull Request, and once approved, it will be merged into the main branch.
+2. **Documentation**: Update the `README.md` with details of changes to the interface, including new environment
+   variables, exposed ports, or configuration changes.
+3. **Approval**: You may request a review for your Pull Request, and once approved, it will be merged into the main
+   branch.
 
 ---
 
@@ -74,7 +78,9 @@ The project is structured as a monorepo with separate services.
 
 ### Our Pledge
 
-We as contributors and the maintainer pledge to making participation in our project and our community a harassment-free experience for everyone, regardless of age, body size, disability, ethnicity, gender identity and expression, level of experience, nationality, personal appearance, race, religion, or sexual identity and orientation.
+We as contributors and the maintainer pledge to making participation in our project and our community a harassment-free
+experience for everyone, regardless of age, body size, disability, ethnicity, gender identity and expression, level of
+experience, nationality, personal appearance, race, religion, or sexual identity and orientation.
 
 ### Our Standards
 
@@ -88,7 +94,8 @@ Examples of behavior that contributes to creating a positive environment include
 
 ### Enforcement
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by contacting the project lead at `hello@sunjay.xyz`. All complaints will be reviewed and investigated.
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by contacting the project lead at
+`hello@sunjay.xyz`. All complaints will be reviewed and investigated.
 
 ---
 
@@ -96,4 +103,5 @@ Instances of abusive, harassing, or otherwise unacceptable behavior may be repor
 
 If you have any questions, feel free to open an issue or reach out to the project owner.
 
-_This Code of Conduct is adapted from the [Contributor Covenant](http://contributor-covenant.org/version/1/4), version 1.4._
+_This Code of Conduct is adapted from the [Contributor Covenant](http://contributor-covenant.org/version/1/4), version
+1.4._

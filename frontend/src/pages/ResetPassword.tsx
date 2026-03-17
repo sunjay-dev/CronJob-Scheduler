@@ -16,7 +16,10 @@ export default function ResetPassword() {
   });
 
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   useEffect(() => {
     const result = tokenSchema.safeParse({ token });
@@ -67,7 +70,10 @@ export default function ResetPassword() {
         setTimeout(() => navigate("/dashboard"), 2000);
       })
       .catch((err) => {
-        setMessage({ type: "error", text: err.message || "Failed to reset password." });
+        setMessage({
+          type: "error",
+          text: err.message || "Failed to reset password.",
+        });
       })
       .finally(() => {
         setIsLoading(false);
@@ -106,12 +112,22 @@ export default function ResetPassword() {
                       required
                       value={details.password}
                       placeholder="Enter password"
-                      onChange={(e) => setDetails((prev) => ({ ...prev, password: e.target.value }))}
+                      onChange={(e) =>
+                        setDetails((prev) => ({
+                          ...prev,
+                          password: e.target.value,
+                        }))
+                      }
                       className="w-full border border-gray-300 rounded-md px-3 py-1.5 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
                     />
                     <button
                       type="button"
-                      onClick={() => setDetails((prev) => ({ ...prev, showPassword: !prev.showPassword }))}
+                      onClick={() =>
+                        setDetails((prev) => ({
+                          ...prev,
+                          showPassword: !prev.showPassword,
+                        }))
+                      }
                       className="absolute right-3 text-gray-500 hover:text-gray-700"
                     >
                       {details.showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -131,12 +147,22 @@ export default function ResetPassword() {
                       required
                       placeholder="Re-enter your password"
                       value={details.confirm}
-                      onChange={(e) => setDetails((prev) => ({ ...prev, confirm: e.target.value }))}
+                      onChange={(e) =>
+                        setDetails((prev) => ({
+                          ...prev,
+                          confirm: e.target.value,
+                        }))
+                      }
                       className="w-full border border-gray-300 rounded-md px-3 py-1.5 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
                     />
                     <button
                       type="button"
-                      onClick={() => setDetails((prev) => ({ ...prev, showConfirm: !prev.showConfirm }))}
+                      onClick={() =>
+                        setDetails((prev) => ({
+                          ...prev,
+                          showConfirm: !prev.showConfirm,
+                        }))
+                      }
                       className="absolute right-3 text-gray-500 hover:text-gray-700"
                     >
                       {details.showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}

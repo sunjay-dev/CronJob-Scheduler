@@ -9,11 +9,16 @@ export const handleUserLogs = async (req: Request, res: Response, next: NextFunc
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 10;
   const skip = (page - 1) * limit;
+  const { status, method } = req.query;
 
   try {
+    const query: { userId: string; status?: string; method?: string } = { userId };
+    if (status) query.status = status as string;
+    if (method) query.method = (method as string).toUpperCase();
+
     const [logs, total] = await Promise.all([
-      logsModels.find({ userId }).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
-      logsModels.countDocuments({ userId }),
+      logsModels.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
+      logsModels.countDocuments(query),
     ]);
 
     res.status(200).json({
@@ -34,11 +39,16 @@ export const handleJobLogs = async (req: Request, res: Response, next: NextFunct
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 10;
   const skip = (page - 1) * limit;
+  const { status, method } = req.query;
 
   try {
+    const query: { userId: string; jobId: string; status?: string; method?: string } = { userId, jobId };
+    if (status) query.status = status as string;
+    if (method) query.method = (method as string).toUpperCase();
+
     const [logs, total] = await Promise.all([
-      logsModels.find({ userId, jobId }).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
-      logsModels.countDocuments({ userId, jobId }),
+      logsModels.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
+      logsModels.countDocuments(query),
     ]);
     res.status(200).json({
       logs,
@@ -48,24 +58,6 @@ export const handleJobLogs = async (req: Request, res: Response, next: NextFunct
     });
   } catch {
     next(new InternalServerError("Error while fetching user logs"));
-  }
-};
-
-export const handleFailedLogs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const { jobId } = req.params;
-  const { userId } = req.jwtUser;
-
-  try {
-    const logs = await logsModels
-      .find({
-        jobId: jobId,
-        userId: userId,
-        status: "failed",
-      })
-      .lean();
-    res.status(200).json(logs);
-  } catch {
-    next(new InternalServerError("Error while fetching failed logs"));
   }
 };
 

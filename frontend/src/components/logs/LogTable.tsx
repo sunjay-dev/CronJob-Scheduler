@@ -13,9 +13,20 @@ interface LogTableProps {
   setPage: Dispatch<SetStateAction<number>>;
   totalPages: number;
   emptyMessage?: string;
+  limit?: number;
+  setLimit?: Dispatch<SetStateAction<number>>;
 }
 
-export default function LogTable({ logs, isLoading, page, setPage, totalPages, emptyMessage = "No logs found." }: LogTableProps) {
+export default function LogTable({
+  logs,
+  isLoading,
+  page,
+  setPage,
+  totalPages,
+  emptyMessage = "No logs found.",
+  limit,
+  setLimit,
+}: LogTableProps) {
   const user = useAppSelector((state) => state.auth.user);
 
   return (
@@ -65,7 +76,7 @@ export default function LogTable({ logs, isLoading, page, setPage, totalPages, e
               </tbody>
             </table>
           </div>
-          <Pagination page={page} setPage={setPage} totalPages={totalPages} />
+          <Pagination page={page} setPage={setPage} totalPages={totalPages} limit={limit} setLimit={setLimit} />
         </>
       )}
     </>

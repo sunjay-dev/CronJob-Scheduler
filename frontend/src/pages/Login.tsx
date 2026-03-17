@@ -8,9 +8,16 @@ import { Helmet } from "react-helmet-async";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [details, setDetails] = useState({ email: "", password: "", rememberMe: false });
+  const [details, setDetails] = useState({
+    email: "",
+    password: "",
+    rememberMe: false,
+  });
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
   const [lastUsed, setLastUsed] = useState("");
   const dispatch = useAppDispatch();
 
@@ -81,7 +88,10 @@ export default function Login() {
     <>
       <Helmet>
         <title>CronJob Scheduler</title>
-        <meta name="description" content="Login to CronJob Scheduler to create, manage, and monitor your cron jobs efficiently." />
+        <meta
+          name="description"
+          content="Login to CronJob Scheduler to create, manage, and monitor your cron jobs efficiently."
+        />
       </Helmet>
       {isLoading && <Loader />}
       <div className="font-[Inter] selection:bg-purple-500 selection:text-white h-dvh w-dvw grid grid-cols-1 md:grid-cols-2 overflow-x-hidden">
@@ -116,7 +126,12 @@ export default function Login() {
                 <div className="flex items-center justify-between text-sm">
                   <label className="flex items-center gap-2">
                     <input
-                      onChange={(e) => setDetails((pre) => ({ ...pre, rememberMe: e.target.checked }))}
+                      onChange={(e) =>
+                        setDetails((pre) => ({
+                          ...pre,
+                          rememberMe: e.target.checked,
+                        }))
+                      }
                       className="cursor-pointer accent-purple-500"
                       type="checkbox"
                       name="remember"

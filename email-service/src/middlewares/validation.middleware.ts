@@ -9,7 +9,9 @@ export const Validate = (schema: z.ZodType) => {
     } catch (error) {
       if (error instanceof ZodError) {
         const isDefaultError = error.issues[0].message.startsWith("Invalid input");
-        const message = isDefaultError ? `${error.issues[0].path}: ${error.issues[0].message}` : error.issues[0].message;
+        const message = isDefaultError
+          ? `${error.issues[0].path}: ${error.issues[0].message}`
+          : error.issues[0].message;
         res.status(400).json({ message });
         return;
       }

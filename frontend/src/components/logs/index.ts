@@ -3,3 +3,4 @@ export { default as LogChart } from "./LogChart";
 export { default as LogDetails } from "./LogDetails";
 export { default as StatCard } from "./StatCard";
 export { default as LogTable } from "./LogTable";
+export { LogFilters } from "./LogFilters";

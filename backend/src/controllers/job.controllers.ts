@@ -93,7 +93,15 @@ export const handleJobEdit = async (req: Request, res: Response, next: NextFunct
 
   const headersObj = Array.isArray(headers) ? getHeaderObj(headers) : {};
 
-  const payload: Payload = { name, url, method, headers: headersObj, userId, timeout, email };
+  const payload: Payload = {
+    name,
+    url,
+    method,
+    headers: headersObj,
+    userId,
+    timeout,
+    email,
+  };
 
   if (body && body.trim() !== "") {
     const allowedMethods = ["POST", "PUT", "PATCH"];

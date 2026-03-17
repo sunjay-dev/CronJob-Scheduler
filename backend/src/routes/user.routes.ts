@@ -24,7 +24,7 @@ import {
   verifyUserSchema,
 } from "../schemas/user.schema.js";
 
-import { validate } from "../middlewares/validate.middlewares.js";
+import { validateBody } from "../middlewares/validate.middlewares.js";
 const router = Router();
 
 router.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
@@ -34,13 +34,13 @@ router.get("/auth/google/callback", passport.authenticate("google", { session: f
 router.get("/details", softRestrictUserLogin, handleUserDetails);
 
 router.post("/logout", handleUserLogout);
-router.post("/login", validate(loginSchema), handleUserLogin);
-router.post("/register", validate(registerSchema), handleUserRegister);
-router.post("/verify-email", validate(verifyUserSchema), handleUserVerification);
-router.post("/resend-otp", validate(verifyUserIdSchema), handleOtpResend);
-router.post("/forgot-password", validate(forgotPasswordSchema), handleForgotPassword);
-router.post("/reset-password", validate(resetPasswordSchema), handleResetPassword);
+router.post("/login", validateBody(loginSchema), handleUserLogin);
+router.post("/register", validateBody(registerSchema), handleUserRegister);
+router.post("/verify-email", validateBody(verifyUserSchema), handleUserVerification);
+router.post("/resend-otp", validateBody(verifyUserIdSchema), handleOtpResend);
+router.post("/forgot-password", validateBody(forgotPasswordSchema), handleForgotPassword);
+router.post("/reset-password", validateBody(resetPasswordSchema), handleResetPassword);
 
-router.put("/", restrictUserLogin, validate(changeUserDetailsSchema), handleChangeUserDetails);
+router.put("/", restrictUserLogin, validateBody(changeUserDetailsSchema), handleChangeUserDetails);
 
 export default router;

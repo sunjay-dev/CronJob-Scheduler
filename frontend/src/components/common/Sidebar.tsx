@@ -12,7 +12,9 @@ export default function Sidebar({ collapsed = false }) {
         <NavLink
           title="Dashboard"
           to="/dashboard"
-          className={({ isActive }) => `flex items-center gap-3 transition hover:text-purple-600 ${isActive && "text-purple-600"}`}
+          className={({ isActive }) =>
+            `flex items-center gap-3 transition hover:text-purple-600 ${isActive && "text-purple-600"}`
+          }
         >
           <LayoutDashboard className="w-5 h-5" />
           {collapsed && <span>Dashboard</span>}
@@ -21,7 +23,9 @@ export default function Sidebar({ collapsed = false }) {
         <NavLink
           title="Jobs"
           to="/jobs"
-          className={({ isActive }) => `flex items-center gap-3 transition hover:text-purple-600 ${isActive && "text-purple-600"}`}
+          className={({ isActive }) =>
+            `flex items-center gap-3 transition hover:text-purple-600 ${isActive && "text-purple-600"}`
+          }
         >
           <ListChecks className="w-5 h-5" />
           {collapsed && <span>Jobs</span>}
@@ -30,7 +34,9 @@ export default function Sidebar({ collapsed = false }) {
         <NavLink
           title="Logs"
           to="/logs"
-          className={({ isActive }) => `flex items-center gap-3 transition hover:text-purple-600 ${isActive && "text-purple-600"}`}
+          className={({ isActive }) =>
+            `flex items-center gap-3 transition hover:text-purple-600 ${isActive && "text-purple-600"}`
+          }
         >
           <History className="w-5 h-5" />
           {collapsed && <span>Logs</span>}
@@ -39,7 +45,9 @@ export default function Sidebar({ collapsed = false }) {
         <NavLink
           title="Settings"
           to="/settings"
-          className={({ isActive }) => `flex items-center gap-3 transition hover:text-purple-600 ${isActive && "text-purple-600"}`}
+          className={({ isActive }) =>
+            `flex items-center gap-3 transition hover:text-purple-600 ${isActive && "text-purple-600"}`
+          }
         >
           <Settings className="w-5 h-5" />
           {collapsed && <span>Settings</span>}

@@ -25,6 +25,8 @@ const joblogsSchema = new mongoose.Schema(
     method: {
       type: String,
       required: true,
+      enum: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+      uppercase: true,
     },
     url: {
       type: String,

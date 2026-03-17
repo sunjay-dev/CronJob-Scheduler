@@ -14,7 +14,9 @@ describe("errorHandler Middleware", () => {
   });
 
   it("should handle an AppError correctly", () => {
-    const error = new AppError("A custom application error", 400, { field: "test" });
+    const error = new AppError("A custom application error", 400, {
+      field: "test",
+    });
 
     errorHandler(error, mockReq as Request, mockRes as Response);
 

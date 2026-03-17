@@ -5,12 +5,14 @@ export default function Features() {
     {
       icon: <Clock className="w-8 h-8" />,
       title: "Flexible Scheduling",
-      description: "Easily create complex cron expressions or simple schedules. Run jobs at any time, interval, or pattern you need.",
+      description:
+        "Easily create complex cron expressions or simple schedules. Run jobs at any time, interval, or pattern you need.",
     },
     {
       icon: <Monitor className="w-8 h-8" />,
       title: "Real-time Monitoring",
-      description: "Watch job executions live, inspect logs, and get instant updates when tasks succeed, fail, or require attention.",
+      description:
+        "Watch job executions live, inspect logs, and get instant updates when tasks succeed, fail, or require attention.",
     },
     {
       icon: <Bell className="w-8 h-8" />,
@@ -26,7 +28,8 @@ export default function Features() {
         <div className="text-center mb-16 px-4">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Everything you need to automate tasks</h2>
           <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
-            From simple cron jobs to complex automation workflows, CronJob Scheduler provides all the tools developers need in one reliable platform.
+            From simple cron jobs to complex automation workflows, CronJob Scheduler provides all the tools developers
+            need in one reliable platform.
           </p>
         </div>
 

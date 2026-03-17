@@ -60,19 +60,32 @@ export default function Header({ sidebarOpen, setSidebarOpen, mobileMenuOpen, se
   return (
     <header className="fixed top-0 left-0 z-50 bg-white shadow-sm h-16 w-full px-6 flex items-center justify-between">
       <div className="flex items-center gap-4">
-        <button title="Toggle Menu" onClick={handleMenuClick} className="text-gray-700 hover:text-purple-600 hidden sm:flex">
+        <button
+          title="Toggle Menu"
+          onClick={handleMenuClick}
+          className="text-gray-700 hover:text-purple-600 hidden sm:flex"
+        >
           <Menu className="w-6 h-6" />
         </button>
 
         <div className="flex items-center gap-2">
-          <img onClick={() => navigate("/dashboard")} src="/logo.webp" alt="Cron Job Logo" className="h-8 w-8 cursor-pointer" />
+          <img
+            onClick={() => navigate("/dashboard")}
+            src="/logo.webp"
+            alt="Cron Job Logo"
+            className="h-8 w-8 cursor-pointer"
+          />
           <span className="text-xl font-semibold text-gray-800">Cron Job</span>
         </div>
       </div>
 
       <div className="hidden sm:flex items-center gap-4 text-sm text-gray-700">
         <span>Hello, {user?.name}</span>
-        <button title="Logout" onClick={() => setConfirmLogout(true)} className="flex items-center gap-1 text-purple-600 hover:underline">
+        <button
+          title="Logout"
+          onClick={() => setConfirmLogout(true)}
+          className="flex items-center gap-1 text-purple-600 hover:underline"
+        >
           <LogOut className="w-4 h-4" />
           <span>Logout</span>
         </button>

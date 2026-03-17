@@ -24,13 +24,20 @@ export const handleUserLogin = async (req: Request, res: Response, next: NextFun
 
     if (!user) return next(new UnauthorizedError("Either email or password is incorrect."));
 
-    if (user.authProvider === "google" || !user.password) return next(new BadRequestError("Please try login using Google."));
+    if (user.authProvider === "google" || !user.password)
+      return next(new BadRequestError("Please try login using Google."));
 
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) return next(new UnauthorizedError("Either email or password is incorrect."));
 
-    if (!user.verified) return next(new ForbiddenError("Please verify your email to login.", { id: user._id }));
+    if (!user.verified) {
+      return next(
+        new ForbiddenError("Please verify your email to login.", {
+          id: user._id,
+        }),
+      );
+    }
 
     const token = signToken({ userId: user._id }, rememberMe ? "30d" : "3d");
 
@@ -63,7 +70,9 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
 
     if (user) {
       if (user.authProvider !== "local")
-        return next(new BadRequestError("This email is already registered with Google. Please continue using Google login."));
+        return next(
+          new BadRequestError("This email is already registered with Google. Please continue using Google login."),
+        );
       return next(new BadRequestError("An account with this email already exists."));
     }
 
@@ -75,7 +84,10 @@ export const handleUserRegister = async (req: Request, res: Response, next: Next
     });
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    await Promise.all([queueEmail({ data: { otp }, name, email, template: "EMAIL_VERIFY" }), redis.set(`otp:${newUser._id}`, otp, "EX", 60 * 60)]);
+    await Promise.all([
+      queueEmail({ data: { otp }, name, email, template: "EMAIL_VERIFY" }),
+      redis.set(`otp:${newUser._id}`, otp, "EX", 60 * 60),
+    ]);
 
     res.status(200).json({
       message: "Account created successfully. Please check your email to verify.",
@@ -132,7 +144,10 @@ export const handleUserVerification = async (req: Request, res: Response, next: 
     }
 
     user.verified = true;
-    await Promise.all([user.save(), redis.del(`otp:${userId}`, `otpAttempts:${userId}`, `otpResendAttempts:${userId}`, `otpResendLock:${userId}`)]);
+    await Promise.all([
+      user.save(),
+      redis.del(`otp:${userId}`, `otpAttempts:${userId}`, `otpResendAttempts:${userId}`, `otpResendLock:${userId}`),
+    ]);
 
     const cookieToken = signToken({ userId: user.id }, "7d");
 
@@ -155,7 +170,10 @@ export const handleOtpResend = async (req: Request, res: Response, next: NextFun
   const { userId } = req.body;
 
   try {
-    const [otpResendAttemptsStr, otpResendLock] = await Promise.all([redis.get(`otpResendAttempts:${userId}`), redis.ttl(`otpResendLock:${userId}`)]);
+    const [otpResendAttemptsStr, otpResendLock] = await Promise.all([
+      redis.get(`otpResendAttempts:${userId}`),
+      redis.ttl(`otpResendLock:${userId}`),
+    ]);
 
     let delay = 60;
     const otpResendAttempts = parseInt(otpResendAttemptsStr ?? "0");
@@ -193,7 +211,12 @@ export const handleOtpResend = async (req: Request, res: Response, next: NextFun
         .set(`otpResendAttempts:${userId}`, otpResendAttempts + 1, "EX", 24 * 60 * 60)
         .set(`otpResendLock:${userId}`, "true", "EX", delay)
         .exec(),
-      queueEmail({ data: { otp }, name: user.name, email: user.email, template: "EMAIL_VERIFY" }),
+      queueEmail({
+        data: { otp },
+        name: user.name,
+        email: user.email,
+        template: "EMAIL_VERIFY",
+      }),
     ]);
 
     res.status(200).json({
@@ -272,7 +295,13 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
 
     const user = await userModel.findOne({ email }).select("authProvider name email").lean();
 
-    if (!user) return next(new NotFoundError("No user found with this email address.", { email: email }));
+    if (!user) {
+      return next(
+        new NotFoundError("No user found with this email address.", {
+          email: email,
+        }),
+      );
+    }
 
     if (user.authProvider === "google")
       return next(
@@ -285,7 +314,12 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
 
     const url = `${process.env.CLIENT_URL as string}/reset-password/${token}`;
 
-    await queueEmail({ data: { url }, name: user.name, email, template: "FORGOT_PASSWORD" });
+    await queueEmail({
+      data: { url },
+      name: user.name,
+      email,
+      template: "FORGOT_PASSWORD",
+    });
 
     await redis
       .multi()
@@ -297,7 +331,11 @@ export const handleForgotPassword = async (req: Request, res: Response, next: Ne
       message: "Email has been successfully sent to reset password",
     });
   } catch {
-    next(new InternalServerError("Something went wrong. Please try again later", { email: email }));
+    next(
+      new InternalServerError("Something went wrong. Please try again later", {
+        email: email,
+      }),
+    );
   }
 };
 
@@ -315,7 +353,10 @@ export const handleResetPassword = async (req: Request, res: Response, next: Nex
       return next(new BadRequestError("The reset link is invalid or has expired. Please request a new one."));
     }
     const hashedPassword = await bcrypt.hash(password, 7);
-    const user = await userModel.findOneAndUpdate({ email }, { password: hashedPassword }, { new: true }).select("_id").lean();
+    const user = await userModel
+      .findOneAndUpdate({ email }, { password: hashedPassword }, { new: true })
+      .select("_id")
+      .lean();
 
     if (!user) return next(new NotFoundError("User not found."));
 

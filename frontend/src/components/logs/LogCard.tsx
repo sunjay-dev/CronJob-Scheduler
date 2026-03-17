@@ -16,7 +16,9 @@ export default function LogCard({ log, timeFormat24 }: { log: UserLogInterface; 
     <>
       <tr className="flex items-center justify-between gap-4 bg-white p-4 mb-2 rounded-md border border-gray-200 text-sm sm:table-row sm:mb-0 sm:border-b sm:rounded-none sm:p-0 sm:hover:bg-gray-50">
         <td className="sm:table-cell sm:px-6 sm:py-4 order-2 sm:order-none">
-          <span className="text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded font-medium uppercase">{log.method}</span>
+          <span className="text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded font-medium uppercase">
+            {log.method}
+          </span>
         </td>
         <td
           title={log.url}
@@ -57,7 +59,9 @@ export default function LogCard({ log, timeFormat24 }: { log: UserLogInterface; 
             <EllipsisVertical className="h-4 w-4" />
             <span className="hidden sm:block">DETAILS</span>
           </button>
-          {openDetailsMenu && <LogDetails details={log} setOpenDetailsMenu={setOpenDetailsMenu} timeFormat24={timeFormat24} />}
+          {openDetailsMenu && (
+            <LogDetails details={log} setOpenDetailsMenu={setOpenDetailsMenu} timeFormat24={timeFormat24} />
+          )}
         </td>
       </tr>
     </>

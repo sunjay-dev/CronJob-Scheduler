@@ -4,11 +4,38 @@ interface Props {
   page: number;
   totalPages: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
+  limit?: number;
+  setLimit?: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export default function Pagination({ page, setPage, totalPages }: Props) {
+export default function Pagination({ page, setPage, totalPages, limit, setLimit }: Props) {
+  const limitOptions = [10, 25, 50, 100];
+
   return (
-    <div className="flex justify-end mt-6">
+    <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-4">
+      <div className="flex items-center gap-2 text-sm text-gray-500">
+        {setLimit && (
+          <div className="flex items-center gap-2">
+            <span>Show</span>
+            <select
+              value={limit}
+              onChange={(e) => {
+                setLimit(parseInt(e.target.value));
+                setPage(1);
+              }}
+              className="bg-white border border-gray-200 rounded-md px-2 py-1 text-sm font-medium text-gray-700 hover:border-gray-300 focus:outline-none cursor-pointer"
+            >
+              {limitOptions.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </select>
+            <span>per page</span>
+          </div>
+        )}
+      </div>
+
       <div className="flex items-center gap-2 text-sm">
         <button
           title="Previous"

@@ -25,8 +25,8 @@ export default function PrivacyPolicy() {
           </p>
 
           <p>
-            CronJob Scheduler ("we", "our", "us") respects your privacy. This Privacy Policy explains how we collect, use, and protect your
-            information when you use our service.
+            CronJob Scheduler ("we", "our", "us") respects your privacy. This Privacy Policy explains how we collect,
+            use, and protect your information when you use our service.
           </p>
 
           <h2 className="text-2xl font-semibold">Information We Collect</h2>
@@ -44,12 +44,15 @@ export default function PrivacyPolicy() {
           </ul>
 
           <h2 className="text-2xl font-semibold">Cookies & Tracking</h2>
-          <p>We currently do not use any third-party analytics or advertising. Basic cookies may be used for session management.</p>
+          <p>
+            We currently do not use any third-party analytics or advertising. Basic cookies may be used for session
+            management.
+          </p>
 
           <h2 className="text-2xl font-semibold">Data Sharing</h2>
           <p>
-            We do not sell or rent your personal information. Data may be shared only with our service providers for operational purposes, or if
-            required by law.
+            We do not sell or rent your personal information. Data may be shared only with our service providers for
+            operational purposes, or if required by law.
           </p>
 
           <h2 className="text-2xl font-semibold">Your Rights</h2>

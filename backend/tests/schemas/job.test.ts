@@ -22,7 +22,10 @@ describe("Job Schemas", () => {
 
   describe("jobStatusSchema", () => {
     it("should validate with valid jobId and status", () => {
-      const result = jobStatusSchema.safeParse({ jobId: validId, status: true });
+      const result = jobStatusSchema.safeParse({
+        jobId: validId,
+        status: true,
+      });
       expect(result.success).toBe(true);
     });
 

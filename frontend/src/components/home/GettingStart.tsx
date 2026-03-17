@@ -5,7 +5,9 @@ export default function GettingStart() {
     <section id="getting-started" className="py-20 bg-gradient-to-br from-purple-50 to-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="text-4xl font-bold text-gray-900 mb-6">How to Get Started</h2>
-        <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">Deploy your own instance or contribute to the open source project</p>
+        <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
+          Deploy your own instance or contribute to the open source project
+        </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-8">
@@ -26,7 +28,9 @@ export default function GettingStart() {
                 Database configuration
               </div>
             </div>
-            <button className="w-full bg-purple-500 text-white py-3 rounded-lg hover:bg-purple-600 transition-colors">View Documentation</button>
+            <button className="w-full bg-purple-500 text-white py-3 rounded-lg hover:bg-purple-600 transition-colors">
+              View Documentation
+            </button>
           </div>
 
           <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-8">

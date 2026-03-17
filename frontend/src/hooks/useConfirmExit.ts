@@ -11,7 +11,10 @@ export function useConfirmExit(isFilled: boolean, shouldBlock: boolean = true) {
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [isFilled, shouldBlock]);
 
-  const blocker = useBlocker(({ currentLocation, nextLocation }) => isFilled && shouldBlock && currentLocation.pathname !== nextLocation.pathname);
+  const blocker = useBlocker(
+    ({ currentLocation, nextLocation }) =>
+      isFilled && shouldBlock && currentLocation.pathname !== nextLocation.pathname,
+  );
 
   useEffect(() => {
     if (shouldBlock && blocker.state === "blocked") {

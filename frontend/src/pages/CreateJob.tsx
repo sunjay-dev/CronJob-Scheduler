@@ -16,7 +16,10 @@ export default function CreateJob() {
   const [confirmAddJsonHeader, setConfirmAddJsonHeader] = useState(false);
   const user = useAppSelector((state) => state.auth.user);
   const dispatch = useAppDispatch();
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   const {
     register,
@@ -84,7 +87,9 @@ export default function CreateJob() {
       try {
         const parsed = JSON.parse(job.body);
         if (typeof parsed === "object" && parsed !== null) {
-          const hasJsonHeader = job.headers?.some((h) => h.key?.toLowerCase() === "content-type" && h.value?.toLowerCase() === "application/json");
+          const hasJsonHeader = job.headers?.some(
+            (h) => h.key?.toLowerCase() === "content-type" && h.value?.toLowerCase() === "application/json",
+          );
           if (!hasJsonHeader) {
             setConfirmAddJsonHeader(true);
             return;
@@ -133,7 +138,13 @@ export default function CreateJob() {
 
         <fieldset disabled={isSubmitting} className="space-y-5">
           {tab === "common" ? (
-            <Common register={register} control={control} watch={watch} errors={errors} emailNotifications={user?.emailNotifications} />
+            <Common
+              register={register}
+              control={control}
+              watch={watch}
+              errors={errors}
+              emailNotifications={user?.emailNotifications}
+            />
           ) : (
             <Advanced register={register} control={control} setValue={setValue} watch={watch} />
           )}

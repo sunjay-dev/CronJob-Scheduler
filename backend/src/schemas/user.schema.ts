@@ -43,7 +43,11 @@ export const changeUserDetailsSchema = z
   .object({
     name: z.string().trim().min(1, "Invalid name").optional(),
     timezone: z.string().trim().min(1, "Invalid timezone").optional(),
-    mode: z.enum(["day", "dark"], { message: "Invalid mode (must be 'day' or 'dark')" }).optional(),
+    mode: z
+      .enum(["day", "dark"], {
+        message: "Invalid mode (must be 'day' or 'dark')",
+      })
+      .optional(),
     timeFormat24: z.boolean({ message: "Invalid timeFormat24 (must be boolean)" }).optional(),
     emailNotifications: z.boolean({ message: "Invalid emailNotifications (must be boolean)" }).optional(),
     pushAlerts: z.boolean({ message: "Invalid pushAlerts (must be boolean)" }).optional(),

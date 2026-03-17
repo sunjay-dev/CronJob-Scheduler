@@ -11,7 +11,9 @@ export default function Footer() {
 
               <h3 className="text-2xl font-bold">CronJob</h3>
             </div>
-            <p className="text-gray-400 max-w-sm">Open-source cron job scheduler built for developers who need reliability and simplicity.</p>
+            <p className="text-gray-400 max-w-sm">
+              Open-source cron job scheduler built for developers who need reliability and simplicity.
+            </p>
           </div>
 
           <div>
@@ -20,7 +22,11 @@ export default function Footer() {
               <a href="/#features" className="block hover:text-white transition-colors">
                 Features
               </a>
-              <a target="_blank" href="https://github.com/sunjay-dev/CronJob-Scheduler#readme" className="block hover:text-white transition-colors">
+              <a
+                target="_blank"
+                href="https://github.com/sunjay-dev/CronJob-Scheduler#readme"
+                className="block hover:text-white transition-colors"
+              >
                 Documentation
               </a>
             </div>
@@ -29,10 +35,18 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold mb-4">Community</h4>
             <div className="space-y-2 text-gray-400">
-              <a target="_blank" href="https://github.com/sunjay-dev/CronJob-Scheduler" className="block hover:text-white transition-colors">
+              <a
+                target="_blank"
+                href="https://github.com/sunjay-dev/CronJob-Scheduler"
+                className="block hover:text-white transition-colors"
+              >
                 GitHub
               </a>
-              <a target="_blank" href="https://github.com/sunjay-dev/CronJob-Scheduler/issues" className="block hover:text-white transition-colors">
+              <a
+                target="_blank"
+                href="https://github.com/sunjay-dev/CronJob-Scheduler/issues"
+                className="block hover:text-white transition-colors"
+              >
                 Issues
               </a>
               <a

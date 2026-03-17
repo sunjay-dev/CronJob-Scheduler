@@ -9,7 +9,9 @@ export const jobSchema = z.object({
   }),
   timezone: z.string().min(1, { message: "Please provide a valid timezone" }),
   enabled: z.boolean({ message: "Enabled must be a boolean" }),
-  timeout: z.number().refine((val) => val >= 1 && val <= 30, { message: "Timeout must be between 1-30 seconds" }),
+  timeout: z.number().refine((val) => val >= 1 && val <= 30, {
+    message: "Timeout must be between 1-30 seconds",
+  }),
   method: z
     .string()
     .toUpperCase()

@@ -90,7 +90,9 @@ export default function Common({ register, control, watch, errors, emailNotifica
             <Controller
               name="cron"
               control={control}
-              render={({ field }) => <Cron value={field.value} setValue={field.onChange} clearButton={false} className="!w-full" />}
+              render={({ field }) => (
+                <Cron value={field.value} setValue={field.onChange} clearButton={false} className="!w-full" />
+              )}
             />
           </div>
         </div>

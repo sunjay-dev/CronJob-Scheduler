@@ -122,11 +122,17 @@ export default function Dashboard() {
       </div>
 
       <div className="flex justify-center md:justify-end gap-4 mb-6">
-        <Link to="/jobs" className="flex items-center gap-2 px-4 py-2 border border-purple-600 text-purple-600 rounded hover:bg-purple-50">
+        <Link
+          to="/jobs"
+          className="flex items-center gap-2 px-4 py-2 border border-purple-600 text-purple-600 rounded hover:bg-purple-50"
+        >
           <List className="w-5 h-5" />
           View All Jobs
         </Link>
-        <Link to="/create" className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 active:scale-[0.98]">
+        <Link
+          to="/create"
+          className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 active:scale-[0.98]"
+        >
           <PlusCircle className="w-5 h-5" />
           Create Job
         </Link>
