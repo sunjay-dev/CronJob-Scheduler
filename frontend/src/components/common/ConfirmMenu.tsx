@@ -16,7 +16,7 @@ export default function ConfirmMenu({
   confirmColor,
 }: ConfirmMenuProps) {
   return (
-    <div className="fixed inset-0 items-center justify-center z-50 bg-black/50 flex">
+    <div className="fixed top-0 left-0 h-dvh w-screen items-center justify-center z-50 bg-black/50 flex">
       <div className="bg-white rounded-lg shadow-lg p-6 w-11/12 max-w-md">
         <h2 className="text-lg font-semibold mb-4">{title}</h2>
 

@@ -57,31 +57,35 @@ export default function CreateJob() {
   useConfirmExit(isDirty, !isSubmitted && !isSubmitting);
 
   const submitJob = async (job: JobDetails) => {
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/jobs`, {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(job),
-    })
-      .then(async (res) => {
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Something went wrong, please try again.");
-        return data;
-      })
-      .then((data) => {
-        setMessage({ type: "success", text: data.message });
-        dispatch(addJob(data.job));
-        navigate("/jobs");
-      })
-      .catch((err) => {
-        setMessage({ type: "error", text: err.message });
-      })
-      .finally(() => {
-        setTimeout(() => setMessage(null), 8000);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/jobs`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(job),
       });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Something went wrong.");
+      }
+
+      setMessage({ type: "success", text: data.message });
+      dispatch(addJob(data.job));
+      navigate("/jobs");
+    } catch (err) {
+      if (err instanceof Error) {
+        setMessage({ type: "error", text: err.message });
+      } else {
+        setMessage({ type: "error", text: "Something went wrong, Please try again later." });
+      }
+    } finally {
+      setTimeout(() => setMessage(null), 8000);
+    }
   };
 
-  const onSubmit = (job: JobDetails) => {
+  const onSubmit = async (job: JobDetails) => {
     const allowBody = ["POST", "PUT", "PATCH"].includes(job.method?.toUpperCase());
     if (allowBody && job.body.trim()) {
       try {
@@ -100,7 +104,7 @@ export default function CreateJob() {
       }
     }
 
-    submitJob(job);
+    await submitJob(job);
   };
 
   return (
