@@ -8,21 +8,21 @@ dashboard.
 
 ---
 
-## 🚀 Features
+## Features
 
-- 🕒 Schedule recurring jobs using cron expressions
-- 📡 Supports GET, POST and many other requests options with custom headers/body
-- 🧠 Built on **Agenda.js** for robust background processing
-- 📊 View job execution logs and status (success/failure)
-- ✨ Toggle jobs on/off without deleting them
-- 💻 Clean React + Tailwind
-- 🔐 JWT-based authentication
-- ⚡ Dedicated **Job Runner** for background execution
-- 📈 Real-time monitoring with Prometheus + Grafana
+- Schedule recurring jobs using cron expressions
+- Supports GET, POST and many other requests options with custom headers/body
+- Built on **Agenda.js** for robust background processing
+- View job execution logs and status (success/failure)
+- Toggle jobs on/off without deleting them
+- Clean React + Tailwind
+- JWT-based authentication
+- Dedicated **Job Runner** for background execution
+- Real-time monitoring with Prometheus + Grafana
 
 ---
 
-## 🛠️ Tech Stack
+## ️Tech Stack
 
 ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
@@ -44,16 +44,17 @@ dashboard.
 ![React Hook Form](https://img.shields.io/badge/React%20Hook%20Form-%23EC5990.svg?style=for-the-badge&logo=reacthookform&logoColor=white)
 ![Grafana](https://img.shields.io/badge/Grafana-%23F46800.svg?style=for-the-badge&logo=grafana&logoColor=white)
 ![Prometheus](https://img.shields.io/badge/Prometheus-%23E6522C.svg?style=for-the-badge&logo=prometheus&logoColor=white)
+![Vitest](https://img.shields.io/badge/Vitest-%23E6522C.svg?style=for-the-badge&logo=vitest&logoColor=white)
 
 ---
 
-## 🏗️ Current Architecture
+## ️ Current Architecture
 
 <img src="https://raw.githubusercontent.com/sunjay-dev/CronJob-Scheduler/refs/heads/main/assets/architecture.webp" alt="CronJob architecture Image" width="100%" />
 
-## 📦 Installation
+## Installation
 
-> ⚠️ Before you start, make sure you have the following installed:
+> ️ Before you start, make sure you have the following installed:
 >
 > - [pnpm](https://pnpm.io/installation) (package manager used in this project)
 > - [TypeScript](https://www.typescriptlang.org/download) (`tsc` compiler)
@@ -89,7 +90,7 @@ pnpm run dev
 
 ### 4. Setup Job Runner
 
-> ⚡ Required for actual scheduling
+> Required for actual scheduling
 
 ```bash
 cd job-runner
@@ -101,7 +102,7 @@ pnpm run dev
 
 ### 4. Setup Email Service (Optional)
 
-> ⚡ Only needed if you want to test/run email service.
+> Only needed if you want to test/run email service.
 
 ```bash
 cd email-service
@@ -114,23 +115,28 @@ pnpm run dev
 
 ---
 
-## 🖥️ Folder Structure
+## ️Folder Structure
 
 ```
 CronJob-Scheduler/
+├── .github/ # GitHub Actions
+├── .husky/ # Husky configuration
 ├── backend/        # Server (Express + Agenda.js)
 ├── frontend/       # Client (React + Tailwind)
 ├── job-runner/     # Background worker (Agenda.js)
 ├── email-service/  # Email microservice (Express + Resend)
 ├── docker-compose.yml # Docker Compose file
 ├── .prettierrc # Prettier configuration
+├── eslint.config.js # ESLint configuration
+├── prometheus.yml # Prometheus configuration
 ├── .gitignore # Git ignore file
+├── assets/ # Assets folder
 ├── README.md
 ```
 
 ---
 
-## 🧭 Roadmap
+## Roadmap
 
 - <del> Create/Update/Delete jobs</del>
 - <del> Job toggle (enable/disable)</del>
@@ -144,6 +150,6 @@ CronJob-Scheduler/
 - <del> Monitoring with Prometheus + Grafana <del>
 - Convert to Micro-service architecture
 
-## 🤝 Contributing
+## Contributing
 
 Contributions, suggestions, and improvements are always welcome!

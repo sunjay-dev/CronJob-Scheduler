@@ -92,9 +92,7 @@ agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJob
     if (err instanceof HTTPError) {
       statusCode = err.response.statusCode;
       timings = err.response.timings?.phases ?? {};
-      errorMessage = err.response.statusMessage
-        ? `${err.response.statusCode} ${err.response.statusMessage}`
-        : err.message;
+      errorMessage = err.response?.statusMessage ?? err.message;
     } else if (err instanceof TimeoutError) {
       errorMessage = "Request timed out";
     } else if (err instanceof RequestError || err instanceof Error) {

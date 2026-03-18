@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { createValidater } from "../../src/middlewares/validate.middlewares.js";
+import { createValidater } from "@/middlewares/validate.middlewares.js";
 import { z } from "zod";
 import type { Request, Response, NextFunction } from "express";
-import { createMockReq, createMockRes, createNext } from "../__helpers__/expressMocks.js";
+import { createMockReq, createMockRes, createNext } from "../../__helpers__/expressMocks.js";
 
 describe("Validate Middlewares", () => {
   let mockReq: Partial<Request>;

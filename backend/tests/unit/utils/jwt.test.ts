@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import jwt from "jsonwebtoken";
-import { signToken, verifyToken } from "../../src/utils/jwt.utils.js";
+import { signToken, verifyToken } from "@/utils/jwt.utils.js";
 
 vi.mock("jsonwebtoken");
 

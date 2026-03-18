@@ -17,7 +17,7 @@ export default function PrivacyPolicy() {
         />
       </Helmet>
       <HomeHeader home={false} />
-      <main className="max-w-4xl mx-auto mt-20 mb-10 px-4 py-12">
+      <main className="max-w-4xl mx-auto mt-16 mb-10 px-4 py-12">
         <section className="space-y-5">
           <h1 className="font-bold text-4xl">Privacy Policy</h1>
           <p>

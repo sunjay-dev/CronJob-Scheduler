@@ -1,16 +1,19 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import errorHandler from "../../src/middlewares/errorHandler.middlewares.js";
-import { AppError } from "../../src/utils/appError.utils.js";
-import { Request, Response } from "express";
-import { createMockReq, createMockRes } from "../__helpers__/expressMocks.js";
+import errorHandler from "@/middlewares/errorHandler.middlewares.js";
+import { AppError } from "@/utils/appError.utils.js";
+import { Request, Response, NextFunction } from "express";
+import { createMockReq, createMockRes, createNext } from "../../__helpers__/expressMocks.js";
 
 describe("errorHandler Middleware", () => {
   let mockReq: Partial<Request>;
   let mockRes: Partial<Response>;
 
+  let nextFunction: NextFunction;
+
   beforeEach(() => {
     mockReq = createMockReq();
     mockRes = createMockRes();
+    nextFunction = createNext();
   });
 
   it("should handle an AppError correctly", () => {
@@ -18,7 +21,7 @@ describe("errorHandler Middleware", () => {
       field: "test",
     });
 
-    errorHandler(error, mockReq as Request, mockRes as Response);
+    errorHandler(error, mockReq as Request, mockRes as Response, nextFunction);
 
     expect(mockRes.status).toHaveBeenCalledWith(400);
     expect(mockRes.json).toHaveBeenCalledWith({
@@ -30,7 +33,7 @@ describe("errorHandler Middleware", () => {
   it("should handle a generic Error correctly", () => {
     const error = new Error("Generic unhandled error");
 
-    errorHandler(error, mockReq as Request, mockRes as Response);
+    errorHandler(error, mockReq as Request, mockRes as Response, nextFunction);
 
     expect(mockRes.status).toHaveBeenCalledWith(500);
     expect(mockRes.json).toHaveBeenCalledWith({

@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import mongoose from "mongoose";
-import { jobLogsParamsSchema, LogIdSchema } from "../../src/schemas/log.schema.js";
+import { jobLogsParamsSchema, LogIdSchema } from "@/schemas/log.schema.js";
 
 describe("Log Schemas", () => {
   const validId = new mongoose.Types.ObjectId().toString();

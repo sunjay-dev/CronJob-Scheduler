@@ -1,6 +1,7 @@
 export class AppError extends Error {
   statusCode: number;
   details?: Record<string, unknown>;
+  readonly isOperational = true;
 
   constructor(message: string, statusCode: number, details?: Record<string, unknown>) {
     super(message);

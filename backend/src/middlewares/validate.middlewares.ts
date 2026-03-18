@@ -9,11 +9,7 @@ export function createValidater(source: "body" | "params" | "query", schema: z.Z
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        const isDefaultError = error.issues[0].message.startsWith("Invalid input");
-        const message = isDefaultError
-          ? `${error.issues[0].path}: ${error.issues[0].message}`
-          : error.issues[0].message;
-        res.status(400).json({ message });
+        res.status(400).json({ message: error.issues[0].message, field: error.issues[0].path[0] });
         return;
       }
 

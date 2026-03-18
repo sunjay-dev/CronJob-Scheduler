@@ -71,4 +71,4 @@ COPY --from=build /usr/src/app/dist ./dist
 EXPOSE 3002
 
 # Run the application.
-CMD ["node", "dist/app.js"]
+CMD ["pnpm", "run", "start"]

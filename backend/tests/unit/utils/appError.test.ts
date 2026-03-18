@@ -7,7 +7,7 @@ import {
   NotFoundError,
   InternalServerError,
   TooManyRequestsError,
-} from "../../src/utils/appError.utils.js";
+} from "@/utils/appError.utils.js";
 
 describe("AppError and Subclasses", () => {
   it("should create an AppError with correctly assigned properties", () => {

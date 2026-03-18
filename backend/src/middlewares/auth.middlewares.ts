@@ -3,15 +3,22 @@ import { verifyToken } from "../utils/jwt.utils.js";
 import logger from "../utils/logger.utils.js";
 import { JwtUser } from "../types/jwt.types.js";
 
-export function restrictUserLogin(req: Request, res: Response, next: NextFunction): void {
+export function extractToken(req: Request): string | undefined {
   let token = req.cookies?.token;
 
   if (!token && typeof req.headers.authorization === "string") {
     const authHeader = req.headers.authorization;
+
     if (authHeader.startsWith("Bearer ")) {
       token = authHeader.split(" ")[1];
     }
   }
+
+  return token;
+}
+
+export function restrictUserLogin(req: Request, res: Response, next: NextFunction): void {
+  const token = extractToken(req);
 
   if (!token) {
     res.status(401).json({
@@ -37,14 +44,7 @@ export function restrictUserLogin(req: Request, res: Response, next: NextFunctio
 }
 
 export function softRestrictUserLogin(req: Request, res: Response, next: NextFunction): void {
-  let token = req.cookies?.token;
-
-  if (!token && typeof req.headers.authorization === "string") {
-    const authHeader = req.headers.authorization;
-    if (authHeader.startsWith("Bearer ")) {
-      token = authHeader.split(" ")[1];
-    }
-  }
+  const token = extractToken(req);
 
   if (!token) {
     res.status(200).json({
@@ -77,14 +77,12 @@ export function softRestrictUserLogin(req: Request, res: Response, next: NextFun
 }
 
 export function prometheusAuth(req: Request, res: Response, next: NextFunction): void {
-  const authHeader = req.headers.authorization;
+  const token = extractToken(req);
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    res.status(401).json({ message: "Missing or invalid Authorization header" });
+  if (!token) {
+    res.status(401).json({ message: "Missing or invalid token" });
     return;
   }
-
-  const token = authHeader.split(" ")[1];
 
   if (token !== (process.env.PROMETHEUS_SECRET as string)) {
     res.status(403).json({ message: "Unauthorized access to metrics" });

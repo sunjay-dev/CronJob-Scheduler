@@ -1,16 +1,19 @@
 import { z } from "zod";
 import mongoose from "mongoose";
+import { isValidTimezone } from "../utils/job.utils.js";
+
+const MAX_PASSWORD_LENGTH = 6;
 
 export const loginSchema = z.object({
   email: z.email("Invalid email address"),
-  password: z.string().min(1, { message: "Password is required" }),
+  password: z.string().min(MAX_PASSWORD_LENGTH, { message: "Please enter a valid password" }),
   rememberMe: z.boolean().optional(),
 });
 
 export const registerSchema = z.object({
   name: z.string().trim().min(2, "Name must be at least 2 characters"),
   email: z.email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z.string().min(MAX_PASSWORD_LENGTH, "Password must be at least 6 characters"),
 });
 
 export const forgotPasswordSchema = z.object({
@@ -20,10 +23,11 @@ export const forgotPasswordSchema = z.object({
 export const resetPasswordSchema = z.object({
   token: z
     .string({ message: "Please also provide reset token" })
-    .min(64, { message: "The Reset token you provided is incorrect." })
-    .max(64, { message: "The Reset token you provided is incorrect." }),
+    .length(64, { message: "The Reset token you provided is incorrect." }),
 
-  password: z.string({ message: "Password is required" }).min(6, { message: "Password must be at least 6 characters" }),
+  password: z
+    .string({ message: "Password is required" })
+    .min(MAX_PASSWORD_LENGTH, { message: "Password must be at least 6 characters" }),
 });
 
 export const verifyUserSchema = z.object({
@@ -42,7 +46,8 @@ export const verifyUserIdSchema = z.object({
 export const changeUserDetailsSchema = z
   .object({
     name: z.string().trim().min(1, "Invalid name").optional(),
-    timezone: z.string().trim().min(1, "Invalid timezone").optional(),
+    timezone: z.string().trim().refine(isValidTimezone, { message: "Invalid timezone" }).optional(),
+
     mode: z
       .enum(["day", "dark"], {
         message: "Invalid mode (must be 'day' or 'dark')",

@@ -1,7 +1,8 @@
 import { z } from "zod";
-import { isValidCron } from "cron-validator";
-import validator from "validator";
 import mongoose from "mongoose";
+import validator from "validator";
+import { isValidCron } from "cron-validator";
+import { isValidTimezone } from "../utils/job.utils.js";
 
 export const jobIdSchema = z.object({
   jobId: z.string().refine((val) => mongoose.Types.ObjectId.isValid(val), {
@@ -21,7 +22,8 @@ export const jobSchema = z.object({
   url: z.string().refine((val) => validator.isURL(val, { require_protocol: true }), {
     message: "Please provide a valid url",
   }),
-  timezone: z.string().min(1, { message: "Please provide a valid timezone" }),
+  timezone: z.string().refine(isValidTimezone, { message: "Please provide a valid timezone" }),
+
   enabled: z.boolean({ message: "Enabled must be a boolean" }),
   method: z
     .string()

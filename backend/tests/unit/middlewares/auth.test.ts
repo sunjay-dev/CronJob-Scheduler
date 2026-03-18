@@ -1,10 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { restrictUserLogin, softRestrictUserLogin, prometheusAuth } from "../../src/middlewares/auth.middlewares.js";
-import * as jwtUtils from "../../src/utils/jwt.utils.js";
+import {
+  extractToken,
+  restrictUserLogin,
+  softRestrictUserLogin,
+  prometheusAuth,
+} from "@/middlewares/auth.middlewares.js";
+import * as jwtUtils from "@/utils/jwt.utils.js";
 import { Request, Response, NextFunction } from "express";
-import { createNext, createMockReq, createMockRes } from "../__helpers__/expressMocks.js";
+import { createNext, createMockReq, createMockRes } from "../../__helpers__/expressMocks.js";
 
-vi.mock("../../src/utils/jwt.utils.js");
+vi.mock("@/utils/jwt.utils.js");
 
 describe("Auth Middlewares", () => {
   let mockReq: Partial<Request>;
@@ -15,6 +20,31 @@ describe("Auth Middlewares", () => {
     mockReq = createMockReq();
     mockRes = createMockRes();
     nextFunction = createNext();
+  });
+
+  describe("extractToken", () => {
+    it("should extract token from cookies if present", () => {
+      mockReq.cookies = { token: "cookie-token" };
+      const token = extractToken(mockReq as Request);
+      expect(token).toBe("cookie-token");
+    });
+
+    it("should extract token from Authorization header if cookies are missing", () => {
+      mockReq.headers = { authorization: "Bearer header-token" };
+      const token = extractToken(mockReq as Request);
+      expect(token).toBe("header-token");
+    });
+
+    it("should return undefined if no token is found", () => {
+      const token = extractToken(mockReq as Request);
+      expect(token).toBeUndefined();
+    });
+
+    it("should return undefined if Authorization header does not start with Bearer", () => {
+      mockReq.headers = { authorization: "Basic token" };
+      const token = extractToken(mockReq as Request);
+      expect(token).toBeUndefined();
+    });
   });
 
   describe("restrictUserLogin", () => {
@@ -28,7 +58,7 @@ describe("Auth Middlewares", () => {
       expect(nextFunction).not.toHaveBeenCalled();
     });
 
-    it("should extract token from Authorization header and call next if valid", () => {
+    it("should extract token and call next if valid", () => {
       mockReq.headers = { authorization: "Bearer valid-token" };
       const decodedUser = { userId: "123" };
       vi.mocked(jwtUtils.verifyToken).mockReturnValue(decodedUser as any);
@@ -82,7 +112,7 @@ describe("Auth Middlewares", () => {
   });
 
   describe("prometheusAuth", () => {
-    it("should return 401 if Authorization header is missing", () => {
+    it("should return 401 if token is missing", () => {
       prometheusAuth(mockReq as Request, mockRes as Response, nextFunction);
 
       expect(mockRes.status).toHaveBeenCalledWith(401);

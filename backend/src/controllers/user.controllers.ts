@@ -1,380 +1,132 @@
 import type { Request, Response, NextFunction } from "express";
-import userModel from "../models/user.models.js";
-import bcrypt from "bcrypt";
-import crypto from "crypto";
 import { signToken } from "../utils/jwt.utils.js";
-import { queueEmail } from "../utils/qstashEmail.utils.js";
-import {
-  AppError,
-  BadRequestError,
-  ForbiddenError,
-  InternalServerError,
-  NotFoundError,
-  TooManyRequestsError,
-  UnauthorizedError,
-} from "../utils/appError.utils.js";
-import redis from "../config/redis.config.js";
+import { BadRequestError } from "../utils/appError.utils.js";
+import * as userService from "../services/user.service.js";
 
-export const handleUserLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const handleUserLogin = async (req: Request, res: Response) => {
   const email = req.body.email.trim().toLowerCase();
   const { password, rememberMe = false } = req.body;
+  const { user, token } = await userService.loginUser({ email, password, rememberMe });
 
-  try {
-    const user = await userModel.findOne({ email }).select("+password verified authProvider").lean();
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined,
+  });
 
-    if (!user) return next(new UnauthorizedError("Either email or password is incorrect."));
-
-    if (user.authProvider === "google" || !user.password)
-      return next(new BadRequestError("Please try login using Google."));
-
-    const isMatch = await bcrypt.compare(password, user.password);
-
-    if (!isMatch) return next(new UnauthorizedError("Either email or password is incorrect."));
-
-    if (!user.verified) {
-      return next(
-        new ForbiddenError("Please verify your email to login.", {
-          id: user._id,
-        }),
-      );
-    }
-
-    const token = signToken({ userId: user._id }, rememberMe ? "30d" : "3d");
-
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-      maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined,
-    });
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: _, ...safeUser } = user;
-    res.status(200).json({
-      message: "Login successful",
-      user: safeUser,
-      token,
-    });
-  } catch {
-    next(new InternalServerError("Something went wrong. Please try again later."));
-  }
+  res.status(200).json({
+    message: "Login successful",
+    user,
+    token,
+  });
 };
 
-export const handleUserRegister = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const handleUserRegister = async (req: Request, res: Response) => {
   const { name, timezone = "UTC" } = req.body;
   const password = req.body.password.trim();
   const email = req.body.email.trim().toLowerCase();
 
-  try {
-    const user = await userModel.findOne({ email }).select("authProvider").lean();
+  const { id } = await userService.registerUser({ name, email, password, timezone });
 
-    if (user) {
-      if (user.authProvider !== "local")
-        return next(
-          new BadRequestError("This email is already registered with Google. Please continue using Google login."),
-        );
-      return next(new BadRequestError("An account with this email already exists."));
-    }
-
-    const newUser = await userModel.create({
-      name,
-      email,
-      password,
-      timezone,
-    });
-
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    await Promise.all([
-      queueEmail({ data: { otp }, name, email, template: "EMAIL_VERIFY" }),
-      redis.set(`otp:${newUser._id}`, otp, "EX", 60 * 60),
-    ]);
-
-    res.status(200).json({
-      message: "Account created successfully. Please check your email to verify.",
-      id: newUser._id,
-      email,
-    });
-  } catch {
-    next(new InternalServerError("Something went wrong. Please try again later."));
-  }
+  res.status(200).json({
+    message: "Account created successfully. Please check your email to verify.",
+    id,
+    email,
+  });
 };
 
-export const handleUserVerification = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const handleUserVerification = async (req: Request, res: Response) => {
   const { otp, userId } = req.body;
 
-  try {
-    const otpLockedUntil = await redis.ttl(`otpLockedUntil:${userId}`);
+  const { token } = await userService.verifyUser({ userId, otp });
 
-    if (otpLockedUntil > 0) {
-      const minutesLeft = Math.ceil(otpLockedUntil / 60);
-      return next(new TooManyRequestsError(`Too many attempts. Try again after ${minutesLeft} minute(s).`));
-    }
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
 
-    const [cachedOtp, otpAttemptsStr] = await redis.mget(`otp:${userId}`, `otpAttempts:${userId}`);
-
-    if (cachedOtp && otp !== cachedOtp) {
-      const otpAttempts = parseInt(otpAttemptsStr || "0") + 1;
-
-      if (otpAttempts >= 5) {
-        await redis
-          .multi()
-          .set(`otpLockedUntil:${userId}`, "true", "EX", 15 * 60)
-          .del(`otpAttempts:${userId}`)
-          .exec();
-        return next(new TooManyRequestsError(`Too many failed attempts. Try again after 15 minutes`));
-      }
-
-      await redis.set(`otpAttempts:${userId}`, otpAttempts, "EX", 15 * 60);
-
-      if (otpAttempts >= 2) {
-        return next(new BadRequestError(`Invalid OTP. You have only ${5 - otpAttempts} try left!`));
-      }
-
-      return next(new BadRequestError("Invalid OTP. Please check and try again."));
-    }
-
-    const user = await userModel.findById(userId);
-
-    if (!user) return next(new NotFoundError("User not found."));
-
-    if (user.verified) return next(new AppError("User is already verified. Please login to continue", 409));
-
-    if (!cachedOtp) {
-      return next(new BadRequestError("The OTP has expired. Please request a new one."));
-    }
-
-    user.verified = true;
-    await Promise.all([
-      user.save(),
-      redis.del(`otp:${userId}`, `otpAttempts:${userId}`, `otpResendAttempts:${userId}`, `otpResendLock:${userId}`),
-    ]);
-
-    const cookieToken = signToken({ userId: user.id }, "7d");
-
-    res.cookie("token", cookieToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
-    res.status(200).json({
-      message: "Your email has been successfully verified.",
-    });
-  } catch {
-    next(new InternalServerError("Error while verifying user email."));
-  }
+  res.status(200).json({
+    message: "Your email has been successfully verified.",
+    token,
+  });
 };
 
-export const handleOtpResend = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const handleOtpResend = async (req: Request, res: Response) => {
   const { userId } = req.body;
 
-  try {
-    const [otpResendAttemptsStr, otpResendLock] = await Promise.all([
-      redis.get(`otpResendAttempts:${userId}`),
-      redis.ttl(`otpResendLock:${userId}`),
-    ]);
+  const { delay } = await userService.resendUserOtp(userId);
 
-    let delay = 60;
-    const otpResendAttempts = parseInt(otpResendAttemptsStr ?? "0");
-
-    switch (otpResendAttempts) {
-      case 0:
-        break;
-      case 1:
-        delay = 5 * 60;
-        break;
-      default:
-        delay = 60 * 60;
-    }
-
-    if (otpResendLock > 0) {
-      return next(
-        new TooManyRequestsError(`Too many requests. Please wait before requesting again.`, {
-          wait: otpResendLock,
-        }),
-      );
-    }
-
-    const user = await userModel.findById(userId).select("verified name email ").lean();
-
-    if (!user) return next(new NotFoundError("User not found."));
-
-    if (user.verified) return next(new AppError("User is already verified. Please login to continue.", 409));
-
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
-    await Promise.all([
-      redis
-        .multi()
-        .set(`otp:${user._id}`, otp, "EX", 60 * 60)
-        .set(`otpResendAttempts:${userId}`, otpResendAttempts + 1, "EX", 24 * 60 * 60)
-        .set(`otpResendLock:${userId}`, "true", "EX", delay)
-        .exec(),
-      queueEmail({
-        data: { otp },
-        name: user.name,
-        email: user.email,
-        template: "EMAIL_VERIFY",
-      }),
-    ]);
-
-    res.status(200).json({
-      message: `A new OTP has been sent to your email.`,
-      wait: delay,
-    });
-  } catch {
-    next(new InternalServerError("Error while resending OTP. Please try again later."));
-  }
+  res.status(200).json({
+    message: `A new OTP has been sent to your email.`,
+    wait: delay,
+  });
 };
 
-export const handleUserLogout = async (req: Request, res: Response): Promise<void> => {
+export const handleUserLogout = async (req: Request, res: Response) => {
   res.clearCookie("token");
   res.status(200).json({ message: "Logged out successfully" });
 };
 
-export const handleUserDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const handleUserDetails = async (req: Request, res: Response) => {
   const { userId } = req.jwtUser;
-  try {
-    const user = await userModel.findById(userId).lean();
-    if (!user) {
-      res.clearCookie("token");
-      return next(new NotFoundError("User not found"));
-    }
-    res.status(200).json(user);
-  } catch {
-    next(new InternalServerError("Error while fetching user details"));
-  }
+
+  const user = await userService.getUserDetailsData(userId);
+  res.status(200).json(user);
 };
 
-export const handleChangeUserDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const handleChangeUserDetails = async (req: Request, res: Response) => {
   const { userId } = req.jwtUser;
   const updateFields = req.body;
 
-  try {
-    const user = await userModel.findByIdAndUpdate(userId, updateFields, { new: true }).lean();
-    res.status(200).json({ message: "User updated successfully", user });
-  } catch {
-    next(new InternalServerError("Error while updating user details"));
-  }
+  const user = await userService.updateUserDetailsData(userId, updateFields);
+  res.status(200).json({ message: "User updated successfully", user });
 };
 
-export const handleGoogleCallBack = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const handleGoogleCallBack = async (req: Request, res: Response, next: NextFunction) => {
   const user = req.user;
   if (!user || typeof user !== "object" || !("_id" in user) || !("email" in user)) {
     return next(new BadRequestError("Invalid user data from Google authentication"));
   }
-  try {
-    const token = signToken({ userId: user._id! }, "7d");
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+  const token = signToken({ userId: user._id! }, "7d");
 
-    res.redirect(`${process.env.CLIENT_URL as string}/dashboard?loginMethod=google`);
-  } catch {
-    next(new InternalServerError("Error while creating account with Google."));
-  }
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
+  res.redirect(`${process.env.CLIENT_URL as string}/dashboard?loginMethod=google`);
 };
 
-export const handleForgotPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const handleForgotPassword = async (req: Request, res: Response) => {
   const email = req.body.email.trim().toLowerCase();
 
-  try {
-    const redisOtp = await redis.get(`otp:${email}`);
-    if (redisOtp) {
-      return next(
-        new TooManyRequestsError("You can request a reset link only once per hour.", {
-          email: email,
-        }),
-      );
-    }
+  await userService.handleForgotPasswordAction(email);
 
-    const user = await userModel.findOne({ email }).select("authProvider name email").lean();
-
-    if (!user) {
-      return next(
-        new NotFoundError("No user found with this email address.", {
-          email: email,
-        }),
-      );
-    }
-
-    if (user.authProvider === "google")
-      return next(
-        new ForbiddenError("This account is connected with Google. Please sign in using Google.", {
-          email: email,
-        }),
-      );
-
-    const token = crypto.randomBytes(32).toString("hex");
-
-    const url = `${process.env.CLIENT_URL as string}/reset-password/${token}`;
-
-    await queueEmail({
-      data: { url },
-      name: user.name,
-      email,
-      template: "FORGOT_PASSWORD",
-    });
-
-    await redis
-      .multi()
-      .set(`otp:${email}`, token, "EX", 60 * 60, "NX")
-      .set(`otptoken:${token}`, email, "EX", 60 * 60)
-      .exec();
-
-    res.status(200).json({
-      message: "Email has been successfully sent to reset password",
-    });
-  } catch {
-    next(
-      new InternalServerError("Something went wrong. Please try again later", {
-        email: email,
-      }),
-    );
-  }
+  res.status(200).json({
+    message: "Email has been successfully sent to reset password",
+  });
 };
 
-export const handleResetPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const handleResetPassword = async (req: Request, res: Response) => {
   const { token } = req.body;
   const password = req.body.password.trim();
 
-  try {
-    const email = await redis.get(`otptoken:${token}`);
+  const { cookieToken } = await userService.resetUserPassword(token, password);
 
-    if (!email) {
-      if (req.cookies?.token) {
-        res.clearCookie("token");
-      }
-      return next(new BadRequestError("The reset link is invalid or has expired. Please request a new one."));
-    }
-    const hashedPassword = await bcrypt.hash(password, 7);
-    const user = await userModel
-      .findOneAndUpdate({ email }, { password: hashedPassword }, { new: true })
-      .select("_id")
-      .lean();
+  res.cookie("token", cookieToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    maxAge: 3 * 24 * 60 * 60 * 1000,
+  });
 
-    if (!user) return next(new NotFoundError("User not found."));
-
-    await redis.del(`otptoken:${token}`);
-
-    const cookieToken = signToken({ userId: user._id }, "3d");
-
-    res.cookie("token", cookieToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-      maxAge: 3 * 24 * 60 * 60 * 1000,
-    });
-
-    res.status(200).json({
-      message: "Your password has been successfully reset. You’re now logged in.",
-    });
-  } catch {
-    next(new InternalServerError("Something went wrong. Please try again later."));
-  }
+  res.status(200).json({
+    message: "Your password has been successfully reset. You’re now logged in.",
+  });
 };

@@ -1,8 +1,9 @@
-import type { Request, Response } from "express";
+import type { Request, Response, NextFunction } from "express";
 import { AppError } from "../utils/appError.utils.js";
 import logger from "../utils/logger.utils.js";
 
-export default function errorHandler(err: Error, req: Request, res: Response): void {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export default function errorHandler(err: Error, req: Request, res: Response, next: NextFunction): void {
   if (err instanceof AppError) {
     logger.error(
       {
@@ -26,5 +27,4 @@ export default function errorHandler(err: Error, req: Request, res: Response): v
   res.status(500).json({
     message: "Something went wrong, Please try again later.",
   });
-  return;
 }

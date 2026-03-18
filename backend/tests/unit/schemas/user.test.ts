@@ -8,7 +8,7 @@ import {
   verifyUserSchema,
   verifyUserIdSchema,
   changeUserDetailsSchema,
-} from "../../src/schemas/user.schema.js";
+} from "@/schemas/user.schema.js";
 
 describe("User Schemas", () => {
   const validId = new mongoose.Types.ObjectId().toString();

@@ -19,7 +19,7 @@ export default function Terms() {
       </Helmet>
       <HomeHeader home={false} />
 
-      <main className="max-w-4xl mt-20 mb-10 mx-auto px-4 py-12 space-y-10">
+      <main className="max-w-4xl mt-16 mb-10 mx-auto px-4 py-12 space-y-10">
         <section className="space-y-5">
           <h1 className="font-bold text-4xl">Terms</h1>
           <p>
