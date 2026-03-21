@@ -7,9 +7,9 @@ import { comparePasswords } from "@/utils/hash.utils.js";
 
 vi.mock("@/utils/hash.utils.js");
 
-describe("POST /api/user/login", () => {
+describe("POST /api/v1/user/auth/login", () => {
   it("should return 400 for invalid request body", async () => {
-    const response = await request(app).post("/api/user/login").send({
+    const response = await request(app).post("/api/v1/user/auth/login").send({
       email: "not-an-email",
     });
 
@@ -20,7 +20,7 @@ describe("POST /api/user/login", () => {
   it("should return 401 if user does not exist", async () => {
     mockingoose(userModel).toReturn(null, "findOne");
 
-    const response = await request(app).post("/api/user/login").send({
+    const response = await request(app).post("/api/v1/user/auth/login").send({
       email: "test@example.com",
       password: "password123",
     });
@@ -41,7 +41,7 @@ describe("POST /api/user/login", () => {
     mockingoose(userModel).toReturn(mockUser, "findOne");
     vi.mocked(comparePasswords).mockResolvedValue(false);
 
-    const response = await request(app).post("/api/user/login").send({
+    const response = await request(app).post("/api/v1/user/auth/login").send({
       email: "test@example.com",
       password: "wrongpassword",
     });
@@ -62,7 +62,7 @@ describe("POST /api/user/login", () => {
     mockingoose(userModel).toReturn(mockUser, "findOne");
     vi.mocked(comparePasswords).mockResolvedValue(true);
 
-    const response = await request(app).post("/api/user/login").send({
+    const response = await request(app).post("/api/v1/user/auth/login").send({
       email: "test@example.com",
       password: "password123",
     });
@@ -83,7 +83,7 @@ describe("POST /api/user/login", () => {
     mockingoose(userModel).toReturn(mockUser, "findOne");
     vi.mocked(comparePasswords).mockResolvedValue(true);
 
-    const response = await request(app).post("/api/user/login").send({
+    const response = await request(app).post("/api/v1/user/auth/login").send({
       email: "test@example.com",
       password: "password123",
     });
@@ -93,6 +93,7 @@ describe("POST /api/user/login", () => {
 
     const setCookie = response.headers["set-cookie"];
     expect(setCookie).toBeDefined();
-    expect(setCookie[0]).toMatch(/token=([^;]+)/);
+    expect(setCookie[0]).toMatch(/accessToken=([^;]+)/);
+    expect(setCookie[1]).toMatch(/refreshToken=([^;]+)/);
   });
 });

@@ -8,7 +8,7 @@ import mongoose from "mongoose";
 vi.mock("@/utils/jwt.utils.js");
 vi.mock("@/config/agenda.config.js");
 
-describe("PUT /api/jobs/:jobId", () => {
+describe("PUT /api/v1/jobs/:jobId", () => {
   const validJobId = new mongoose.Types.ObjectId().toString();
 
   beforeEach(() => {
@@ -32,7 +32,7 @@ describe("PUT /api/jobs/:jobId", () => {
     vi.mocked(agenda.jobs).mockResolvedValue([]);
 
     const response = await request(app)
-      .put(`/api/jobs/${validJobId}`)
+      .put(`/api/v1/jobs/${validJobId}`)
       .set("Authorization", "Bearer token")
       .send(validEditPayload);
 
@@ -56,7 +56,7 @@ describe("PUT /api/jobs/:jobId", () => {
     vi.mocked(agenda.jobs).mockResolvedValue([mockJob] as any);
 
     const response = await request(app)
-      .put(`/api/jobs/${validJobId}`)
+      .put(`/api/v1/jobs/${validJobId}`)
       .set("Authorization", "Bearer token")
       .send(validEditPayload);
 

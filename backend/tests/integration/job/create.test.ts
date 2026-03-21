@@ -7,7 +7,7 @@ import * as jwtUtils from "@/utils/jwt.utils.js";
 vi.mock("@/utils/jwt.utils.js");
 vi.mock("@/config/agenda.config.js");
 
-describe("POST /api/jobs", () => {
+describe("POST /api/v1/jobs", () => {
   beforeEach(() => {
     vi.mocked(jwtUtils.verifyToken).mockReturnValue({ userId: "user-abc-123" } as any);
   });
@@ -27,7 +27,7 @@ describe("POST /api/jobs", () => {
 
   it("should return 400 for missing or invalid data", async () => {
     const response = await request(app)
-      .post("/api/jobs")
+      .post("/api/v1/jobs")
       .set("Authorization", "Bearer token")
       .send({ ...validPayload, method: "INVALID" });
 
@@ -37,7 +37,7 @@ describe("POST /api/jobs", () => {
 
   it("should return 400 if method does not allow body", async () => {
     const response = await request(app)
-      .post("/api/jobs")
+      .post("/api/v1/jobs")
       .set("Authorization", "Bearer token")
       .send({ ...validPayload, method: "GET", body: '{"key": "value"}' });
 
@@ -54,7 +54,7 @@ describe("POST /api/jobs", () => {
 
     vi.mocked(agenda.create).mockReturnValue(mockJob as any);
 
-    const response = await request(app).post("/api/jobs").set("Authorization", "Bearer token").send(validPayload);
+    const response = await request(app).post("/api/v1/jobs").set("Authorization", "Bearer token").send(validPayload);
 
     expect(response.status).toBe(200);
     expect(response.body.message.length).toBeGreaterThan(0);

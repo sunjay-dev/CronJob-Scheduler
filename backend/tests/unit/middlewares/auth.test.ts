@@ -1,10 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import {
-  extractToken,
-  restrictUserLogin,
-  softRestrictUserLogin,
-  prometheusAuth,
-} from "@/middlewares/auth.middlewares.js";
+import { extractToken, restrictUserLogin, prometheusAuth } from "@/middlewares/auth.middlewares.js";
 import * as jwtUtils from "@/utils/jwt.utils.js";
 import { Request, Response, NextFunction } from "express";
 import { createNext, createMockReq, createMockRes } from "../../__helpers__/expressMocks.js";
@@ -24,7 +19,7 @@ describe("Auth Middlewares", () => {
 
   describe("extractToken", () => {
     it("should extract token from cookies if present", () => {
-      mockReq.cookies = { token: "cookie-token" };
+      mockReq.cookies = { accessToken: "cookie-token" };
       const token = extractToken(mockReq as Request);
       expect(token).toBe("cookie-token");
     });
@@ -53,6 +48,7 @@ describe("Auth Middlewares", () => {
 
       expect(mockRes.status).toHaveBeenCalledWith(401);
       expect(mockRes.json).toHaveBeenCalledWith({
+        authorized: false,
         message: expect.any(String),
       });
       expect(nextFunction).not.toHaveBeenCalled();
@@ -71,7 +67,7 @@ describe("Auth Middlewares", () => {
     });
 
     it("should return 401 if token is invalid", () => {
-      mockReq.cookies = { token: "invalid-token" };
+      mockReq.cookies = { accessToken: "invalid-token" };
       vi.mocked(jwtUtils.verifyToken).mockImplementation(() => {
         throw new Error();
       });
@@ -80,36 +76,37 @@ describe("Auth Middlewares", () => {
 
       expect(mockRes.status).toHaveBeenCalledWith(401);
       expect(mockRes.json).toHaveBeenCalledWith({
-        message: expect.any(String),
-      });
-      expect(nextFunction).not.toHaveBeenCalled();
-    });
-  });
-
-  describe("softRestrictUserLogin", () => {
-    it("should return 200 with authorized: false if no token is provided", () => {
-      softRestrictUserLogin(mockReq as Request, mockRes as Response, nextFunction);
-
-      expect(mockRes.status).toHaveBeenCalledWith(200);
-      expect(mockRes.json).toHaveBeenCalledWith({
         authorized: false,
         message: expect.any(String),
       });
       expect(nextFunction).not.toHaveBeenCalled();
     });
-
-    it("should call next if valid token is provided", () => {
-      mockReq.cookies = { token: "valid-token" };
-      const decodedUser = { userId: "123" };
-      vi.mocked(jwtUtils.verifyToken).mockReturnValue(decodedUser as any);
-
-      softRestrictUserLogin(mockReq as Request, mockRes as Response, nextFunction);
-
-      expect(jwtUtils.verifyToken).toHaveBeenCalledWith("valid-token");
-      expect((mockReq as Request).jwtUser).toEqual(decodedUser);
-      expect(nextFunction).toHaveBeenCalled();
-    });
   });
+
+  // describe("softRestrictUserLogin", () => {
+  //   it("should return 200 with authorized: false if no token is provided", () => {
+  //     softRestrictUserLogin(mockReq as Request, mockRes as Response, nextFunction);
+
+  //     expect(mockRes.status).toHaveBeenCalledWith(200);
+  //     expect(mockRes.json).toHaveBeenCalledWith({
+  //       authorized: false,
+  //       message: expect.any(String),
+  //     });
+  //     expect(nextFunction).not.toHaveBeenCalled();
+  //   });
+
+  //   it("should call next if valid token is provided", () => {
+  //     mockReq.cookies = { token: "valid-token" };
+  //     const decodedUser = { userId: "123" };
+  //     vi.mocked(jwtUtils.verifyToken).mockReturnValue(decodedUser as any);
+
+  //     softRestrictUserLogin(mockReq as Request, mockRes as Response, nextFunction);
+
+  //     expect(jwtUtils.verifyToken).toHaveBeenCalledWith("valid-token");
+  //     expect((mockReq as Request).jwtUser).toEqual(decodedUser);
+  //     expect(nextFunction).toHaveBeenCalled();
+  //   });
+  // });
 
   describe("prometheusAuth", () => {
     it("should return 401 if token is missing", () => {

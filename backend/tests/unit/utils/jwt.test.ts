@@ -1,12 +1,12 @@
 import { describe, it, expect, vi } from "vitest";
-import jwt from "jsonwebtoken";
+import jwt, { SignOptions } from "jsonwebtoken";
 import { signToken, verifyToken } from "@/utils/jwt.utils.js";
 
 vi.mock("jsonwebtoken");
 
 describe("JWT Utilities", () => {
   const payload = { userId: "123" };
-  const expiresIn = "1h";
+  const jwtOptions: SignOptions = { expiresIn: "1h" };
 
   describe("signToken", () => {
     it("should sign a token without expiration", () => {
@@ -16,7 +16,7 @@ describe("JWT Utilities", () => {
 
       const token = signToken(payload);
 
-      expect(jwt.sign).toHaveBeenCalledWith(payload, process.env.JWT_SECRET);
+      expect(jwt.sign).toHaveBeenCalledWith(payload, process.env.JWT_SECRET, undefined);
       expect(token).toBe(mockedToken);
     });
 
@@ -24,12 +24,9 @@ describe("JWT Utilities", () => {
       const mockedToken = "mocked.jwt.token.expires";
 
       vi.mocked(jwt.sign).mockReturnValue(mockedToken as any);
+      const token = signToken(payload, jwtOptions);
 
-      const token = signToken(payload, expiresIn);
-
-      expect(jwt.sign).toHaveBeenCalledWith(payload, process.env.JWT_SECRET, {
-        expiresIn,
-      });
+      expect(jwt.sign).toHaveBeenCalledWith(payload, process.env.JWT_SECRET, jwtOptions);
       expect(token).toBe(mockedToken);
     });
   });

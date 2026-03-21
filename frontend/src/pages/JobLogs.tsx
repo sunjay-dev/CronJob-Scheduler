@@ -2,6 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { LogTable, LogFilters } from "../components";
 import type { UserLogInterface } from "../types";
+import { apiFetch } from "../utils/apiFetch";
 
 export default function JobLogs() {
   const [jobName, setJobName] = useState("");
@@ -25,9 +26,7 @@ export default function JobLogs() {
     if (statusFilter) queryParams.append("status", statusFilter);
     if (methodFilter) queryParams.append("method", methodFilter);
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/logs/${jobId}/?${queryParams.toString()}`, {
-      credentials: "include",
-    })
+    apiFetch(`/api/v1/logs/${jobId}/?${queryParams.toString()}`)
       .then(async (res) => {
         const data = await res.json();
 

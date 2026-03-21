@@ -8,6 +8,7 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { settingsSchema } from "../schemas/authSchemas";
 import { ToggleSwitch } from "../components";
+import { apiFetch } from "../utils/apiFetch";
 
 export default function SettingsPage() {
   const user = useAppSelector((state) => state.auth.user);
@@ -39,12 +40,8 @@ export default function SettingsPage() {
   const handleSaveChanges = () => {
     if (!user) return;
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/`, {
+    apiFetch("/api/v1/user/me", {
       method: "PUT",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify(getValues()),
     })
       .then(async (res) => {

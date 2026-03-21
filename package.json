@@ -10,7 +10,7 @@
   "scripts": {
     "lint": "eslint . --fix",
     "format": "prettier . --write",
-    "prepare": "husky"
+    "dev": "concurrently \"pnpm --filter ./backend dev\" \"pnpm --filter ./frontend dev\""
   },
   "author": "https://github.com/sunjay-dev/",
   "license": "MIT",
@@ -24,5 +24,8 @@
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.1",
     "typescript-eslint": "^8.57.1"
+  },
+  "dependencies": {
+    "concurrently": "^9.2.1"
   }
 }

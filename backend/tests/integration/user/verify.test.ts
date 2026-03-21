@@ -9,11 +9,11 @@ import mockingoose from "mockingoose";
 vi.mock("@/config/redis.config.js");
 vi.mock("@/utils/jwt.utils.js");
 
-describe("POST /api/user/verify-email", () => {
+describe("POST /api/v1/user/auth/verify-email", () => {
   const validUserId = "507f1f77bcf86cd799439011";
 
   it("should return 400 for missing otp", async () => {
-    const response = await request(app).post("/api/user/verify-email").send({ userId: validUserId });
+    const response = await request(app).post("/api/v1/user/auth/verify-email").send({ userId: validUserId });
 
     expect(response.status).toBe(400);
     expect(response.body.message).toMatch(/expected string, received undefined/i);
@@ -23,7 +23,7 @@ describe("POST /api/user/verify-email", () => {
     vi.mocked(redis.mget).mockResolvedValue([null, null]);
     mockingoose(userModel).toReturn({ _id: validUserId }, "findOne");
 
-    const response = await request(app).post("/api/user/verify-email").send({
+    const response = await request(app).post("/api/v1/user/auth/verify-email").send({
       userId: validUserId,
       otp: "123456",
     });
@@ -36,7 +36,7 @@ describe("POST /api/user/verify-email", () => {
     vi.mocked(redis.mget).mockResolvedValue(["123456", "0"]);
     mockingoose(userModel).toReturn(null, "findOne");
 
-    const response = await request(app).post("/api/user/verify-email").send({
+    const response = await request(app).post("/api/v1/user/auth/verify-email").send({
       userId: validUserId,
       otp: "123456",
     });
@@ -57,7 +57,7 @@ describe("POST /api/user/verify-email", () => {
     vi.spyOn(userModel, "findOne").mockResolvedValue(mockUser as any);
     vi.mocked(jwtUtils.signToken).mockReturnValue("fake-token");
 
-    const response = await request(app).post("/api/user/verify-email").send({
+    const response = await request(app).post("/api/v1/user/auth/verify-email").send({
       userId: validUserId,
       otp: "123456",
     });

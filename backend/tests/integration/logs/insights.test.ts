@@ -9,7 +9,7 @@ import mockingoose from "mockingoose";
 vi.mock("@/utils/jwt.utils.js");
 vi.mock("@/config/redis.config.js");
 
-describe("GET /api/logs/insights", () => {
+describe("GET /api/v1/logs/insights", () => {
   const validUserId = "507f1f77bcf86cd799439011";
 
   beforeEach(() => {
@@ -20,7 +20,7 @@ describe("GET /api/logs/insights", () => {
     const mockInsights = { totalExecutions: 10, successRate: 100 };
     vi.mocked(redis.get).mockResolvedValue(JSON.stringify(mockInsights));
 
-    const response = await request(app).get("/api/logs/insights").set("Authorization", "Bearer token");
+    const response = await request(app).get("/api/v1/logs/insights").set("Authorization", "Bearer token");
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual(mockInsights);
@@ -39,7 +39,7 @@ describe("GET /api/logs/insights", () => {
     ];
     mockingoose(logsModels).toReturn(mockInsights, "aggregate");
 
-    const response = await request(app).get("/api/logs/insights").set("Authorization", "Bearer token");
+    const response = await request(app).get("/api/v1/logs/insights").set("Authorization", "Bearer token");
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual(mockInsights);

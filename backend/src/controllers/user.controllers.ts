@@ -1,24 +1,38 @@
-import type { Request, Response, NextFunction } from "express";
-import { signToken } from "../utils/jwt.utils.js";
+import type { Request, Response, NextFunction, CookieOptions } from "express";
 import { BadRequestError } from "../utils/appError.utils.js";
 import * as userService from "../services/user.service.js";
+import { revokeRefreshToken, generateRefreshAndAccessToken } from "../services/token.service.js";
+import { OAuthUser } from "../types/user.types.js";
+
+const accessTokenOptions: CookieOptions = {
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+  maxAge: 15 * 60 * 1000,
+};
+
+const refreshTokenOptions: CookieOptions = {
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+};
 
 export const handleUserLogin = async (req: Request, res: Response) => {
   const email = req.body.email.trim().toLowerCase();
   const { password, rememberMe = false } = req.body;
-  const { user, token } = await userService.loginUser({ email, password, rememberMe });
+  const { user, accessToken, refreshToken } = await userService.loginUser({ email, password });
 
-  res.cookie("token", token, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
+  res.cookie("accessToken", accessToken, accessTokenOptions);
+  res.cookie("refreshToken", refreshToken, {
+    ...refreshTokenOptions,
     maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined,
   });
 
   res.status(200).json({
     message: "Login successful",
     user,
-    token,
+    accessToken,
+    refreshToken,
   });
 };
 
@@ -36,21 +50,35 @@ export const handleUserRegister = async (req: Request, res: Response) => {
   });
 };
 
+export const handleRefreshAccessToken = async (req: Request, res: Response) => {
+  const refreshToken = req.cookies?.refreshToken;
+  if (!refreshToken) throw new BadRequestError("Refresh token is required");
+
+  const accessToken = await userService.generateAccessToken(refreshToken);
+
+  res.cookie("accessToken", accessToken, accessTokenOptions);
+
+  res.status(200).json({
+    message: "Access token refreshed successfully",
+    accessToken,
+  });
+};
+
 export const handleUserVerification = async (req: Request, res: Response) => {
   const { otp, userId } = req.body;
 
-  const { token } = await userService.verifyUser({ userId, otp });
+  const { accessToken, refreshToken } = await userService.verifyUser({ userId, otp });
 
-  res.cookie("token", token, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+  res.cookie("accessToken", accessToken, accessTokenOptions);
+  res.cookie("refreshToken", refreshToken, {
+    ...refreshTokenOptions,
+    maxAge: 30 * 24 * 60 * 60 * 1000,
   });
 
   res.status(200).json({
     message: "Your email has been successfully verified.",
-    token,
+    accessToken,
+    refreshToken,
   });
 };
 
@@ -66,7 +94,9 @@ export const handleOtpResend = async (req: Request, res: Response) => {
 };
 
 export const handleUserLogout = async (req: Request, res: Response) => {
-  res.clearCookie("token");
+  revokeRefreshToken(req.cookies?.refreshToken);
+  res.clearCookie("accessToken");
+  res.clearCookie("refreshToken");
   res.status(200).json({ message: "Logged out successfully" });
 };
 
@@ -86,18 +116,17 @@ export const handleChangeUserDetails = async (req: Request, res: Response) => {
 };
 
 export const handleGoogleCallBack = async (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user;
-  if (!user || typeof user !== "object" || !("_id" in user) || !("email" in user)) {
+  const user = req.user as OAuthUser;
+  if (!user || typeof user !== "object" || !("_id" in user)) {
     return next(new BadRequestError("Invalid user data from Google authentication"));
   }
 
-  const token = signToken({ userId: user._id! }, "7d");
+  const { accessToken, refreshToken } = await generateRefreshAndAccessToken(user._id.toString());
 
-  res.cookie("token", token, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+  res.cookie("accessToken", accessToken, accessTokenOptions);
+  res.cookie("refreshToken", refreshToken, {
+    ...refreshTokenOptions,
+    maxAge: 30 * 24 * 60 * 60 * 1000,
   });
 
   res.redirect(`${process.env.CLIENT_URL as string}/dashboard?loginMethod=google`);
@@ -117,16 +146,17 @@ export const handleResetPassword = async (req: Request, res: Response) => {
   const { token } = req.body;
   const password = req.body.password.trim();
 
-  const { cookieToken } = await userService.resetUserPassword(token, password);
+  const { accessToken, refreshToken } = await userService.resetUserPassword(token, password);
 
-  res.cookie("token", cookieToken, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-    maxAge: 3 * 24 * 60 * 60 * 1000,
+  res.cookie("accessToken", accessToken, accessTokenOptions);
+  res.cookie("refreshToken", refreshToken, {
+    ...refreshTokenOptions,
+    maxAge: 30 * 24 * 60 * 60 * 1000,
   });
 
   res.status(200).json({
     message: "Your password has been successfully reset. You’re now logged in.",
+    accessToken,
+    refreshToken,
   });
 };

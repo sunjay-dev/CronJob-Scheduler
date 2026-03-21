@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { LogChart, LogTable, LogFilters } from "../components";
 import type { InsightLog, UserLogInterface } from "../types";
+import { apiFetch } from "../utils/apiFetch";
 
 export default function Logs() {
   const [limit, setLimit] = useState(10);
@@ -25,9 +26,7 @@ export default function Logs() {
       if (statusFilter) queryParams.append("status", statusFilter);
       if (methodFilter) queryParams.append("method", methodFilter);
 
-      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/logs?${queryParams.toString()}`, {
-        credentials: "include",
-      })
+      apiFetch(`/api/v1/logs?${queryParams.toString()}`)
         .then(async (res) => {
           const data = await res.json();
 
@@ -64,9 +63,7 @@ export default function Logs() {
 
   useEffect(() => {
     const fetchInsights = () => {
-      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/logs/insights`, {
-        credentials: "include",
-      })
+      apiFetch("/api/v1/logs/insights")
         .then(async (res) => {
           const data = await res.json();
 

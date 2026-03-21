@@ -24,9 +24,9 @@ import cronRouter from "./routes/log.routes.js";
 import jobRouter from "./routes/job.routes.js";
 
 app.use("/", serverRouter);
-app.use("/api/user", userRouter);
-app.use("/api/logs", cronRouter);
-app.use("/api/jobs", jobRouter);
+app.use("/api/v1/user", userRouter);
+app.use("/api/v1/logs", cronRouter);
+app.use("/api/v1/jobs", jobRouter);
 
 app.use(errorHandler);
 

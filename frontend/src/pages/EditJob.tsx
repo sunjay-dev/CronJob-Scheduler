@@ -9,6 +9,7 @@ import { jobSchema } from "../schemas/jobSchemas";
 import { useConfirmExit } from "../hooks/useConfirmExit";
 import { useForm, type FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { apiFetch } from "../utils/apiFetch";
 
 export default function EditJob() {
   const { jobId } = useParams();
@@ -61,9 +62,7 @@ export default function EditJob() {
   useConfirmExit(isDirty, !isSubmitted && !isSubmitted);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/jobs/${jobId}`, {
-      credentials: "include",
-    })
+    apiFetch(`/api/v1/jobs/${jobId}`)
       .then(async (res) => {
         const data = await res.json();
 
@@ -125,12 +124,8 @@ export default function EditJob() {
   };
 
   const submitEditJob = () => {
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/jobs/${jobId}`, {
+    apiFetch(`/api/v1/jobs/${jobId}`, {
       method: "PUT",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify(getValues()),
     })
       .then(async (res) => {

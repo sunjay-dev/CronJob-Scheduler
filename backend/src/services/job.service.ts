@@ -2,7 +2,7 @@ import agenda from "../config/agenda.config.js";
 import logsModels from "../models/logs.models.js";
 import mongoose from "mongoose";
 import { NotFoundError } from "../utils/appError.utils.js";
-import { JobPayload } from "@/types/job.types.js";
+import { JobPayload } from "../types/job.types.js";
 
 export const createJobAction = async (payload: JobPayload, cron: string, timezone: string, enabled: boolean) => {
   const job = agenda.create("http-request", payload);

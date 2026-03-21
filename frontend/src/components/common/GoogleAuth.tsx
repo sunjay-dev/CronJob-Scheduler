@@ -1,5 +1,5 @@
 const handleGoogleAuth = () => {
-  window.open(`${import.meta.env.VITE_BACKEND_URL}/api/user/auth/google`, "_self");
+  window.open(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/auth/google`, "_self");
 };
 
 export default function GoogleAuth({ text, lastUsed }: { text: string; lastUsed: boolean }) {

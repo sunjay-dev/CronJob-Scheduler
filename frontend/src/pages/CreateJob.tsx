@@ -9,6 +9,7 @@ import { jobSchema } from "../schemas/jobSchemas";
 import { useConfirmExit } from "../hooks/useConfirmExit";
 import { useForm, type FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { apiFetch } from "../utils/apiFetch";
 
 export default function CreateJob() {
   const navigate = useNavigate();
@@ -58,10 +59,8 @@ export default function CreateJob() {
 
   const submitJob = async (job: JobDetails) => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/jobs`, {
+      const res = await apiFetch("/api/v1/jobs", {
         method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(job),
       });
 

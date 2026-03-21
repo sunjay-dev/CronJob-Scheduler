@@ -9,11 +9,11 @@ import mockingoose from "mockingoose";
 vi.mock("@/config/redis.config.js");
 vi.mock("@/utils/qstashEmail.utils.js");
 
-describe("POST /api/user/register", () => {
+describe("POST /api/v1/user/auth/register", () => {
   const validUserId = "507f1f77bcf86cd799439011";
 
   it("should return 400 for invalid request body", async () => {
-    const response = await request(app).post("/api/user/register").send({
+    const response = await request(app).post("/api/v1/user/auth/register").send({
       name: "valid name",
       email: "not-an-email",
       password: "password123",
@@ -32,7 +32,7 @@ describe("POST /api/user/register", () => {
 
     mockingoose(userModel).toReturn(mockUser, "findOne");
 
-    const response = await request(app).post("/api/user/register").send({
+    const response = await request(app).post("/api/v1/user/auth/register").send({
       name: "John Doe",
       email: "test@example.com",
       password: "password123",
@@ -48,7 +48,7 @@ describe("POST /api/user/register", () => {
     const newUser = { _id: validUserId, email: "test@example.com", name: "John Doe" };
     vi.spyOn(userModel, "create").mockResolvedValue(newUser as unknown as never);
 
-    const response = await request(app).post("/api/user/register").send({
+    const response = await request(app).post("/api/v1/user/auth/register").send({
       name: "John Doe",
       email: "test@example.com",
       password: "password123",

@@ -20,7 +20,24 @@
               "path": [""]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/",
+                  "host": ["{{baseUrl}}"],
+                  "path": [""]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "Hello from my server!"
+            }
+          ]
         },
         {
           "name": "Health Check",
@@ -33,13 +50,36 @@
               "path": ["health"]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/health",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["health"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "OK"
+            }
+          ]
         },
         {
           "name": "Metrics",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{prometheusSecret}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/metrics",
               "host": ["{{baseUrl}}"],
@@ -51,7 +91,7 @@
       ]
     },
     {
-      "name": "User",
+      "name": "User Authentication",
       "item": [
         {
           "name": "Register",
@@ -68,12 +108,33 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/user/register",
+              "raw": "{{baseUrl}}/api/v1/user/auth/register",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "user", "register"]
+              "path": ["api", "v1", "user", "auth", "register"]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/user/auth/register",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "user", "auth", "register"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "{\n    \"message\": \"Account created successfully. Please check your email to verify.\",\n    \"id\": \"user_id\",\n    \"email\": \"john@example.com\"\n}"
+            }
+          ]
         },
         {
           "name": "Login",
@@ -90,12 +151,63 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/user/login",
+              "raw": "{{baseUrl}}/api/v1/user/auth/login",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "user", "login"]
+              "path": ["api", "v1", "user", "auth", "login"]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\",\n    \"rememberMe\": true\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/user/auth/login",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "user", "auth", "login"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "{\n    \"message\": \"Login successful\",\n    \"user\": {\n        \"_id\": \"user_id\",\n        \"name\": \"John Doe\",\n        \"email\": \"john@example.com\"\n    },\n    \"accessToken\": \"jwt_access_token\",\n    \"refreshToken\": \"jwt_refresh_token\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/user/auth/refresh",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "user", "auth", "refresh"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/user/auth/refresh",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "user", "auth", "refresh"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "{\n    \"message\": \"Access token refreshed successfully\",\n    \"accessToken\": \"new_jwt_access_token\"\n}"
+            }
+          ]
         },
         {
           "name": "Verify Email",
@@ -112,12 +224,33 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/user/verify-email",
+              "raw": "{{baseUrl}}/api/v1/user/auth/verify-email",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "user", "verify-email"]
+              "path": ["api", "v1", "user", "auth", "verify-email"]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"otp\": \"123456\",\n    \"userId\": \"user_mongodb_id\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/user/auth/verify-email",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "user", "auth", "verify-email"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "{\n    \"message\": \"Your email has been successfully verified.\",\n    \"accessToken\": \"jwt_access_token\",\n    \"refreshToken\": \"jwt_refresh_token\"\n}"
+            }
+          ]
         },
         {
           "name": "Resend OTP",
@@ -134,12 +267,33 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/user/resend-otp",
+              "raw": "{{baseUrl}}/api/v1/user/auth/resend-otp",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "user", "resend-otp"]
+              "path": ["api", "v1", "user", "auth", "resend-otp"]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"userId\": \"user_mongodb_id\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/user/auth/resend-otp",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "user", "auth", "resend-otp"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "{\n    \"message\": \"A new OTP has been sent to your email.\",\n    \"wait\": 60\n}"
+            }
+          ]
         },
         {
           "name": "Forgot Password",
@@ -156,12 +310,33 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/user/forgot-password",
+              "raw": "{{baseUrl}}/api/v1/user/auth/forgot-password",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "user", "forgot-password"]
+              "path": ["api", "v1", "user", "auth", "forgot-password"]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"email\": \"john@example.com\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/user/auth/forgot-password",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "user", "auth", "forgot-password"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "{\n    \"message\": \"Email has been successfully sent to reset password\"\n}"
+            }
+          ]
         },
         {
           "name": "Reset Password",
@@ -178,29 +353,122 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/user/reset-password",
+              "raw": "{{baseUrl}}/api/v1/user/auth/reset-password",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "user", "reset-password"]
+              "path": ["api", "v1", "user", "auth", "reset-password"]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"token\": \"64_character_reset_token\",\n    \"password\": \"newpassword123\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/user/auth/reset-password",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "user", "auth", "reset-password"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "{\n    \"message\": \"Your password has been successfully reset. You’re now logged in.\"\n}"
+            }
+          ]
         },
         {
-          "name": "Get User Details",
+          "name": "Logout",
           "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/user/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "user", "auth", "logout"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/user/auth/logout",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "user", "auth", "logout"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "{\n    \"message\": \"Logged out successfully\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "User Profile",
+      "item": [
+        {
+          "name": "Get My Details",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/user/details",
+              "raw": "{{baseUrl}}/api/v1/user/me",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "user", "details"]
+              "path": ["api", "v1", "user", "me"]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/user/me",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "user", "me"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "{\n    \"_id\": \"user_id\",\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"timezone\": \"UTC\",\n    \"mode\": \"day\"\n}"
+            }
+          ]
         },
         {
-          "name": "Update User Details",
+          "name": "Update My Details",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "PUT",
             "header": [],
             "body": {
@@ -213,25 +481,33 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/user/",
+              "raw": "{{baseUrl}}/api/v1/user/me",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "user", ""]
+              "path": ["api", "v1", "user", "me"]
             }
           },
-          "response": []
-        },
-        {
-          "name": "Logout",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/user/logout",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "user", "logout"]
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"John Updated\",\n    \"timezone\": \"America/New_York\",\n    \"mode\": \"dark\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/user/me",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "user", "me"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "{\n    \"message\": \"User updated successfully\",\n    \"user\": {\n        \"_id\": \"user_id\",\n        \"name\": \"John Updated\",\n        \"email\": \"john@example.com\",\n        \"timezone\": \"America/New_York\",\n        \"mode\": \"dark\"\n    }\n}"
             }
-          },
-          "response": []
+          ]
         }
       ]
     },
@@ -241,12 +517,22 @@
         {
           "name": "Get All Jobs",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/jobs/",
+              "raw": "{{baseUrl}}/api/v1/jobs/",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "jobs", ""]
+              "path": ["api", "v1", "jobs", ""]
             }
           },
           "response": []
@@ -254,12 +540,22 @@
         {
           "name": "Get Job by ID",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/jobs/:jobId",
+              "raw": "{{baseUrl}}/api/v1/jobs/:jobId",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "jobs", ":jobId"],
+              "path": ["api", "v1", "jobs", ":jobId"],
               "variable": [
                 {
                   "key": "jobId",
@@ -273,6 +569,16 @@
         {
           "name": "Create Job",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
@@ -285,16 +591,47 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/jobs/",
+              "raw": "{{baseUrl}}/api/v1/jobs/",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "jobs", ""]
+              "path": ["api", "v1", "jobs", ""]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"Check Site Health\",\n    \"url\": \"https://example.com/health\",\n    \"timezone\": \"UTC\",\n    \"enabled\": true,\n    \"method\": \"GET\",\n    \"email\": true,\n    \"cron\": \"0 * * * *\",\n    \"body\": \"\",\n    \"timeout\": 10,\n    \"headers\": []\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/jobs/",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "jobs", ""]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "{\n    \"message\": \"Job created successfully\",\n    \"job\": {\n        \"_id\": \"job_id\",\n        \"name\": \"Check Site Health\",\n        \"url\": \"https://example.com/health\",\n        \"enabled\": true,\n        \"nextRun\": \"2023-11-01T12:00:00.000Z\"\n    }\n}"
+            }
+          ]
         },
         {
           "name": "Update Job",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "PUT",
             "header": [],
             "body": {
@@ -307,9 +644,9 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/jobs/:jobId",
+              "raw": "{{baseUrl}}/api/v1/jobs/:jobId",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "jobs", ":jobId"],
+              "path": ["api", "v1", "jobs", ":jobId"],
               "variable": [
                 {
                   "key": "jobId",
@@ -318,17 +655,48 @@
               ]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"Updated Site Health Check\",\n    \"url\": \"https://example.com/health\",\n    \"timezone\": \"UTC\",\n    \"enabled\": true,\n    \"method\": \"GET\",\n    \"email\": true,\n    \"cron\": \"0 * * * *\",\n    \"body\": \"\",\n    \"timeout\": 10,\n    \"headers\": []\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/jobs/:jobId",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "jobs", ":jobId"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "{\n    \"message\": \"Job updated successfully\",\n    \"job\": {\n        \"_id\": \"job_id\",\n        \"name\": \"Updated Site Health Check\"\n    }\n}"
+            }
+          ]
         },
         {
           "name": "Delete Job",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/jobs/:jobId",
+              "raw": "{{baseUrl}}/api/v1/jobs/:jobId",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "jobs", ":jobId"],
+              "path": ["api", "v1", "jobs", ":jobId"],
               "variable": [
                 {
                   "key": "jobId",
@@ -337,11 +705,38 @@
               ]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/jobs/:jobId",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "jobs", ":jobId"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "{\n    \"message\": \"Job deleted\",\n    \"jobId\": \"job_id\"\n}"
+            }
+          ]
         },
         {
           "name": "Trigger Job Now",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
@@ -354,16 +749,47 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/jobs/trigger",
+              "raw": "{{baseUrl}}/api/v1/jobs/trigger",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "jobs", "trigger"]
+              "path": ["api", "v1", "jobs", "trigger"]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"jobId\": \"job_mongodb_id\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/jobs/trigger",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "jobs", "trigger"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "{\n    \"message\": \"Job executed immediately\"\n}"
+            }
+          ]
         },
         {
           "name": "Update Job Status",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "PUT",
             "header": [],
             "body": {
@@ -376,12 +802,33 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/jobs/status",
+              "raw": "{{baseUrl}}/api/v1/jobs/status",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "jobs", "status"]
+              "path": ["api", "v1", "jobs", "status"]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"jobId\": \"job_mongodb_id\",\n    \"status\": true\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/jobs/status",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "jobs", "status"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "{\n    \"message\": \"Job enabled\",\n    \"status\": true\n}"
+            }
+          ]
         }
       ]
     },
@@ -391,12 +838,22 @@
         {
           "name": "Get User Logs",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/logs/?page=1&limit=10",
+              "raw": "{{baseUrl}}/api/v1/logs/?page=1&limit=10",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "logs", ""],
+              "path": ["api", "v1", "logs", ""],
               "query": [
                 {
                   "key": "page",
@@ -424,12 +881,22 @@
         {
           "name": "Get Log Insights",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/logs/insights",
+              "raw": "{{baseUrl}}/api/v1/logs/insights",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "logs", "insights"]
+              "path": ["api", "v1", "logs", "insights"]
             }
           },
           "response": []
@@ -437,12 +904,22 @@
         {
           "name": "Get Logs by Job ID",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/logs/:jobId?page=1&limit=10",
+              "raw": "{{baseUrl}}/api/v1/logs/:jobId?page=1&limit=10",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "logs", ":jobId"],
+              "path": ["api", "v1", "logs", ":jobId"],
               "query": [
                 {
                   "key": "page",
@@ -466,12 +943,22 @@
         {
           "name": "Get Log by ID",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/logs/id/:logId",
+              "raw": "{{baseUrl}}/api/v1/logs/id/:logId",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "logs", "id", ":logId"],
+              "path": ["api", "v1", "logs", "id", ":logId"],
               "variable": [
                 {
                   "key": "logId",
@@ -505,6 +992,16 @@
     {
       "key": "baseUrl",
       "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "prometheusSecret",
+      "value": "",
       "type": "string"
     }
   ]

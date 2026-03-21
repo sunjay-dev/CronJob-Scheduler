@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { setJobs } from "../slices/jobSlice";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import type { JobInterface, UserLogInterface } from "../types";
+import { apiFetch } from "../utils/apiFetch";
 
 export default function Dashboard() {
   const limit = 8;
@@ -38,9 +39,7 @@ export default function Dashboard() {
     if (!user) return;
     if (jobs.length !== 0) return;
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/jobs`, {
-      credentials: "include",
-    })
+    apiFetch("/api/v1/jobs")
       .then(async (res) => {
         const data = await res.json();
 
@@ -60,9 +59,7 @@ export default function Dashboard() {
 
     const fetchLogs = () => {
       setIsLoading(true);
-      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/logs?page=${page}&limit=${limit}`, {
-        credentials: "include",
-      })
+      apiFetch(`/api/v1/logs?page=${page}&limit=${limit}`)
         .then(async (res) => {
           const data = await res.json();
 

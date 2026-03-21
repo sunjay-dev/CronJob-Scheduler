@@ -23,7 +23,7 @@ export default function ForgetPassword() {
     setIsLoading(true);
     setMessage(null);
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/forgot-password`, {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/auth/forgot-password`, {
       method: "POST",
       credentials: "include",
       headers: {

@@ -40,7 +40,7 @@ export default function ResetPassword() {
 
     setIsLoading(true);
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/reset-password`, {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/auth/reset-password`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },

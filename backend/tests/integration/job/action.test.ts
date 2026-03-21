@@ -17,7 +17,7 @@ describe("Job Mutating Actions", () => {
     vi.mocked(jwtUtils.verifyToken).mockReturnValue({ userId: "user-abc-123" } as any);
   });
 
-  describe("PUT /api/jobs/status", () => {
+  describe("PUT /api/v1/jobs/status", () => {
     it("should toggle the status successfully", async () => {
       const mockJob = {
         enable: vi.fn(),
@@ -29,7 +29,7 @@ describe("Job Mutating Actions", () => {
       vi.mocked(agenda.jobs).mockResolvedValue([mockJob] as any);
 
       const response = await request(app)
-        .put("/api/jobs/status")
+        .put("/api/v1/jobs/status")
         .set("Authorization", "Bearer token")
         .send({ jobId: validJobId, status: true });
 
@@ -43,7 +43,7 @@ describe("Job Mutating Actions", () => {
       vi.mocked(agenda.jobs).mockResolvedValue([]);
 
       const response = await request(app)
-        .put("/api/jobs/status")
+        .put("/api/v1/jobs/status")
         .set("Authorization", "Bearer token")
         .send({ jobId: validJobId, status: false });
 
@@ -52,13 +52,13 @@ describe("Job Mutating Actions", () => {
     });
   });
 
-  describe("POST /api/jobs/trigger", () => {
+  describe("POST /api/v1/jobs/trigger", () => {
     it("should trigger job execution immediately", async () => {
       const mockJob = { attrs: { name: "http-request", data: { url: "example.com" }, _id: validJobId } };
       vi.mocked(agenda.jobs).mockResolvedValue([mockJob] as any);
 
       const response = await request(app)
-        .post("/api/jobs/trigger")
+        .post("/api/v1/jobs/trigger")
         .set("Authorization", "Bearer token")
         .send({ jobId: validJobId });
 
@@ -71,11 +71,11 @@ describe("Job Mutating Actions", () => {
     });
   });
 
-  describe("DELETE /api/jobs/:jobId", () => {
+  describe("DELETE /api/v1/jobs/:jobId", () => {
     it("should return 404 if agenda cannot delete job", async () => {
       vi.mocked(agenda.cancel).mockResolvedValue(0);
 
-      const response = await request(app).delete(`/api/jobs/${validJobId}`).set("Authorization", "Bearer token");
+      const response = await request(app).delete(`/api/v1/jobs/${validJobId}`).set("Authorization", "Bearer token");
 
       expect(response.status).toBe(404);
       expect(response.body.message.length).toBeGreaterThan(0);
@@ -85,7 +85,7 @@ describe("Job Mutating Actions", () => {
       vi.mocked(agenda.cancel).mockResolvedValue(1);
       vi.mocked(logsModels.deleteMany).mockResolvedValue(true as any);
 
-      const response = await request(app).delete(`/api/jobs/${validJobId}`).set("Authorization", "Bearer token");
+      const response = await request(app).delete(`/api/v1/jobs/${validJobId}`).set("Authorization", "Bearer token");
 
       expect(response.status).toBe(200);
       expect(response.body.message.length).toBeGreaterThan(0);

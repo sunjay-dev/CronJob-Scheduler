@@ -13,8 +13,10 @@ import {
   TooManyRequestsError,
   UnauthorizedError,
 } from "../utils/appError.utils.js";
+import refreshTokenModel from "../models/refreshToken.models.js";
+import { generateRefreshAndAccessToken } from "./token.service.js";
 
-export const loginUser = async ({ email, password, rememberMe }: LoginParams) => {
+export const loginUser = async ({ email, password }: LoginParams) => {
   const user = await userModel.findOne({ email }).select("+password verified authProvider").lean();
 
   if (!user) throw new UnauthorizedError("Either email or password is incorrect.");
@@ -32,15 +34,15 @@ export const loginUser = async ({ email, password, rememberMe }: LoginParams) =>
   if (!isMatch) throw new UnauthorizedError("Either email or password is incorrect.");
 
   if (!user.verified) {
-    throw new ForbiddenError("Please verify your email to login.", { id: user._id });
+    throw new ForbiddenError("Please verify your email to login.", { id: user._id.toString() });
   }
 
-  const token = signToken({ userId: user._id }, rememberMe ? "30d" : "3d");
+  const { accessToken, refreshToken } = await generateRefreshAndAccessToken(user._id.toString());
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { password: _, ...safeUser } = user;
 
-  return { user: safeUser, token };
+  return { user: safeUser, accessToken, refreshToken };
 };
 
 export const registerUser = async ({ name, email, password, timezone }: RegisterParams) => {
@@ -67,6 +69,15 @@ export const registerUser = async ({ name, email, password, timezone }: Register
   ]);
 
   return { id: newUser._id, email };
+};
+
+export const generateAccessToken = async (refreshToken: string) => {
+  if (!refreshToken) throw new UnauthorizedError("No refresh token provided.");
+
+  const storedToken = await refreshTokenModel.findOne({ refreshToken });
+  if (!storedToken) throw new UnauthorizedError("Refresh token revoked or expired.");
+
+  return signToken({ userId: storedToken.user.toString() }, { expiresIn: "15m" });
 };
 
 export const verifyUser = async ({ userId, otp }: VerifyParams) => {
@@ -116,8 +127,8 @@ export const verifyUser = async ({ userId, otp }: VerifyParams) => {
     redis.del(`otp:${userId}`, `otpAttempts:${userId}`, `otpResendAttempts:${userId}`, `otpResendLock:${userId}`),
   ]);
 
-  const token = signToken({ userId: user.id }, "7d");
-  return { token };
+  const { accessToken, refreshToken } = await generateRefreshAndAccessToken(user._id.toString());
+  return { accessToken, refreshToken };
 };
 
 export const resendUserOtp = async (userId: string) => {
@@ -229,6 +240,6 @@ export const resetUserPassword = async (token: string, password: string) => {
 
   await redis.del(`otptoken:${token}`);
 
-  const cookieToken = signToken({ userId: user._id }, "3d");
-  return { cookieToken };
+  const { accessToken, refreshToken } = await generateRefreshAndAccessToken(user._id.toString());
+  return { accessToken, refreshToken };
 };

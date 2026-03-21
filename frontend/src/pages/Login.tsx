@@ -32,7 +32,7 @@ export default function Login() {
 
     setIsLoading(true);
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/login`, {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/auth/login`, {
       method: "POST",
       credentials: "include",
       headers: {

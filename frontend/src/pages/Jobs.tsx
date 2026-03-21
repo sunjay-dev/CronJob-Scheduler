@@ -4,10 +4,9 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../hooks";
 import { removeJob, setJobs, updateJobStatus } from "../slices/jobSlice";
+import { apiFetch } from "../utils/apiFetch";
 
 export default function Jobs() {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL as string;
-
   const jobs = useAppSelector((state) => state.jobs.jobs);
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
@@ -18,9 +17,7 @@ export default function Jobs() {
 
     setIsLoading(true);
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/jobs`, {
-      credentials: "include",
-    })
+    apiFetch("/api/v1/jobs")
       .then(async (res) => {
         const data = await res.json();
 
@@ -39,10 +36,8 @@ export default function Jobs() {
 
   const handleChangeStatus = (id: string, status: boolean) => {
     setIsLoading(true);
-    fetch(`${backendUrl}/api/jobs/status`, {
+    apiFetch("/api/v1/jobs/status", {
       method: "PUT",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ jobId: id, status }),
     })
       .then(async (res) => {
@@ -61,9 +56,8 @@ export default function Jobs() {
 
   const handleDeleteJob = (id: string) => {
     setIsLoading(true);
-    fetch(`${backendUrl}/api/jobs/${id}`, {
+    apiFetch(`/api/v1/jobs/${id}`, {
       method: "DELETE",
-      credentials: "include",
     })
       .then(async (res) => {
         const data = await res.json();

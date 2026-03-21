@@ -1,30 +1,33 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Outlet, Navigate } from "react-router-dom";
 import { logout, setAuth } from "../../slices/authSlice";
 import { useAppDispatch } from "../../hooks";
 import { Loader } from "../common";
 import { clearJobs } from "../../slices/jobSlice";
+import { apiFetch } from "../../utils/apiFetch";
 
 export default function Layout() {
   const [isLoading, setIsLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);
   const dispatch = useAppDispatch();
 
+  const callLogout = useCallback(() => {
+    dispatch(logout());
+    dispatch(clearJobs());
+    setAuthorized(false);
+  }, [dispatch]);
+
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/details`, {
-      credentials: "include",
-    })
-      .then(async (res) => {
+    async function checkAuth() {
+      try {
+        const res = await apiFetch("/api/v1/user/me");
+
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || "Something went wrong, Please try again later.");
-        return data;
-      })
-      .then((data) => {
+
         if (data.authorized === false) {
-          dispatch(logout());
-          dispatch(clearJobs());
-          setAuthorized(false);
-          return null;
+          callLogout();
+          return;
         }
 
         setAuthorized(true);
@@ -42,14 +45,14 @@ export default function Layout() {
             },
           }),
         );
-      })
-      .catch(() => {
-        dispatch(logout());
-        dispatch(clearJobs());
-        setAuthorized(false);
-      })
-      .finally(() => setIsLoading(false));
-  }, [dispatch]);
+      } catch {
+        callLogout();
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    checkAuth();
+  }, [callLogout, dispatch]);
 
   if (isLoading) return <Loader />;
 

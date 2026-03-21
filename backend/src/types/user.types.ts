@@ -1,7 +1,6 @@
 export interface LoginParams {
   email: string;
   password?: string;
-  rememberMe?: boolean;
 }
 
 export interface RegisterParams {
@@ -15,3 +14,7 @@ export interface VerifyParams {
   userId: string;
   otp: string;
 }
+
+export type OAuthUser = {
+  _id: { toString(): string };
+};

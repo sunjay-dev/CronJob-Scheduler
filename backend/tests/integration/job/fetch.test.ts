@@ -8,9 +8,9 @@ import mongoose from "mongoose";
 vi.mock("@/utils/jwt.utils.js");
 vi.mock("@/config/agenda.config.js");
 
-describe("GET /api/jobs", () => {
+describe("GET /api/v1/jobs", () => {
   it("should return 401 if unauthenticated", async () => {
-    const response = await request(app).get("/api/jobs");
+    const response = await request(app).get("/api/v1/jobs");
     expect(response.status).toBe(401);
   });
 
@@ -21,7 +21,7 @@ describe("GET /api/jobs", () => {
     const mockJobs = [{ name: "Job 1" }, { name: "Job 2" }];
     vi.mocked(agenda.jobs).mockResolvedValue(mockJobs as any);
 
-    const response = await request(app).get("/api/jobs").set("Authorization", "Bearer validsimulatedtoken");
+    const response = await request(app).get("/api/v1/jobs").set("Authorization", "Bearer validsimulatedtoken");
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual(mockJobs);
@@ -29,11 +29,11 @@ describe("GET /api/jobs", () => {
   });
 });
 
-describe("GET /api/jobs/:jobId", () => {
+describe("GET /api/v1/jobs/:jobId", () => {
   it("should return 400 for invalid jobId parameter", async () => {
     vi.mocked(jwtUtils.verifyToken).mockReturnValue({ userId: "user-abc-123" } as any);
 
-    const response = await request(app).get("/api/jobs/invalid-id").set("Authorization", "Bearer validsimulatedtoken");
+    const response = await request(app).get("/api/v1/jobs/invalid-id").set("Authorization", "Bearer validsimulatedtoken");
 
     expect(response.status).toBe(400);
     expect(response.body.message.length).toBeGreaterThan(0);
@@ -49,7 +49,7 @@ describe("GET /api/jobs/:jobId", () => {
     vi.mocked(agenda.jobs).mockResolvedValue(mockJob as any);
 
     const response = await request(app)
-      .get(`/api/jobs/${validJobId}`)
+      .get(`/api/v1/jobs/${validJobId}`)
       .set("Authorization", "Bearer validsimulatedtoken");
 
     expect(response.status).toBe(200);

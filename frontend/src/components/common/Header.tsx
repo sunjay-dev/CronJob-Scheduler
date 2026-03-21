@@ -38,7 +38,7 @@ export default function Header({ sidebarOpen, setSidebarOpen, mobileMenuOpen, se
   const handleUserLogout = async () => {
     setConfirmLogout(false);
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/logout`, {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/auth/logout`, {
       credentials: "include",
       method: "POST",
     })
