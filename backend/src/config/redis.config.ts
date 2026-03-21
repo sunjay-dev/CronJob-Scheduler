@@ -1,7 +1,10 @@
 import { Redis } from "ioredis";
 import logger from "../utils/logger.utils.js";
 
-const redis = new Redis(process.env.REDIS_URL as string);
+const redis = new Redis(process.env.REDIS_URL as string, {
+  connectTimeout: 10_000,
+  maxRetriesPerRequest: 3,
+});
 
 redis.on("connect", () => {
   logger.info({ message: "Redis client connected" });

@@ -33,7 +33,9 @@ describe("GET /api/v1/jobs/:jobId", () => {
   it("should return 400 for invalid jobId parameter", async () => {
     vi.mocked(jwtUtils.verifyToken).mockReturnValue({ userId: "user-abc-123" } as any);
 
-    const response = await request(app).get("/api/v1/jobs/invalid-id").set("Authorization", "Bearer validsimulatedtoken");
+    const response = await request(app)
+      .get("/api/v1/jobs/invalid-id")
+      .set("Authorization", "Bearer validsimulatedtoken");
 
     expect(response.status).toBe(400);
     expect(response.body.message.length).toBeGreaterThan(0);

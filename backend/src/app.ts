@@ -11,6 +11,7 @@ app.use(
   cors({
     origin: process.env.CLIENT_URL as string,
     credentials: true,
+    maxAge: 7200,
   }),
 );
 

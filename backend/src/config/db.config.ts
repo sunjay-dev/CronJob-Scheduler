@@ -7,5 +7,6 @@ export default async function connectDB() {
     logger.info({ message: "MongoDB connected" });
   } catch (error) {
     logger.error({ message: "Failed to connect to MongoDB", error });
+    throw error;
   }
 }
