@@ -4,12 +4,12 @@ import app from "../../src/app.js";
 
 describe("Server basic routes", () => {
   it("should return 200 on GET /", async () => {
-    const response = await request(app).get("/");
+    const response = await request(app).get("/api/v1/");
     expect(response.status).toBe(200);
   });
 
   it("should return 200 on GET /health", async () => {
-    const response = await request(app).get("/health");
+    const response = await request(app).get("/api/v1/health");
     expect(response.status).toBe(200);
   });
 });

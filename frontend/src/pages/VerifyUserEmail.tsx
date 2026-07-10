@@ -34,7 +34,7 @@ export default function VerifyEmail() {
 
     setIsLoading(true);
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/auth/verify-email`, {
+    fetch("/api/v1/user/auth/verify-email", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -84,7 +84,7 @@ export default function VerifyEmail() {
 
     setIsLoading(true);
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/auth/resend-otp`, {
+    fetch("/api/v1/user/auth/resend-otp", {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },

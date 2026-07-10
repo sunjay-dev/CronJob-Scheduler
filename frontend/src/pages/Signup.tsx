@@ -30,7 +30,7 @@ export default function Signup() {
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     };
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/auth/register`, {
+    fetch("/api/v1/user/auth/register", {
       method: "POST",
       credentials: "include",
       headers: {

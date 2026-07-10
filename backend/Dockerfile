@@ -1,5 +1,5 @@
 ARG NODE_VERSION=24.11.0
-ARG PNPM_VERSION=10.32.1
+ARG PNPM_VERSION=10.33.1
 
 # =================== base stage ============================================
 FROM node:${NODE_VERSION}-alpine AS base

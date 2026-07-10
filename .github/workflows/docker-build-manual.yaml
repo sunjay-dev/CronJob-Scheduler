@@ -70,11 +70,11 @@ jobs:
       - name: Build & Push Backend
         uses: docker/build-push-action@v5
         with:
-          context: ./backend
-          file: backend/Dockerfile
+          context: .
+          file: ./Dockerfile.app
           platforms: linux/arm64
           push: true
-          tags: sunjay195/cron-job-backend:latest
+          tags: sunjay195/cron-job-app:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
           labels: |

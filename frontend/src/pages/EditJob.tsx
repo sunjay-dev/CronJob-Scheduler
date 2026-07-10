@@ -59,7 +59,7 @@ export default function EditJob() {
     else setMessage(null);
   };
 
-  useConfirmExit(isDirty, !isSubmitted && !isSubmitted);
+  useConfirmExit(isDirty, !isSubmitted && isSubmitting);
 
   useEffect(() => {
     apiFetch(`/api/v1/jobs/${jobId}`)
