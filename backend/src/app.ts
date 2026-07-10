@@ -1,10 +1,11 @@
-import "dotenv/config";
 import express from "express";
+import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import path from "path";
 import { fileURLToPath } from "url";
 import passport from "./config/passport.config.js";
 import errorHandler from "./middlewares/errorHandler.middlewares.js";
+import routes from "./api.routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -12,19 +13,13 @@ const clientDistPath = path.join(__dirname, "../public");
 
 const app = express();
 
+app.use(helmet());
 app.use(passport.initialize());
 app.use(express.json());
 app.use(cookieParser());
+app.use(express.static(clientDistPath));
 
-import serverRouter from "./routes/server.routes.js";
-import userRouter from "./routes/user.routes.js";
-import cronRouter from "./routes/log.routes.js";
-import jobRouter from "./routes/job.routes.js";
-
-app.use("/api/v1", serverRouter);
-app.use("/api/v1/user", userRouter);
-app.use("/api/v1/logs", cronRouter);
-app.use("/api/v1/jobs", jobRouter);
+app.use("/api/v1", routes);
 
 app.get("/*splat", (req, res, next) => {
   if (req.path.startsWith("/api/")) {
