@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
+import env from "../config/env.config.js";
 
 export function RestrictAuthenticatedRequest(req: Request, res: Response, next: NextFunction) {
   const { authorization } = req.headers;
@@ -10,7 +11,7 @@ export function RestrictAuthenticatedRequest(req: Request, res: Response, next: 
 
   const token = authorization.split(" ")[1];
 
-  if (!token || token !== (process.env.EMAIL_SERVICE_SECRET as string)) {
+  if (!token || token !== env.EMAIL_SERVICE_SECRET) {
     res.status(401).json({ message: "Unauthorized" });
     return;
   }

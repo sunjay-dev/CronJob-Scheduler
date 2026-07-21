@@ -1,9 +1,10 @@
 import { Resend } from "resend";
 import type { EmailSchema } from "../schemas/email.schema.js";
 import { forgetPasswordTemplete, jobFailedTemplate, confirmEmailTemplate } from "../emailTemplates/index.js";
+import env from "../config/env.config.js";
 
 export default async function sendEmail({ email, name, template, data }: EmailSchema): Promise<void> {
-  const resend = new Resend(process.env.RESEND_EMAIL_API_KEY as string);
+  const resend = new Resend(env.RESEND_EMAIL_API_KEY);
   let emailTemplate: string;
   let subject: string;
 
@@ -28,7 +29,7 @@ export default async function sendEmail({ email, name, template, data }: EmailSc
 
   try {
     await resend.emails.send({
-      from: `CronJon Scheduler <${process.env.SENDEREMAIL as string}>`,
+      from: `CronJon Scheduler <${env.SENDEREMAIL}>`,
       to: email,
       subject,
       html: emailTemplate,
