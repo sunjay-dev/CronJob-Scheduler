@@ -2,6 +2,7 @@ import "dotenv/config";
 import connectDB from "./config/db.config.js";
 import http from "http";
 import register from "./config/prometheus.config.js";
+import env from "./config/env.config.js";
 
 connectDB();
 
@@ -35,7 +36,7 @@ http
       }
 
       const token = authHeader.split(" ")[1];
-      if (token !== (process.env.PROMETHEUS_SECRET as string)) {
+      if (token !== env.PROMETHEUS_SECRET) {
         res.statusCode = 403;
         res.setHeader("Content-Type", "application/json");
         res.end(JSON.stringify({ message: "Invalid Authorization token" }));
@@ -48,6 +49,6 @@ http
       res.end();
     }
   })
-  .listen(process.env.PORT || 3002, () => {
+  .listen(env.PORT, () => {
     console.log("Job Runner metrics server running on port 3002");
   });

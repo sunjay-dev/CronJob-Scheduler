@@ -2,6 +2,7 @@ import agenda from "../agenda.js";
 import logsModel from "../../models/logs.models.js";
 import userModel from "../../models/user.models.js";
 import { queueEmail } from "../../utils/qstashEmail.utils.js";
+import env from "../../config/env.config.js";
 
 import got, { HTTPError, OptionsOfBufferResponseBody, RequestError, TimeoutError } from "got";
 import type { Job } from "agenda";
@@ -20,7 +21,7 @@ interface HttpRequestJobData {
   email: boolean;
 }
 
-const MAX_FAILS_ALLOWED = Number(process.env.MAX_FAILS_ALLOWED) || 10;
+const MAX_FAILS_ALLOWED = env.MAX_FAILS_ALLOWED;
 
 agenda.define("http-request", { concurrency: 5 }, async (job: Job<HttpRequestJobData>) => {
   const { _id, data } = job.attrs;
