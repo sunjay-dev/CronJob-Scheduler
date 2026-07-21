@@ -1,4 +1,5 @@
 import logger from "./logger.utils.js";
+import env from "../config/env.config.js";
 
 interface EmailProps {
   name: string;
@@ -8,7 +9,7 @@ interface EmailProps {
 }
 
 export const queueEmail = async ({ name, email, template, data }: EmailProps): Promise<void> => {
-  if ((process.env.ENABLE_EMAIL_SERVICE as string) !== "true") {
+  if (!env.ENABLE_EMAIL_SERVICE) {
     logger.info({ message: "Email sent to: ", name, email, template, data });
     logger.info({
       message: "Email service is disabled. Skipping actual email sending.",
@@ -17,12 +18,12 @@ export const queueEmail = async ({ name, email, template, data }: EmailProps): P
   }
 
   try {
-    const response = await fetch(`https://qstash.upstash.io/v2/publish/${process.env.EMAIL_SERVICE_URL}`, {
+    const response = await fetch(`https://qstash.upstash.io/v2/publish/${env.EMAIL_SERVICE_URL}`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${process.env.QSTASH_TOKEN as string}`,
+        Authorization: `Bearer ${env.QSTASH_TOKEN}`,
         "Content-Type": "application/json",
-        "Upstash-Forward-Authorization": `Bearer ${process.env.EMAIL_SERVICE_SECRET as string}`,
+        "Upstash-Forward-Authorization": `Bearer ${env.EMAIL_SERVICE_SECRET}`,
       },
       body: JSON.stringify({ name, email, template, data }),
     });

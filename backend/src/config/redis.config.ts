@@ -1,7 +1,8 @@
 import { Redis } from "ioredis";
 import logger from "../utils/logger.utils.js";
+import env from "./env.config.js";
 
-const redis = new Redis(process.env.REDIS_URL as string, {
+const redis = new Redis(env.REDIS_URL, {
   connectTimeout: 10_000,
   maxRetriesPerRequest: 3,
 });

@@ -3,14 +3,14 @@ import connectDB from "./config/db.config.js";
 import logger from "./utils/logger.utils.js";
 import redis from "./config/redis.config.js";
 import mongoose from "mongoose";
+import env from "./config/env.config.js";
 
 async function startServer() {
   try {
     await connectDB();
 
-    const port = process.env.PORT || 3000;
-    const server = app.listen(port, () => {
-      logger.info({ message: "Server running on Port", port });
+    const server = app.listen(env.PORT, () => {
+      logger.info({ message: "Server running on Port", port: env.PORT });
     });
 
     const shutdown = async (signal: string) => {

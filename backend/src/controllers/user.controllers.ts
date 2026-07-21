@@ -3,6 +3,7 @@ import { BadRequestError } from "../utils/appError.utils.js";
 import * as userService from "../services/user.service.js";
 import { revokeRefreshToken, generateRefreshAndAccessToken } from "../services/token.service.js";
 import { OAuthUser } from "../types/user.types.js";
+import env from "../config/env.config.js";
 
 const accessTokenOptions: CookieOptions = {
   httpOnly: true,
@@ -129,7 +130,7 @@ export const handleGoogleCallBack = async (req: Request, res: Response, next: Ne
     maxAge: 30 * 24 * 60 * 60 * 1000,
   });
 
-  res.redirect(`${process.env.CLIENT_URL as string}/dashboard?loginMethod=google`);
+  res.redirect(`${env.CLIENT_URL}/dashboard?loginMethod=google`);
 };
 
 export const handleForgotPassword = async (req: Request, res: Response) => {

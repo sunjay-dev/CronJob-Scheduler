@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import { verifyToken } from "../utils/jwt.utils.js";
 import logger from "../utils/logger.utils.js";
 import { JwtUser } from "../types/jwt.types.js";
+import env from "../config/env.config.js";
 
 export function extractToken(req: Request): string | undefined {
   let accessToken = req.cookies?.accessToken;
@@ -85,7 +86,7 @@ export function prometheusAuth(req: Request, res: Response, next: NextFunction):
     return;
   }
 
-  if (token !== (process.env.PROMETHEUS_SECRET as string)) {
+  if (token !== env.PROMETHEUS_SECRET) {
     res.status(403).json({ message: "Unauthorized access to metrics" });
     return;
   }

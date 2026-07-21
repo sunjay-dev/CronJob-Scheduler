@@ -1,9 +1,10 @@
 import { Agenda } from "agenda";
+import env from "./env.config.js";
 
 const agenda = new Agenda({
   db: {
-    address: process.env.MONGO_DB_URI as string,
-    collection: process.env.MONGO_DB_COLLECTION as string,
+    address: env.MONGO_DB_URI,
+    collection: env.MONGO_DB_COLLECTION,
   },
 });
 

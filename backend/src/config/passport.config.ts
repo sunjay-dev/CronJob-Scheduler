@@ -1,13 +1,14 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import userModels from "../models/user.models.js";
+import env from "./env.config.js";
 
 passport.use(
   new GoogleStrategy(
     {
-      clientID: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL as string,
+      clientID: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
+      callbackURL: env.GOOGLE_CALLBACK_URL,
     },
     async (_accessToken, _refreshToken, profile, done) => {
       const email = profile.emails?.[0]?.value;

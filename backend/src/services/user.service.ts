@@ -5,6 +5,7 @@ import { signToken } from "../utils/jwt.utils.js";
 import { queueEmail } from "../utils/qstashEmail.utils.js";
 import { LoginParams, RegisterParams, VerifyParams } from "../types/user.types.js";
 import redis from "../config/redis.config.js";
+import env from "../config/env.config.js";
 import {
   AppError,
   BadRequestError,
@@ -208,7 +209,7 @@ export const handleForgotPasswordAction = async (email: string) => {
   }
 
   const token = generateRandomToken();
-  const url = `${process.env.CLIENT_URL as string}/reset-password/${token}`;
+  const url = `${env.CLIENT_URL}/reset-password/${token}`;
 
   await queueEmail({
     data: { url },
