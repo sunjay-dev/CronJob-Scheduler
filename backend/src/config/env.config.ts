@@ -6,7 +6,7 @@ const envSchema = z.object({
 
   MONGO_DB_COLLECTION: z.string().default("agendaJobs"),
   JWT_SECRET: z.string().min(1),
-  CLIENT_URL: z.string().url().default("http://localhost:5173"),
+  CLIENT_URL: z.url().default("http://localhost:5173"),
   PORT: z.coerce.number().default(3000),
 
   GOOGLE_CLIENT_ID: z.string().default(""),
@@ -18,6 +18,7 @@ const envSchema = z.object({
   EMAIL_SERVICE_SECRET: z.string().default(""),
   QSTASH_TOKEN: z.string().default(""),
 
+  BCRYPT_SALT_ROUNDS: z.coerce.number().int().min(4).max(16).default(10),
   PROMETHEUS_SECRET: z.string().default(""),
   APP_JOB_NAME: z.string().default("backend"),
 

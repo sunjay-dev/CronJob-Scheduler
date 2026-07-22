@@ -10,10 +10,12 @@ services:
     networks:
       - app-network
 
-  backend:
-    build: ./backend
-    container_name: backend
-    image: sunjay195/backend:latest
+  cronjob-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.app
+    container_name: cronjob-app
+    image: sunjay195/cronjob-app:latest
     depends_on:
       - mongodb
       - redis
@@ -37,25 +39,12 @@ services:
     ports:
       - "9090:9090"
 
-  frontend:
-    build: ./frontend
-    container_name: frontend
-    image: sunjay195/frontend:latest
-    depends_on:
-      - backend
-    env_file:
-      - ./frontend/.env
-    ports:
-      - "5173:5173"
-    networks:
-      - app-network
-
   email-service:
     build: ./email-service
     container_name: email-service
     image: sunjay195/email-service:latest
     depends_on:
-      - backend
+      - cronjob-app
     env_file:
       - ./email-service/.env
     ports:

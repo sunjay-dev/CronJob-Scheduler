@@ -6,15 +6,15 @@ on:
       service:
         description: "Select service to build"
         required: true
-        default: backend
+        default: cronjob-app
         type: choice
         options:
-          - backend
+          - cronjob-app
           - job-runner
 
 jobs:
   test-backend:
-    if: ${{ github.event.inputs.service == 'backend' }}
+    if: ${{ github.event.inputs.service == 'cronjob-app' }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -40,9 +40,9 @@ jobs:
         run: pnpm test
         working-directory: ./backend
 
-  backend:
+  cronjob-app:
     needs: test-backend
-    if: ${{ github.event.inputs.service == 'backend' }}
+    if: ${{ github.event.inputs.service == 'cronjob-app' }}
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 10
 
@@ -67,14 +67,14 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build & Push Backend
+      - name: Build & Push Cronjob App
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile.app
           platforms: linux/arm64
           push: true
-          tags: sunjay195/cron-job-app:latest
+          tags: sunjay195/cronjob-app:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
           labels: |

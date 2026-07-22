@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import env from "../config/env.config.js";
 
 const userSchema = new mongoose.Schema(
   {
@@ -56,7 +57,7 @@ const userSchema = new mongoose.Schema(
 
 userSchema.pre("save", async function () {
   if (!this.isModified("password") || !this.password) return;
-  this.password = await bcrypt.hash(this.password, 7);
+  this.password = await bcrypt.hash(this.password, env.BCRYPT_SALT_ROUNDS);
 });
 
 export default mongoose.model("User", userSchema);
