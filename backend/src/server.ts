@@ -1,3 +1,5 @@
+import "./tracing.js";
+import { shutdownTracing } from "./tracing.js";
 import app from "./app.js";
 import connectDB from "./config/db.config.js";
 import logger from "./utils/logger.utils.js";
@@ -14,11 +16,21 @@ async function startServer() {
     });
 
     const shutdown = async (signal: string) => {
-      logger.info({ message: "Closing connections...", signal });
-      await redis.quit();
-      await mongoose.connection.close();
-      server.close(() => {
-        logger.info({ message: "Server and DB connections closed." });
+      logger.info({ message: "Shutting down...", signal });
+
+      server.close(async () => {
+        logger.info({ message: "HTTP server closed." });
+
+        try {
+          await redis.quit();
+          await mongoose.connection.close();
+          logger.info({ message: "DB and Redis connections closed." });
+        } catch (err) {
+          logger.error({ message: "Error closing DB/Redis connections", error: err });
+        }
+
+        await shutdownTracing();
+
         process.exit(0);
       });
     };

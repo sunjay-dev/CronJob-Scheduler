@@ -42,7 +42,10 @@ dashboard.
 ![Docker](https://img.shields.io/badge/Docker-2496ED.svg?style=for-the-badge&logo=docker&logoColor=white)
 ![Redis](https://img.shields.io/badge/Redis-%23DC382D.svg?style=for-the-badge&logo=redis&logoColor=white)
 ![React Hook Form](https://img.shields.io/badge/React%20Hook%20Form-%23EC5990.svg?style=for-the-badge&logo=reacthookform&logoColor=white)
+![OpenTelemetry](https://img.shields.io/badge/OpenTelemetry-FFFFFF?&style=for-the-badge&logo=opentelemetry&logoColor=black)
 ![Grafana](https://img.shields.io/badge/Grafana-%23F46800.svg?style=for-the-badge&logo=grafana&logoColor=white)
+![Loki](https://img.shields.io/badge/Loki-F46800.svg?style=for-the-badge&logo=grafana&logoColor=white)
+![Tempo](https://img.shields.io/badge/Tempo-4B9E5F.svg?style=for-the-badge&logo=grafana&logoColor=white)
 ![Prometheus](https://img.shields.io/badge/Prometheus-%23E6522C.svg?style=for-the-badge&logo=prometheus&logoColor=white)
 ![Vitest](https://img.shields.io/badge/Vitest-%23E6522C.svg?style=for-the-badge&logo=vitest&logoColor=white)
 
@@ -57,7 +60,6 @@ dashboard.
 > ️ Before you start, make sure you have the following installed:
 >
 > - [pnpm](https://pnpm.io/installation) (package manager used in this project)
-> - [TypeScript](https://www.typescriptlang.org/download) (`tsc` compiler)
 
 ### 1. Clone the repository
 

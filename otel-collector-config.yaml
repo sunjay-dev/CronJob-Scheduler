@@ -1,0 +1,52 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+  filelog:
+    include:
+      - /var/lib/docker/containers/*/*.log
+    exclude:
+      - /var/lib/docker/containers/*${env:HOSTNAME}*/*.log
+    start_at: "end"
+    storage: file_storage
+
+    operators:
+      - type: json_parser
+        timestamp:
+          parse_from: attributes.time
+          layout: "%Y-%m-%dT%H:%M:%S.%fZ"
+      - type: move
+        from: attributes.log
+        to: body
+
+extensions:
+  file_storage:
+    directory: /var/lib/otelcol/file_storage
+    create_directory: true
+    timeout: 1s
+
+processors:
+  batch:
+
+exporters:
+  debug:
+    verbosity: detailed
+  otlphttp/grafana_cloud:
+    endpoint: ${env:GRAFANA_CLOUD_OTLP_ENDPOINT}
+    headers:
+      authorization: ${env:GRAFANA_CLOUD_BASIC_AUTH_HEADER}
+
+service:
+  extensions: [file_storage]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug, otlphttp/grafana_cloud]
+    logs:
+      receivers: [filelog]
+      processors: [batch]
+      exporters: [debug, otlphttp/grafana_cloud]

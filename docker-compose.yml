@@ -17,11 +17,13 @@ services:
     depends_on:
       - mongodb
       - redis
+      - otel-collector
     env_file:
       - ./backend/.env
     environment:
       - MONGO_DB_URI=mongodb://mongodb:27017/cron-job
       - REDIS_URL=redis://redis:6379
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
     ports:
       - "3000:3000"
     networks:
@@ -85,8 +87,28 @@ services:
     networks:
       - app-network
 
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otel-collector
+    restart: always
+    user: "0:0"
+    environment:
+      - GRAFANA_CLOUD_OTLP_ENDPOINT=${GRAFANA_CLOUD_OTLP_ENDPOINT}
+      - GRAFANA_CLOUD_BASIC_AUTH_HEADER=${GRAFANA_CLOUD_BASIC_AUTH_HEADER}
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - otel-storage:/var/lib/otelcol:rw
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+    networks:
+      - app-network
+
 volumes:
   mongo_data:
+  otel-storage:
 
 networks:
   app-network:
