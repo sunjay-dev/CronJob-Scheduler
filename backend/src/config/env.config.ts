@@ -23,7 +23,7 @@ const envSchema = z.object({
   APP_JOB_NAME: z.string().default("backend"),
 
   OTEL_TRACING_ENABLED: z.coerce.boolean().default(false),
-  OTEL_SERVICE_NAME: z.string().default("backend"),
+  OTEL_SERVICE_NAME: z.string().default("cronjob-backend"),
   OTEL_TRACES_EXPORTER: z.string().default("otlp"),
   OTEL_EXPORTER_OTLP_ENDPOINT: z.string().default("http://localhost:4318"),
 });

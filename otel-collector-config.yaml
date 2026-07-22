@@ -14,6 +14,9 @@ receivers:
     storage: file_storage
 
     operators:
+      - type: regex_parser
+        parse_from: attributes["log.file.path"]
+        regex: "^/var/lib/docker/containers/(?P<container_id>[a-f0-9]{12})[a-f0-9]+/.*"
       - type: json_parser
         timestamp:
           parse_from: attributes.time
@@ -30,6 +33,15 @@ extensions:
 
 processors:
   batch:
+  transform:
+    error_mode: ignore
+    log_statements:
+      - context: log
+        statements:
+          - set(resource.attributes["service.name"], attributes.attrs["com.docker.compose.service"]) where
+            attributes.attrs["com.docker.compose.service"] != nil
+          - set(resource.attributes["service.name"], attributes["container_id"]) where
+            resource.attributes["service.name"] == nil and attributes["container_id"] != nil
 
 exporters:
   otlphttp/grafana_cloud:
@@ -46,5 +58,5 @@ service:
       exporters: [otlphttp/grafana_cloud]
     logs:
       receivers: [filelog]
-      processors: [batch]
+      processors: [batch, transform]
       exporters: [otlphttp/grafana_cloud]

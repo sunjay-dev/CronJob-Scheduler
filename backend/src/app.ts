@@ -5,6 +5,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import passport from "./config/passport.config.js";
 import errorHandler from "./middlewares/errorHandler.middlewares.js";
+import { requestLogger } from "./middlewares/requestLogger.middlewares.js";
 import routes from "./api.routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -14,6 +15,7 @@ const clientDistPath = path.join(__dirname, "../public");
 const app = express();
 
 app.use(helmet());
+app.use(requestLogger);
 app.use(passport.initialize());
 app.use(express.json());
 app.use(cookieParser());
