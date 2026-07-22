@@ -32,8 +32,6 @@ processors:
   batch:
 
 exporters:
-  debug:
-    verbosity: detailed
   otlphttp/grafana_cloud:
     endpoint: ${env:GRAFANA_CLOUD_OTLP_ENDPOINT}
     headers:
@@ -45,8 +43,8 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [debug, otlphttp/grafana_cloud]
+      exporters: [otlphttp/grafana_cloud]
     logs:
       receivers: [filelog]
       processors: [batch]
-      exporters: [debug, otlphttp/grafana_cloud]
+      exporters: [otlphttp/grafana_cloud]

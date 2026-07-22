@@ -21,12 +21,12 @@ async function startServer() {
       server.close(async () => {
         logger.info({ message: "HTTP server closed." });
 
-        try {
-          await redis.quit();
-          await mongoose.connection.close();
-          logger.info({ message: "DB and Redis connections closed." });
-        } catch (err) {
-          logger.error({ message: "Error closing DB/Redis connections", error: err });
+        const results = await Promise.allSettled([redis.quit(), mongoose.connection.close()]);
+
+        for (const result of results) {
+          if (result.status === "rejected") {
+            logger.error({ message: "Error closing connection", error: result.reason });
+          }
         }
 
         await shutdownTracing();
