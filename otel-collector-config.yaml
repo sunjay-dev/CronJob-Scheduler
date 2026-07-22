@@ -33,13 +33,18 @@ extensions:
 
 processors:
   batch:
+  filter:
+    error_mode: ignore
+    logs:
+      log_record:
+        - attributes["attrs"] == nil
+        - attributes["attrs"]["com.docker.compose.service"] == nil
   transform:
     error_mode: ignore
     log_statements:
       - context: log
         statements:
-          - set(resource.attributes["service.name"], attributes.attrs["com.docker.compose.service"]) where
-            attributes.attrs["com.docker.compose.service"] != nil
+          - set(resource.attributes["service.name"], attributes["attrs"]["com.docker.compose.service"]) where attributes["attrs"] != nil and attributes["attrs"]["com.docker.compose.service"] != nil
           - set(resource.attributes["service.name"], attributes["container_id"]) where
             resource.attributes["service.name"] == nil and attributes["container_id"] != nil
 
@@ -58,5 +63,5 @@ service:
       exporters: [otlphttp/grafana_cloud]
     logs:
       receivers: [filelog]
-      processors: [batch, transform]
+      processors: [filter, transform, batch]
       exporters: [otlphttp/grafana_cloud]

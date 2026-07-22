@@ -20,10 +20,10 @@ const envSchema = z.object({
 
   BCRYPT_SALT_ROUNDS: z.coerce.number().int().min(4).max(16).default(10),
   PROMETHEUS_SECRET: z.string().default(""),
-  APP_JOB_NAME: z.string().default("backend"),
+  APP_JOB_NAME: z.string().default("cronjob-app"),
 
   OTEL_TRACING_ENABLED: z.coerce.boolean().default(false),
-  OTEL_SERVICE_NAME: z.string().default("cronjob-backend"),
+  OTEL_SERVICE_NAME: z.string().default("cronjob-app"),
   OTEL_TRACES_EXPORTER: z.string().default("otlp"),
   OTEL_EXPORTER_OTLP_ENDPOINT: z.string().default("http://localhost:4318"),
 });
