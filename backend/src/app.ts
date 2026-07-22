@@ -14,6 +14,8 @@ const clientDistPath = path.join(__dirname, "../public");
 
 const app = express();
 
+app.set("trust proxy", true);
+
 app.use(helmet());
 app.use(requestLogger);
 app.use(passport.initialize());
