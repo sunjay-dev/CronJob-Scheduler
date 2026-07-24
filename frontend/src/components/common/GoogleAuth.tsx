@@ -1,3 +1,5 @@
+import google from "@/assets/images/google.webp";
+
 const handleGoogleAuth = () => {
   window.open("/api/v1/user/auth/google", "_self");
 };
@@ -16,7 +18,7 @@ export default function GoogleAuth({ text, lastUsed }: { text: string; lastUsed:
         type="button"
         className="w-full border bg-white border-gray-300 py-1.5 rounded-md flex items-center justify-center gap-2 hover:bg-gray-50 transition text-sm relative"
       >
-        <img src="/google.webp" alt="Google" className="w-4 h-4" />
+        <img src={google} alt="Google" className="w-4 h-4" />
         <span>{text}</span>
       </button>
     </div>

@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
+import notFoundPage from "@/assets/images/NotFoundPage.webp";
 
 export default function NotFoundPage() {
   return (
     <div className="font-[Inter] flex flex-col justify-center min-h-screen items-center bg-gray-50 px-4 py-10">
-      <img src="/NotFoundPage.webp" alt="404 Not Found" className="w-full max-w-md" />
+      <img src={notFoundPage} alt="404 Not Found" className="w-full max-w-md" />
       <p className="text-lg text-[#ba68c8] mb-6 text-center max-w-md">
         Sorry, the page you're looking for doesn't exist or was moved.
       </p>

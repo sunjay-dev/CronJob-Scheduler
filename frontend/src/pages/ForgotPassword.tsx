@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Footer, Loader, Popup } from "../components";
+import logo from "@/assets/images/logo.webp";
+import forgotPassword from "@/assets/images/Forgot-password.webp";
 import { forgotPasswordSchema } from "../schemas/authSchemas";
 
 export default function ForgetPassword() {
@@ -56,7 +58,7 @@ export default function ForgetPassword() {
       <div className="font-[Inter] selection:bg-purple-500 selection:text-white h-dvh w-dvw grid grid-cols-1 md:grid-cols-2 overflow-hidden">
         <div className="flex flex-col px-8 md:px-6 py-6">
           <Link to="/login">
-            <img src="/logo.webp" alt="logo" className="md:ml-2 h-10 w-10 mb-8" />
+            <img src={logo} alt="logo" className="md:ml-2 h-10 w-10 mb-8" />
           </Link>
 
           <div className="flex-grow flex flex-col justify-center items-center">
@@ -103,7 +105,7 @@ export default function ForgetPassword() {
         </div>
 
         <div className="bg-purple-100 hidden md:flex items-center justify-center">
-          <img src="/Forgot-password.webp" alt="Forgot password illustration" className="max-w-sm" />
+          <img src={forgotPassword} alt="Forgot password illustration" className="max-w-sm" />
         </div>
       </div>
     </>

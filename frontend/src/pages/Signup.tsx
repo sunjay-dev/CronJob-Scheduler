@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { GoogleAuth, Loader, Popup, PasswordInput } from "../components";
+import logo from "@/assets/images/logo.webp";
+import signupIllustration from "@/assets/images/Signup-illustration.webp";
 import { RegisterSchema } from "../schemas/authSchemas";
 
 export default function Signup() {
@@ -64,11 +66,11 @@ export default function Signup() {
       {isLoading && <Loader />}
       <div className="font-[Inter] selection:bg-purple-500 selection:text-white h-dvh w-dvw grid grid-cols-1 md:grid-cols-2 overflow-x-hidden">
         <div className="bg-purple-100 hidden md:flex items-center justify-center">
-          <img src="/Signup-illustration.webp" alt="Illustration" className="max-w-sm" />
+          <img src={signupIllustration} alt="Illustration" className="max-w-sm" />
         </div>
 
         <div className="flex flex-col px-8 md:px-6 py-6 md:py-4">
-          <img src="/logo.webp" alt="logo" className="md:ml-2 h-10 w-10 mb-8" />
+          <img src={logo} alt="logo" className="md:ml-2 h-10 w-10 mb-8" />
 
           <div className="flex-grow flex flex-col justify-center items-center">
             <form onSubmit={handleFormSubmit} className="w-full max-w-sm">

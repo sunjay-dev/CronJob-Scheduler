@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
+import logo from "@/assets/images/logo.webp";
 
 export default function Header({ home }: { home: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,7 +12,7 @@ export default function Header({ home }: { home: boolean }) {
         <div className="flex justify-between items-center py-3">
           <div className="flex items-center space-x-2">
             <Link to="/">
-              <img src="/logo.webp" alt="CronJob Logo" className="w-8 h-8" />
+              <img src={logo} alt="CronJob Logo" className="w-8 h-8" />
             </Link>
             <h1 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">Cron Job</h1>
           </div>

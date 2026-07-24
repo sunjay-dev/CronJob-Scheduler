@@ -1,6 +1,7 @@
 import { LogOut, Menu } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks";
+import logo from "@/assets/images/logo.webp";
 import { logout } from "../../slices/authSlice";
 import ConfirmMenu from "./ConfirmMenu";
 import { useState, useEffect } from "react";
@@ -71,7 +72,7 @@ export default function Header({ sidebarOpen, setSidebarOpen, mobileMenuOpen, se
         <div className="flex items-center gap-2">
           <img
             onClick={() => navigate("/dashboard")}
-            src="/logo.webp"
+            src={logo}
             alt="Cron Job Logo"
             className="h-8 w-8 cursor-pointer"
           />

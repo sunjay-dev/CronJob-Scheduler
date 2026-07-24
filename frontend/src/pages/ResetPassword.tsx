@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Footer, Loader, Popup } from "../components";
+import logo from "@/assets/images/logo.webp";
+import resetPassword from "@/assets/images/ResetPassword.webp";
 import { Eye, EyeOff } from "lucide-react";
 import { resetPasswordSchema, tokenSchema } from "../schemas/authSchemas";
 
@@ -87,7 +89,7 @@ export default function ResetPassword() {
       <div className="font-[Inter] selection:bg-purple-500 selection:text-white h-dvh w-dvw grid grid-cols-1 md:grid-cols-2 overflow-x-hidden">
         <div className="flex flex-col px-8 md:px-6 py-6">
           <Link to="/login">
-            <img src="/logo.webp" alt="logo" className="md:ml-2 h-10 w-10 mb-8" />
+            <img src={logo} alt="logo" className="md:ml-2 h-10 w-10 mb-8" />
           </Link>
 
           <div className="flex-grow flex flex-col justify-center items-center">
@@ -184,7 +186,7 @@ export default function ResetPassword() {
         </div>
 
         <div className="bg-purple-100 hidden md:flex items-center justify-center">
-          <img src="/ResetPassword.webp" alt="Illustration" className="max-w-sm" />
+          <img src={resetPassword} alt="Illustration" className="max-w-sm" />
         </div>
       </div>
     </>

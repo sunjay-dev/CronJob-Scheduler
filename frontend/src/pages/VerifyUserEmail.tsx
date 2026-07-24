@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Popup, Loader, Footer } from "../components";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import logo from "@/assets/images/logo.webp";
+import verifyEmail from "@/assets/images/verify-email.webp";
 import { verifyUserSchema, verifyUserIdSchema } from "../schemas/authSchemas";
 
 export default function VerifyEmail() {
@@ -125,7 +127,7 @@ export default function VerifyEmail() {
       <div className="font-[Inter] selection:bg-purple-500 selection:text-white h-dvh w-dvw grid grid-cols-1 md:grid-cols-2 overflow-x-hidden">
         <div className="flex flex-col px-8 md:px-6 py-6">
           <Link to="/login">
-            <img src="/logo.webp" alt="logo" className="md:ml-2 h-10 w-10 mb-8" />
+            <img src={logo} alt="logo" className="md:ml-2 h-10 w-10 mb-8" />
           </Link>
 
           <div className="flex-grow flex flex-col justify-center items-center">
@@ -181,7 +183,7 @@ export default function VerifyEmail() {
         </div>
 
         <div className="bg-purple-100 hidden md:flex items-center justify-center">
-          <img src="/verify-email.webp" alt="Verify Email Illustration" className="max-w-sm" />
+          <img src={verifyEmail} alt="Verify Email Illustration" className="max-w-sm" />
         </div>
       </div>
     </>

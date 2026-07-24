@@ -1,6 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAppDispatch } from "../hooks";
+import logo from "@/assets/images/logo.webp";
+import signinIllustration from "@/assets/images/Signin-illustration.webp";
 import { setAuth } from "../slices/authSlice";
 import { Loader, Popup, GoogleAuth, PasswordInput } from "../components";
 import { loginSchema } from "../schemas/authSchemas";
@@ -96,7 +98,7 @@ export default function Login() {
       {isLoading && <Loader />}
       <div className="font-[Inter] selection:bg-purple-500 selection:text-white h-dvh w-dvw grid grid-cols-1 md:grid-cols-2 overflow-x-hidden">
         <div className="flex flex-col px-8 md:px-6 py-6">
-          <img src="/logo.webp" alt="logo" className="md:ml-2 h-10 w-10 mb-8" />
+          <img src={logo} alt="logo" className="md:ml-2 h-10 w-10 mb-8" />
 
           <div className="flex-grow flex flex-col justify-center items-center">
             <form onSubmit={handleFormSubmit} className="w-full max-w-sm">
@@ -172,7 +174,7 @@ export default function Login() {
         </div>
 
         <div className="bg-purple-100 hidden md:flex items-center justify-center">
-          <img src="/Signin-illustration.webp" alt="Illustration" className="max-w-sm" />
+          <img src={signinIllustration} alt="Illustration" className="max-w-sm" />
         </div>
       </div>
     </>

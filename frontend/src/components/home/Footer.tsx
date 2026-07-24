@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import logo from "@/assets/images/logo.webp";
 
 export default function Footer() {
   return (
@@ -7,7 +8,7 @@ export default function Footer() {
         <div className="grid md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
-              <img src="/logo.webp" className="w-12 h-12" />
+              <img src={logo} className="w-12 h-12" />
 
               <h3 className="text-2xl font-bold">CronJob</h3>
             </div>

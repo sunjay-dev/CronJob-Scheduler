@@ -1,6 +1,7 @@
 import { X, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../hooks";
+import logo from "@/assets/images/logo.webp";
 import { logout } from "../../slices/authSlice";
 import { clearJobs } from "../../slices/jobSlice";
 import ConfirmMenu from "./ConfirmMenu";
@@ -54,7 +55,7 @@ export function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
         <div className="absolute top-4 left-6 flex items-center gap-2">
           <img
             onClick={() => navigate("/dashboard")}
-            src="/logo.webp"
+            src={logo}
             alt="Cron Job Logo"
             className="h-8 w-8 cursor-pointer"
           />
