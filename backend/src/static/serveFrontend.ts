@@ -3,22 +3,27 @@ import path from "path";
 
 export function serveFrontend(app: express.Express, clientDistPath: string) {
   app.use(
-    "/assets",
-    express.static(path.join(clientDistPath, "assets"), {
-      immutable: true,
-      maxAge: "1y",
-      etag: false,
-      fallthrough: false,
-    }),
-  );
-
-  app.use(
     express.static(clientDistPath, {
       etag: false,
-      maxAge: 0,
+
       setHeaders(res, filePath) {
-        if (filePath.endsWith(".html")) {
+        const name = path.basename(filePath);
+
+        if (name === "index.html") {
           res.setHeader("Cache-Control", "public, max-age=0, must-revalidate");
+          return;
+        }
+        if (name === "sw.js" || name === "registerSW.js" || name === "manifest.webmanifest") {
+          res.setHeader("Cache-Control", "no-cache");
+          return;
+        }
+
+        const isHashed = /[-.][a-zA-Z0-9]{8,}(?=\.)/.test(name);
+
+        if (isHashed) {
+          res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+        } else {
+          res.setHeader("Cache-Control", "public, max-age=86400");
         }
       },
     }),

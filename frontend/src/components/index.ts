@@ -1,3 +1,4 @@
+export { default as OfflineOverlay } from "./OfflineOverlay";
 export {
   ConfirmMenu,
   Footer,

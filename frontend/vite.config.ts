@@ -30,7 +30,6 @@ export default defineConfig({
         enabled: false,
       },
       registerType: "autoUpdate",
-      includeAssets: ["index.html", "offline.html"],
       manifest: {
         name: "CronJob Scheduler",
         short_name: "CronJob",
